@@ -47,4 +47,10 @@ public class Member {
         this.favoriteLine = favoriteLine;
         this.role = role;
     }
+
+    public void update(String nickname, String password, int favoriteLine) {
+        this.nickname = nickname;
+        this.password = password;
+        this.favoriteLine = favoriteLine;
+    }
 }

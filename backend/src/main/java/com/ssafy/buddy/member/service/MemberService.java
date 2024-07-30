@@ -1,6 +1,7 @@
 package com.ssafy.buddy.member.service;
 
 import com.ssafy.buddy.member.controller.request.SignUpRequest;
+import com.ssafy.buddy.member.controller.request.UpdateRequest;
 import com.ssafy.buddy.member.controller.response.MemberResponse;
 import com.ssafy.buddy.member.domain.Member;
 import com.ssafy.buddy.member.domain.Role;
@@ -38,6 +39,16 @@ public class MemberService {
     public MemberResponse findInfo(Long memberId) {
         Member member = findById(memberId);
         return MemberResponse.from(member);
+    }
+
+    @Transactional
+    public void updateInfo(Long memberId, UpdateRequest request) {
+        Member member = findById(memberId);
+        member.update(request.getNickname(), passwordEncoder.encode(request.getPassword()), request.getFavoriteLine());
+    }
+
+    public boolean isStudentIdDuplicated(String studentId) {
+        return memberRepository.existsByStudentId(studentId);
     }
 
     private Member findById(Long memberId) {
