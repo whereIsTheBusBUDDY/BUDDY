@@ -2,6 +2,7 @@ package com.ssafy.buddy.member.controller;
 
 import com.ssafy.buddy.auth.supports.LoginMember;
 import com.ssafy.buddy.member.controller.request.SignUpRequest;
+import com.ssafy.buddy.member.controller.request.UpdateRequest;
 import com.ssafy.buddy.member.controller.response.MemberResponse;
 import com.ssafy.buddy.member.service.MemberService;
 import jakarta.validation.Valid;
@@ -31,5 +32,15 @@ public class MemberController {
     @GetMapping("/members/me")
     public MemberResponse findInfo(@LoginMember Long memberId) {
         return memberService.findInfo(memberId);
+    }
+
+    @PutMapping("/members/me")
+    public void updateInfo(@LoginMember Long memberId, @RequestBody UpdateRequest request) {
+        memberService.updateInfo(memberId, request);
+    }
+
+    @GetMapping("/check-studentId")
+    public boolean isStudentIdDuplicated(@RequestParam("studentId") String studentId) {
+        return memberService.isStudentIdDuplicated(studentId);
     }
 }
