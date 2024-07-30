@@ -1,0 +1,15 @@
+CREATE TABLE IF NOT EXISTS member (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    student_id VARCHAR(255) NOT NULL,
+    nickname VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    favorite_line INT NOT NULL,
+    role VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS refresh_token (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    refresh_token VARCHAR(255) NOT NULL
+);
