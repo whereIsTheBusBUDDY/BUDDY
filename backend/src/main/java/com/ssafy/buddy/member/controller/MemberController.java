@@ -43,4 +43,9 @@ public class MemberController {
     public boolean isStudentIdDuplicated(@RequestParam("studentId") String studentId) {
         return memberService.isStudentIdDuplicated(studentId);
     }
+
+    @PostMapping("/reset-password")
+    public void resetPassword(@RequestParam("email") String email) {
+        memberService.resetPassword(email);
+    }
 }
