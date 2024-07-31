@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
-import SendInput from '../components/SendInput';
-import Pagename from '../components/PageName';
-import { WHITE, GRAY, SKYBLUE } from '../constant/color';
+import SendInput from '../../components/SendInput';
+import Pagename from '../../components/PageName';
+import { WHITE, GRAY, SKYBLUE } from '../../constant/color';
 
-const ChatPage = () => {
+const ChatScreen = () => {
   const messages = [
     {
       id: 1,
@@ -99,4 +99,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ChatPage;
+export default ChatScreen;

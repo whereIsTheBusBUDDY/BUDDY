@@ -6,9 +6,9 @@ import {
   ScrollView,
   ImageBackground,
 } from 'react-native';
-import { BLACK, GRAY, SKYBLUE, WHITE } from '../constant/color';
-import Button, { ButtonColors } from '../components/Button';
-import { useUserContext } from '../context/UserContext';
+import { BLACK, GRAY, SKYBLUE, WHITE } from '../../constant/color';
+import Button, { ButtonColors } from '../../components/Button';
+import { useUserContext } from '../../context/UserContext';
 
 const ProfileScreen = () => {
   const { setLoginUser } = useUserContext();
@@ -19,7 +19,7 @@ const ProfileScreen = () => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <ImageBackground
-        source={require('../../assets/idcard.png')}
+        source={require('../../../assets/idcard.png')}
         style={styles.profileImage}
       >
         <Text style={styles.imageText}>김싸피</Text>

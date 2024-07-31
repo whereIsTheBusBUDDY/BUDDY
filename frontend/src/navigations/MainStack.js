@@ -1,8 +1,8 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import MainScreen from '../screen/MainScreen';
-import ChatScreen from '../screen/ChatScreen';
+import ChatScreen from '../screen/CheckIn/ChatScreen';
 import BoardScreen from '../screen/Board/BoardScreen';
-import MessageScreen from '../screen/MessageScreen';
+import MessageScreen from '../screen/CheckIn/MessageScreen';
 import { Image } from 'react-native';
 import { Fontisto } from '@expo/vector-icons';
 
