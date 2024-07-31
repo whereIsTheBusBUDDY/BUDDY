@@ -1,0 +1,60 @@
+{
+  "expo": {
+    "name": "buddy-app",
+    "slug": "buddy-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/bus.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "package": "com.ssafy.budy",
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "This app needs access to your location to track your movements.",
+        "NSLocationAlwaysUsageDescription": "This app needs access to your location to track your movements in the background.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "Allow $(PRODUCT_NAME) to use your location",
+        "UIBackgroundModes": ["location"]
+      }
+    },
+    "android": {
+      "package": "com.ssafy.budy",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyAq4Boum-hSew2whKsnJBSqmbxQuFM7NTw"
+        }
+      },
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "INTERNET",
+        "FOREGROUND_SERVICE",
+        "ACCESS_BACKGROUND_LOCATION"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "6262af48-55de-4ec3-bfd0-b79ab62c2b51"
+      }
+    },
+    "plugins": [
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow buddy-app to access your location"
+        }
+      ]
+    ]
+  }
+}
