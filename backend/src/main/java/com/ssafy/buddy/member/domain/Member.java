@@ -53,4 +53,8 @@ public class Member {
         this.password = password;
         this.favoriteLine = favoriteLine;
     }
+
+    public void resetPassword(String password) {
+        this.password = password;
+    }
 }
