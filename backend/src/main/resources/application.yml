@@ -3,19 +3,6 @@ spring:
     name: buddy
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-  profiles:
-    active: local
-
-# local 환경
----
-spring:
-  config:
-    activate:
-      on-profile: local
-  datasource:
-    url: jdbc:mysql://localhost:3306/buddy?serverTimezone=UTC&characterEncoding=UTF-8
-    username: ${DB_NAME}
-    password: ${DB_PASSWORD}
   jpa:
     hibernate:
       ddl-auto: none
@@ -33,3 +20,25 @@ spring:
 jwt:
   secret-key: ${SECRET_KEY}
   refresh-key: ${REFRESH_KEY}
+
+# local 환경
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+  datasource:
+    url: jdbc:mysql://localhost:3306/buddy?serverTimezone=UTC&characterEncoding=UTF-8
+    username: ${DB_NAME}
+    password: ${DB_PASSWORD}
+
+# dev 환경
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    url: jdbc:mysql://rds-test.cfsok8siyava.ap-northeast-2.rds.amazonaws.com:3306/rdstest
+    username: ${RDS_NAME}
+    password: ${RDS_PASSWORD}
