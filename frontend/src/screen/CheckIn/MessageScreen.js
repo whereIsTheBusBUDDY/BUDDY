@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import MsgButton from '../components/MsgButton';
-import CustomPopup from '../components/MsgPopup';
+import MsgButton from '../../components/MsgButton';
+import CustomPopup from '../../components/MsgPopup';
 
 const MessageScreen = () => {
   const [popupVisible, setPopupVisible] = useState(false);

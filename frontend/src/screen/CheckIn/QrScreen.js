@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Linking } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
-import { GRAY, PRIMARY } from '../constant/color';
+import { GRAY, PRIMARY } from '../../constant/color';
 
 export default function QrScanner() {
   const [hasPermission, setHasPermission] = useState(null);
