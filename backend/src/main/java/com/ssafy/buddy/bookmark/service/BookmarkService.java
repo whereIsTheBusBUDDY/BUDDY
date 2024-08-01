@@ -1,5 +1,6 @@
 package com.ssafy.buddy.bookmark.service;
 
+import com.ssafy.buddy.bookmark.controller.response.BookmarkResponse;
 import com.ssafy.buddy.bookmark.domain.Bookmark;
 import com.ssafy.buddy.bookmark.repository.BookmarkRepository;
 import com.ssafy.buddy.member.domain.Member;
@@ -10,6 +11,9 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -28,6 +32,35 @@ public class BookmarkService {
 
     public void removeBookmark(Long memberId, int stationId) {
         bookmarkRepository.deleteByMemberIdAndStationId(memberId, stationId);
+    }
+
+    public List<BookmarkResponse> getMyBookmarks(Long memberId) {
+        List<Bookmark> bookmarks = bookmarkRepository.findAllByMemberId(memberId);
+
+        return bookmarks.stream()
+                .map(bookmark -> new BookmarkResponse(
+                        bookmark.getStation().getId(),
+                        bookmark.getStation().getStationName(),
+                        true
+                ))
+                .collect(Collectors.toList());
+    }
+
+    public List<BookmarkResponse> getStationsWithBookmarks(Long memberId, int busLine) {
+        List<Station> stations = stationRepository.findAllByBusLine(busLine);
+        List<Bookmark> bookmarks = bookmarkRepository.findAllByMemberId(memberId);
+
+        List<Integer> bookmarkedStationIds = bookmarks.stream()
+                .map(bookmark -> bookmark.getStation().getId())
+                .toList();
+
+        return stations.stream()
+                .map(station -> new BookmarkResponse(
+                        station.getId(),
+                        station.getStationName(),
+                        bookmarkedStationIds.contains(station.getId())
+                ))
+                .collect(Collectors.toList());
     }
 
     private Member findByMemberId(Long memberId) {

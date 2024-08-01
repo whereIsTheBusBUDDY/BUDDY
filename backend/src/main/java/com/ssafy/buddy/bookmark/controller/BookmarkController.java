@@ -1,9 +1,12 @@
 package com.ssafy.buddy.bookmark.controller;
 
 import com.ssafy.buddy.auth.supports.LoginMember;
+import com.ssafy.buddy.bookmark.controller.response.BookmarkResponse;
 import com.ssafy.buddy.bookmark.service.BookmarkService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,5 +21,15 @@ public class BookmarkController {
     @DeleteMapping("/bookmarks")
     public void removeBookmark(@LoginMember Long memberId, @RequestParam("stationId") int stationId) {
         bookmarkService.removeBookmark(memberId, stationId);
+    }
+
+    @GetMapping("/bookmarks")
+    public List<BookmarkResponse> getMyBookmarks(@LoginMember Long memberId) {
+        return bookmarkService.getMyBookmarks(memberId);
+    }
+
+    @GetMapping("/routes")
+    public List<BookmarkResponse> getMyBookmarks(@LoginMember Long memberId, @RequestParam("busId") int busId) {
+        return bookmarkService.getStationsWithBookmarks(memberId, busId);
     }
 }
