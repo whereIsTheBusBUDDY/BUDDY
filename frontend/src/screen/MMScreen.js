@@ -7,15 +7,30 @@ import {
   useBlurOnFulfill,
   useClearByFocusCell,
 } from 'react-native-confirmation-code-field';
-import ProgressBar from '../components/ProgressBar'; // Adjust the path as necessary
+import ProgressBar from '../components/ProgressBar';
 import RegistButton from '../components/RegistButton';
+import { mmAuth } from '../api/auth';
 
-const CELL_COUNT = 6;
+const CELL_COUNT = 5;
+
+const word = require('../../assets/word.json');
+
+// 랜덤 숫자 만들기
+const generateRandomCode = () => {
+  return Math.floor(10000 + Math.random() * 90000).toString();
+};
+
+const getRandomWord = (wordJson, category) => {
+  const categoryWord = wordJson[category];
+  const randomIndex = Math.floor(Math.random() * categoryWord.length);
+  return categoryWord[randomIndex];
+};
 
 const MMScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const [value, setValue] = useState('');
+  const [combinedWord, setCombinedWord] = useState('');
   const step = 3;
   const ref = useBlurOnFulfill({ value, cellCount: CELL_COUNT });
   const [props, getCellOnLayoutHandler] = useClearByFocusCell({
@@ -23,17 +38,39 @@ const MMScreen = () => {
     setValue,
   });
 
+  // 컴포넌트가 마운트될 때 인증 코드를 생성하고 전송
   useEffect(() => {
-    if (route.params?.step) {
-      setStep(route.params.step);
-    }
-  }, [route.params]);
+    mmText = generateRandomCode();
+    console.log('Generated Code:', mmText);
+
+    const sendAuthCode = async () => {
+      try {
+        const randomAd = getRandomWord(word, 'ad');
+        const randomNone = getRandomWord(word, 'none');
+
+        const wordCombination = randomAd + ' ' + randomNone;
+        setCombinedWord(wordCombination);
+
+        const message = `<${wordCombination}>님에게 <${mmText}>가 전송되었습니다`;
+        const mmData = {
+          text: message,
+        };
+        const result = await mmAuth(mmData);
+        console.log('인증 코드 전송 완료');
+      } catch (error) {
+        console.log('인증 코드 전송 실패:', error.message);
+      }
+    };
+
+    sendAuthCode();
+  }, []);
 
   const handleNext = () => {
-    if (step < 3) {
-    } else {
-      // 완료 버튼 클릭 시 실행할 코드
+    if (value === mmText) {
+      console.log('인증코드가 맞습니다');
       navigation.navigate('Login');
+    } else {
+      console.log('인증코드가 틀렸습니다');
     }
   };
 
@@ -45,7 +82,9 @@ const MMScreen = () => {
           <View>
             <Text style={styles.origintxt}>
               Mattermost 인증채널에{'\n'}
-              전송된 <Text style={styles.pointxt}>인증코드</Text>를 입력해주세요
+              <Text style={styles.pointxt}>{combinedWord}</Text>님에게 전송된{' '}
+              {'\n'}
+              <Text style={styles.pointxt}>인증코드</Text>를 입력해주세요
             </Text>
           </View>
           <CodeField
@@ -145,7 +184,6 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   buttonContainer: {
-    // paddingHorizontal: 10,
     paddingBottom: 20,
     paddingTop: 25,
     marginRight: 15,
