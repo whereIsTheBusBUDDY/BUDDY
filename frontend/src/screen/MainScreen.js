@@ -43,7 +43,9 @@ const MainScreen = () => {
 
           <ImageButton
             title={'07:00 | 1호차, 6호차는 유성온천역부터 운행합니다.'}
-            onPress={() => {}}
+            onPress={() => {
+              navigate.navigate('Board');
+            }}
             buttonColor={ButtonColors.ORANGE}
             width={width}
             height={40}
@@ -51,7 +53,9 @@ const MainScreen = () => {
           />
           <ImageButton
             title={'김싸피님,\n실시간 셔틀버스 위치를 확인해보세요!'}
-            onPress={() => {}}
+            onPress={() => {
+              navigate.navigate('Bus');
+            }}
             buttonColor={ButtonColors.GRAY}
             width={width}
             height={160}
@@ -67,7 +71,9 @@ const MainScreen = () => {
           <View style={styles.upperLeftPad}>
             <ImageButton
               title={'QR 코드로\n 탑승하기'}
-              onPress={() => {}}
+              onPress={() => {
+                navigate.navigate('Qr');
+              }}
               buttonColor={ButtonColors.ORANGE}
               width={width / 2 - 10}
               height={100}
@@ -90,7 +96,9 @@ const MainScreen = () => {
             />
             <ImageButton
               title="채팅방 입장하기"
-              onPress={() => {}}
+              onPress={() => {
+                navigate.navigate('Chat');
+              }}
               width={width / 2}
               height={45}
               imageSource={require('../../assets/chat.png')}
@@ -105,7 +113,9 @@ const MainScreen = () => {
           <View style={styles.middleLeftPad}>
             <ImageButton
               title="셔틀 노선도"
-              onPress={() => {}}
+              onPress={() => {
+                navigate.navigate('Map');
+              }}
               width={width / 2 - 10}
               height={100}
               imageSource={require('../../assets/map.png')}
@@ -115,7 +125,9 @@ const MainScreen = () => {
             />
             <ImageButton
               title={'즐겨찾는\n 목적지'}
-              onPress={() => {}}
+              onPress={() => {
+                navigate.navigate('Favorite');
+              }}
               width={width / 2 - 10}
               height={100}
               imageSource={require('../../assets/favorite.png')}
@@ -182,7 +194,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: BLACK,
     fontWeight: 'bold',
-    marginTop: 30,
+    // marginTop: 30,
     marginBottom: 10,
   },
   upperContainer: {

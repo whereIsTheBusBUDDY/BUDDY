@@ -35,7 +35,7 @@ const FavoriteScreen = () => {
   const [activeTab, setActiveTab] = useState('MyFavorites');
   return (
     <View style={styles.container}>
-      <Pagename title="< 게시판" />
+      {/* <Pagename title="< 게시판" /> */}
       <Text style={styles.title}>
         {activeTab === 'MyFavorites'
           ? '김싸피님이 즐겨찾는 목적지예요!'

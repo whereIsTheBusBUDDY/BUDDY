@@ -13,7 +13,6 @@ import { BLACK, WHITE, SKYBLUE, GRAY, PRIMARY } from '../../constant/color';
 const DetailScreen = ({ board }) => {
   return (
     <View style={styles.container}>
-      <Pagename title={`< ${board.category}`} />
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         {board.category === '공지사항' ? (
           <View style={styles.noticeContainer}>

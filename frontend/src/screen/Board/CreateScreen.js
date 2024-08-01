@@ -14,7 +14,7 @@ export default function App() {
     <View style={styles.container}>
       {/* header 컴포넌트 수정하고 바꾸기 */}
       <View style={styles.header}>
-        <Text>{'< 글쓰기'}</Text>
+        {/* <Text>{'< 글쓰기'}</Text> */}
         <Button title="작성" onPress={() => alert('작성 버튼 클릭')} />
       </View>
       <ScrollView style={styles.scrollContainer}>

@@ -70,24 +70,20 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     backgroundColor: WHITE,
     alignItems: 'left',
-    padding: 20,
+    paddingHorizontal: 20,
   },
 
   profileContainer: {
     alignItems: 'center',
-    marginTop: 30,
+    // marginTop: 30,
   },
   profileImage: {
-    marginTop: 50,
+    // marginTop: 50,
     marginVertical: 30,
     width: '100%',
     height: 190,
   },
-  // profileName: {
-  //   fontSize: 20,
-  //   fontWeight: 'bold',
-  //   marginTop: 10,
-  // },
+
   infoContainer: {
     width: '100%',
     backgroundColor: WHITE,

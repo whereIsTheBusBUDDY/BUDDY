@@ -8,6 +8,7 @@ import ProfileScreen from '../screen/Account/ProfileScreen';
 import MainStack from './MainStack';
 import { Ionicons } from '@expo/vector-icons';
 import { GRAY, PRIMARY } from '../constant/color';
+import BoardStack from './BoardStack';
 
 const Tab = createBottomTabNavigator();
 
@@ -51,22 +52,33 @@ const ContentTab = () => {
       <Tab.Screen
         name={'채팅'}
         component={ChatScreen}
-        options={{ headerShown: false }}
+        options={{
+          headerTitle: '채팅',
+          headerShadowVisible: false,
+        }}
       />
       <Tab.Screen
         name={'실시간셔틀'}
         component={MapScreen}
-        options={{ headerShown: false }}
+        options={{
+          headerTitle: '실시간 셔틀',
+          headerShadowVisible: false,
+        }}
       />
       <Tab.Screen
         name={'게시판'}
-        component={BoardScreen}
-        options={{ headerShown: false }}
+        component={BoardStack}
+        options={{
+          headerShown: false,
+        }}
       />
       <Tab.Screen
         name={'마이페이지'}
         component={ProfileScreen}
-        options={{ headerShown: false }}
+        options={{
+          headerTitle: '마이페이지',
+          headerShadowVisible: false,
+        }}
       />
     </Tab.Navigator>
   );

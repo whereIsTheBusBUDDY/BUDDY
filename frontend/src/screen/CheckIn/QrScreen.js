@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Linking } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
-import { GRAY, PRIMARY } from '../../constant/color';
+import { GRAY, PRIMARY, WHITE } from '../../constant/color';
 
 export default function QrScanner() {
   const [hasPermission, setHasPermission] = useState(null);
@@ -79,6 +79,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: WHITE,
   },
   paragraph: {
     fontSize: 20,
@@ -112,7 +113,7 @@ const styles = StyleSheet.create({
     height: BORDER_SIZE,
     borderTopWidth: BORDER_WIDTH,
     borderLeftWidth: BORDER_WIDTH,
-    borderColor: PRIMARY.BACKGROUND,
+    borderColor: PRIMARY.DEFAULT,
     borderTopLeftRadius: BORDER_RADIUS,
   },
   borderTopRight: {
@@ -123,7 +124,7 @@ const styles = StyleSheet.create({
     height: BORDER_SIZE,
     borderTopWidth: BORDER_WIDTH,
     borderRightWidth: BORDER_WIDTH,
-    borderColor: PRIMARY.BACKGROUND,
+    borderColor: PRIMARY.DEFAULT,
     borderTopRightRadius: BORDER_RADIUS,
   },
   borderBottomLeft: {
@@ -134,7 +135,7 @@ const styles = StyleSheet.create({
     height: BORDER_SIZE,
     borderBottomWidth: BORDER_WIDTH,
     borderLeftWidth: BORDER_WIDTH,
-    borderColor: PRIMARY.BACKGROUND,
+    borderColor: PRIMARY.DEFAULT,
     borderBottomLeftRadius: BORDER_RADIUS,
   },
   borderBottomRight: {
@@ -145,7 +146,7 @@ const styles = StyleSheet.create({
     height: BORDER_SIZE,
     borderBottomWidth: BORDER_WIDTH,
     borderRightWidth: BORDER_WIDTH,
-    borderColor: PRIMARY.BACKGROUND,
+    borderColor: PRIMARY.DEFAULT,
     borderBottomRightRadius: BORDER_RADIUS,
   },
   button: {
