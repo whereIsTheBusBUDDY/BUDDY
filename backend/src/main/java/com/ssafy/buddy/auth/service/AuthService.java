@@ -1,6 +1,6 @@
 package com.ssafy.buddy.auth.service;
 
-import com.ssafy.buddy.auth.controller.domain.RefreshToken;
+import com.ssafy.buddy.auth.domain.RefreshToken;
 import com.ssafy.buddy.auth.controller.request.LoginRequest;
 import com.ssafy.buddy.auth.controller.response.LoginResponse;
 import com.ssafy.buddy.auth.controller.response.RefreshResponse;
