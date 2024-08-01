@@ -5,6 +5,8 @@ import {
   View,
   useWindowDimensions,
 } from 'react-native';
+
+import { useNavigation } from '@react-navigation/native';
 import BoardItem from '../../components/BoardItem';
 import TabButton from '../../components/BoardTabButton';
 import Pagename from '../../components/PageName';
@@ -89,6 +91,7 @@ const boards = [
 ];
 
 const BoardScreen = () => {
+  const navigate = useNavigation();
   const [selectedCategory, setSelectedCategory] = useState('공지사항');
   const [selectedBoard, setSelectedBoard] = useState(null);
   const filteredBoards = boards.filter(
@@ -101,7 +104,7 @@ const BoardScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Pagename title="< 게시판" />
+      {/* <Pagename title="< 게시판" /> */}
       <View style={styles.bgContainer}>
         <View style={styles.tabContainer}>
           <TabButton
@@ -120,7 +123,10 @@ const BoardScreen = () => {
             <BoardItem
               key={index}
               board={board}
-              onPress={() => setSelectedBoard(board)}
+              onPress={() => {
+                // setSelectedBoard(board);
+                navigate.navigate('Create');
+              }}
             />
           ))}
         </ScrollView>
@@ -136,7 +142,7 @@ const styles = StyleSheet.create({
     backgroundColor: WHITE,
   },
   bgContainer: {
-    height: '85%',
+    height: '98%',
     backgroundColor: GRAY.BACKGROUND,
     borderRadius: 15,
   },

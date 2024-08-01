@@ -29,7 +29,7 @@ const ChatScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Pagename title="< 채팅" />
+      {/* <Pagename title="< 채팅" /> */}
       <ScrollView style={styles.chatContainer}>
         {messages.map((message) => (
           <View
