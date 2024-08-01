@@ -8,11 +8,11 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class LoginResponse {
-    private String nickname;
+    private String role;
     private String accessToken;
     private String refreshToken;
 
     public static LoginResponse from(Member member, String accessToken, String refreshToken) {
-        return new LoginResponse(member.getNickname(), accessToken, refreshToken);
+        return new LoginResponse(member.getRole().name(), accessToken, refreshToken);
     }
 }
