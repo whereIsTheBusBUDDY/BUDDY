@@ -7,6 +7,7 @@ import LoginScreen from '../screen/LoginScreen';
 import IDScreen from '../screen/IDScreen';
 import SignupScreen from '../screen/SignupScreen';
 import MMScreen from '../screen/MMScreen';
+import CameraScreen from '../screen/CameraScreen';
 
 const Stack = createNativeStackNavigator();
 const FirstStack = () => {
@@ -65,6 +66,7 @@ const FirstStack = () => {
           headerShadowVisible: false,
         }}
       />
+      <Stack.Screen name={'CameraScreen'} component={CameraScreen} />
       <Stack.Screen
         name={'Signup'}
         component={SignupScreen}
