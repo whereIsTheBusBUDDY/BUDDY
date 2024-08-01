@@ -10,9 +10,8 @@ const user = {
   ROLE: 'user',
 };
 
-export const signUp_url = 'http://i11b109.p.ssafy.io:8080/sign-up';
-
 import axios from 'axios';
+import { signUp_url, mm_url } from './url';
 
 export const signIn = (email, password) => {
   return new Promise((resolve, reject) => {
@@ -48,4 +47,8 @@ export const signUp = (userData) => {
         throw new Error('Error setting up the request');
       }
     });
+};
+
+export const mmAuth = (mmData) => {
+  axios.post(mm_url, mmData);
 };
