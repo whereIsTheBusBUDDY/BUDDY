@@ -1,4 +1,4 @@
-package com.ssafy.buddy.auth.controller.domain;
+package com.ssafy.buddy.auth.domain;
 
 import jakarta.persistence.*;
 import lombok.Getter;
