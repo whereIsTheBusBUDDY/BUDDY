@@ -46,24 +46,16 @@ const IDScreen = () => {
             <Text style={styles.pointxt}>학생증</Text>을 준비해주세요
           </Text>
 
-          {photo ? (
-            <Image source={{ uri: photo.uri }} style={styles.photo} />
-          ) : (
-            <View style={[styles.box, { height: width / 2.3 }]}>
-              <Text style={styles.logo}>multicampus</Text>
-              <View style={styles.profile}>
-                <Image
-                  source={
-                    photo
-                      ? { uri: photo }
-                      : require('../../assets/studentid.png')
-                  }
-                  style={styles.image}
-                />
-                <Text style={styles.name}>김 싸 피</Text>
-              </View>
+          <View style={[styles.box, { height: width / 2.3 }]}>
+            <Text style={styles.logo}>multicampus</Text>
+            <View style={styles.profile}>
+              <Image
+                source={require('../../assets/studentid.png')}
+                style={styles.image}
+              />
+              <Text style={styles.name}>김 싸 피</Text>
             </View>
-          )}
+          </View>
           <View>
             <Text style={styles.content}>
               ① 학생증의 앞면이 보이도록 놓아주세요.{'\n'}
@@ -80,7 +72,8 @@ const IDScreen = () => {
             </Text>
           </View>
 
-          {!result || !result.allow ? (
+          {/* {!result || !result.allow ? ( */}
+          {result ? (
             <View style={styles.buttonContainer}>
               <RegistButton
                 title="학생증 촬영하기"
@@ -94,7 +87,7 @@ const IDScreen = () => {
               <View style={styles.buttonContainer}>
                 <RegistButton
                   title={step === 3 ? '완료' : '다음'}
-                  buttonType="GRAY"
+                  buttonType="PRIMARY"
                   onPress={handleNext}
                   height={63}
                 />
