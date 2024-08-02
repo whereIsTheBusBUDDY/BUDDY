@@ -11,42 +11,51 @@ const user = {
 };
 
 import axios from 'axios';
-import { signUp_url, mm_url } from './url';
+import apiClient from './api';
+import { signIn_url, signUp_url, mm_url } from './url';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export const signIn = (email, password) => {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      if (email === admin.EMAIL && password === admin.PASSWORD) {
-        resolve(admin);
-      } else if (email === user.EMAIL && password === user.PASSWORD) {
-        resolve(user);
-      } else {
-        reject('The email or password is wrong');
-      }
-    });
-  });
+export const signIn = async (email, password) => {
+  try {
+    const response = await apiClient.post(signIn_url, { email, password });
+    const { accessToken, role } = response.data; // 서버로부터 받은 토큰과 역할
+
+    // AsyncStorage에 토큰 저장
+    await AsyncStorage.setItem('accessToken', accessToken);
+    await AsyncStorage.setItem('userEmail', email);
+    await AsyncStorage.setItem('userRole', role);
+
+    console.log('Access Token:', accessToken);
+
+    return { role }; // 역할 반환
+  } catch (error) {
+    if (error.response) {
+      // 서버가 반환한 에러 메시지를 콘솔에 출력
+      // console.error('Login Error:', error.response.data);
+      throw new Error(error.response.data.message || '로그인 실패');
+    } else if (error.request) {
+      // console.error('No response was received', error.request);
+      throw new Error('서버로부터 응답이 없습니다');
+    } else {
+      // console.error('Error Message:', error.message);
+      throw new Error('요청 설정 중 오류 발생');
+    }
+  }
 };
 
-export const signUp = (userData) => {
-  return axios
-    .post(signUp_url, userData)
-    .then((response) => {
-      console.log('Signup Response:', response.data);
-      return response.data;
-    })
-    .catch((error) => {
-      console.error('Axios Error:', error); // Axios 전체 오류 로깅
-      if (error.response) {
-        console.error('Error Response:', error.response.data); // HTTP 응답 본문 로깅
-        throw new Error(error.response.data.message || 'Registration failed');
-      } else if (error.request) {
-        console.error('Error Request:', error.request); // 요청에 대한 오류 정보 로깅
-        throw new Error('No response was received');
-      } else {
-        console.error('Error Message:', error.message); // 오류 메시지 로깅
-        throw new Error('Error setting up the request');
-      }
-    });
+export const signUp = async (userData) => {
+  try {
+    const response = await axios.post(signUp_url, userData);
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      throw new Error(error.response.data.message || '회원가입 실패');
+    } else if (error.request) {
+      throw new Error('서버로부터 응답이 없습니다');
+    } else {
+      throw new Error('요청 설정 중 오류 발생');
+    }
+  }
 };
 
 export const mmAuth = (mmData) => {

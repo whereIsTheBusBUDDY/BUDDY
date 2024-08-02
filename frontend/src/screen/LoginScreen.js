@@ -3,38 +3,40 @@ import {
   Keyboard,
   KeyboardAvoidingView,
   Platform,
-  Pressable,
   StyleSheet,
-  Text,
   View,
 } from 'react-native';
 import { PRIMARY, WHITE } from '../constant/color';
-import { useNavigation } from '@react-navigation/native';
+// import { useNavigation } from '@react-navigation/native';
 import { useUserContext } from '../context/UserContext';
 import { useFirstContext } from '../context/FirstContent';
 import Input, { keyboardTypes } from '../components/Input';
 import RegistButton, { ButtonType } from '../components/RegistButton';
 import { useEffect, useState } from 'react';
 import { signIn } from '../api/auth';
+
 const LoginScreen = () => {
-  const navigate = useNavigation();
+  // const navigate = useNavigation();
   const { setUser, setLoginUser } = useUserContext();
   const { setScreen } = useFirstContext();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [disabled, setDisabled] = useState(true);
   const [loading, setLoading] = useState(false);
+
   useEffect(() => {
     setDisabled(!email || !password);
   }, [email, password]);
+
   const onSubmit = async () => {
     if (disabled || !loading) {
       Keyboard.dismiss();
       setLoading(true);
+
       try {
         const data = await signIn(email, password);
-        console.log(data.ROLE);
         setScreen(false);
+        setLoginUser({ email, role: data.role });
         setLoginUser(data);
       } catch (e) {
         Alert.alert('Login Error', e.message);
@@ -76,7 +78,7 @@ const LoginScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: WHITE,
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 20,
