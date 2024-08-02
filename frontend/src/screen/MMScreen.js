@@ -31,6 +31,8 @@ const MMScreen = () => {
   const route = useRoute();
   const [value, setValue] = useState('');
   const [combinedWord, setCombinedWord] = useState('');
+  const [mmText, setMmText] = useState(generateRandomCode()); // mmText를 상태로 저장
+  const [isDisabled, setIsDisabled] = useState(true); // 버튼 활성화 상태
   const step = 3;
   const ref = useBlurOnFulfill({ value, cellCount: CELL_COUNT });
   const [props, getCellOnLayoutHandler] = useClearByFocusCell({
@@ -40,9 +42,6 @@ const MMScreen = () => {
 
   // 컴포넌트가 마운트될 때 인증 코드를 생성하고 전송
   useEffect(() => {
-    mmText = generateRandomCode();
-    console.log('Generated Code:', mmText);
-
     const sendAuthCode = async () => {
       try {
         const randomAd = getRandomWord(word, 'ad');
@@ -63,7 +62,16 @@ const MMScreen = () => {
     };
 
     sendAuthCode();
-  }, []);
+  }, [mmText]);
+
+  useEffect(() => {
+    // value와 mmText를 비교하여 버튼 활성화 상태 설정
+    if (value === mmText) {
+      setIsDisabled(false); // 인증 코드가 맞으면 버튼 활성화
+    } else {
+      setIsDisabled(true); // 인증 코드가 틀리면 버튼 비활성화
+    }
+  }, [value, mmText]);
 
   const handleNext = () => {
     if (value === mmText) {
@@ -117,8 +125,9 @@ const MMScreen = () => {
             <RegistButton
               title={step === 3 ? '완료' : '다음'}
               onPress={handleNext}
-              buttonType={'GRAY'}
+              buttonType={'PRIMARY'}
               height={63}
+              disabled={isDisabled} // 버튼 활성화 상태 적용
             />
           </View>
         </View>
