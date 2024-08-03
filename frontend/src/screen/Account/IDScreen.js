@@ -9,8 +9,8 @@ import {
   useWindowDimensions,
 } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import RegistButton from '../components/RegistButton';
-import ProgressBar from '../components/ProgressBar';
+import RegistButton from '../../components/RegistButton';
+import ProgressBar from '../../components/ProgressBar';
 
 const IDScreen = () => {
   const width = useWindowDimensions().width;
@@ -50,7 +50,7 @@ const IDScreen = () => {
             <Text style={styles.logo}>multicampus</Text>
             <View style={styles.profile}>
               <Image
-                source={require('../../assets/studentid.png')}
+                source={require('../../../assets/studentid.png')}
                 style={styles.image}
               />
               <Text style={styles.name}>김 싸 피</Text>

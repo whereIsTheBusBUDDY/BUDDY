@@ -5,7 +5,7 @@ import BoardScreen from '../screen/Board/BoardScreen';
 import MessageScreen from '../screen/CheckIn/MessageScreen';
 import { Image, TouchableOpacity, requireNativeComponent } from 'react-native';
 import { Fontisto } from '@expo/vector-icons';
-import NotificationScreen from '../screen/NotificationScreen';
+import NotificationScreen from '../screen/Notification/NotificationScreen';
 import MapScreen from '../screen/Map/MapScreen';
 import QrScreen from '../screen/CheckIn/QrScreen';
 import FavoriteScreen from '../screen/Favorite/FavoriteScreen';

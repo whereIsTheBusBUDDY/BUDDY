@@ -7,13 +7,13 @@ import {
   useBlurOnFulfill,
   useClearByFocusCell,
 } from 'react-native-confirmation-code-field';
-import ProgressBar from '../components/ProgressBar';
-import RegistButton from '../components/RegistButton';
-import { mmAuth } from '../api/auth';
+import ProgressBar from '../../components/ProgressBar';
+import RegistButton from '../../components/RegistButton';
+import { mmAuth } from '../../api/auth';
 
 const CELL_COUNT = 5;
 
-const word = require('../../assets/word.json');
+const word = require('../../../assets/word.json');
 
 // 랜덤 숫자 만들기
 const generateRandomCode = () => {

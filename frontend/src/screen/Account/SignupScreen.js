@@ -10,10 +10,10 @@ import {
   Text,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import Input, { keyboardTypes } from '../components/SignupInput';
-import RegistButton from '../components/RegistButton';
-import ProgressBar from '../components/ProgressBar';
-import { signUp } from '../api/auth';
+import Input, { keyboardTypes } from '../../components/SignupInput';
+import RegistButton from '../../components/RegistButton';
+import ProgressBar from '../../components/ProgressBar';
+import { signUp } from '../../api/auth';
 import ModalDropdown from 'react-native-modal-dropdown';
 
 const SignupScreen = () => {

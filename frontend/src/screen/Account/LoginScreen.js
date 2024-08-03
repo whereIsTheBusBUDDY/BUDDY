@@ -6,14 +6,14 @@ import {
   StyleSheet,
   View,
 } from 'react-native';
-import { PRIMARY, WHITE } from '../constant/color';
+import { PRIMARY, WHITE } from '../../constant/color';
 // import { useNavigation } from '@react-navigation/native';
-import { useUserContext } from '../context/UserContext';
-import { useFirstContext } from '../context/FirstContent';
-import Input, { keyboardTypes } from '../components/Input';
-import RegistButton, { ButtonType } from '../components/RegistButton';
+import { useUserContext } from '../../context/UserContext';
+import { useFirstContext } from '../../context/FirstContent';
+import Input, { keyboardTypes } from '../../components/Input';
+import RegistButton, { ButtonType } from '../../components/RegistButton';
 import { useEffect, useState } from 'react';
-import { signIn } from '../api/auth';
+import { signIn } from '../../api/auth';
 
 const LoginScreen = () => {
   // const navigate = useNavigation();
