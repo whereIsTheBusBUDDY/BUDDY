@@ -3,11 +3,11 @@ import LoadingPage from '../screen/LoadingScreen';
 import IntroduceScreen from '../screen/IntroduceScreen';
 import { Fontisto } from '@expo/vector-icons';
 import { Image } from 'react-native';
-import LoginScreen from '../screen/LoginScreen';
-import IDScreen from '../screen/IDScreen';
-import SignupScreen from '../screen/SignupScreen';
-import MMScreen from '../screen/MMScreen';
-import CameraScreen from '../screen/CameraScreen';
+import LoginScreen from '../screen/Account/LoginScreen';
+import IDScreen from '../screen/Account/IDScreen';
+import SignupScreen from '../screen/Account/SignupScreen';
+import MMScreen from '../screen/Account/MMScreen';
+import CameraScreen from '../screen/Account/CameraScreen';
 
 const Stack = createNativeStackNavigator();
 const FirstStack = () => {

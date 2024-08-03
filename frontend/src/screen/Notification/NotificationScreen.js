@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
-import { GRAY, PRIMARY, WHITE } from '../constant/color';
+import { GRAY, PRIMARY, WHITE } from '../../constant/color';
 
 const notifications = [
   {
