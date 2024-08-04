@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS member (
     role VARCHAR(50) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS refresh_token (
+CREATE TABLE  IF NOT EXISTS refresh_token (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     refresh_token VARCHAR(255) NOT NULL
 );
