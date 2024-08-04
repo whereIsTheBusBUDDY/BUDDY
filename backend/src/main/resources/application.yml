@@ -21,6 +21,15 @@ jwt:
   secret-key: ${SECRET_KEY}
   refresh-key: ${REFRESH_KEY}
 
+naver:
+  api:
+    host: naveropenapi.apigw.ntruss.com
+    path: /map-direction-15/v1/driving
+    naver-api-client-id: ${NAVER_API_CLIENT_ID}
+    naver-api-client-secret: ${NAVER_API_CLIENT_SECRET}
+    header1: X-NCP-APIGW-API-KEY-ID
+    header2: X-NCP-APIGW-API-KEY
+
 # local 환경
 ---
 spring:
@@ -32,6 +41,7 @@ spring:
     username: ${DB_NAME}
     password: ${DB_PASSWORD}
 
+
 # dev 환경
 ---
 spring:
@@ -42,3 +52,5 @@ spring:
     url: jdbc:mysql://rds-test.cfsok8siyava.ap-northeast-2.rds.amazonaws.com:3306/rdstest
     username: ${RDS_NAME}
     password: ${RDS_PASSWORD}
+
+
