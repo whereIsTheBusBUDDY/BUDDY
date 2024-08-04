@@ -16,6 +16,18 @@ spring:
   sql:
     init:
       mode: always
+  kafka:
+    consumer:
+      bootstrap-servers: ${KAFKA_SERVER}
+      group-id: bus-location-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    producer:
+      bootstrap-servers: ${KAFKA_SERVER}
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    bootstrap-servers: ${KAFKA_SERVER}
 
 jwt:
   secret-key: ${SECRET_KEY}
