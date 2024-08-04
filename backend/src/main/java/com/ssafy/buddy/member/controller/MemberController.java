@@ -48,4 +48,9 @@ public class MemberController {
     public void resetPassword(@RequestParam("email") String email) {
         memberService.resetPassword(email);
     }
+
+    @PostMapping("/scan")
+    public void scanQrCode(@LoginMember Long memberId, @RequestParam("busNumber") int busNumber) {
+        memberService.scanQrCode(memberId, busNumber);
+    }
 }
