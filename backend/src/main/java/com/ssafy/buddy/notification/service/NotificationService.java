@@ -33,7 +33,7 @@ public class NotificationService {
         SseEmitter sseEmitter = new SseEmitter(3_000L);
         sseEmitter.onCompletion(() -> sseEmitterRepository.deleteById(memberId));
         sseEmitter.onTimeout(() -> sseEmitterRepository.deleteById(memberId));
-
+        sendMessage(sseEmitter, "연결됨!");
         return sseEmitterRepository.save(memberId, sseEmitter);
     }
 
