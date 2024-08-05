@@ -22,15 +22,14 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
         ErrorCode errorCode = (ErrorCode) request.getAttribute("exception");
+        if (errorCode == null) errorCode = ErrorCode.MISSING_TOKEN;
 
-        if (errorCode != null) {
-            ErrorResponse errorResponse = new ErrorResponse(errorCode);
-            String jsonErrorResponse = objectMapper.writeValueAsString(errorResponse);
+        ErrorResponse errorResponse = new ErrorResponse(errorCode);
+        String jsonErrorResponse = objectMapper.writeValueAsString(errorResponse);
 
-            response.setStatus(errorCode.getStatus().value());
-            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-            response.setCharacterEncoding("UTF-8");
-            response.getWriter().write(jsonErrorResponse);
-        }
+        response.setStatus(errorCode.getStatus().value());
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write(jsonErrorResponse);
     }
 }
