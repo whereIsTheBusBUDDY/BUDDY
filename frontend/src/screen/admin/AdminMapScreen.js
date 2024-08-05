@@ -61,14 +61,14 @@ const AdminMapScreen = () => {
         latitudeDelta: 0.005,
         longitudeDelta: 0.005,
       });
-      console.log('location update', location);
+      // console.log('location update', location);
     }
   }, [location]);
   return (
     <View style={styles.container}>
       {locationMap ? (
         <MapView ref={mapRef} style={styles.map} initialRegion={locationMap}>
-          <Marker coordinate={locationMap} title={busNumber}>
+          <Marker coordinate={locationMap} title={`${busNumber}호차`}>
             <Image
               source={require('../../../assets/bus_maker.png')} // 이미지 경로를 실제 경로로 변경하세요
               style={{ width: 40, height: 40 }}

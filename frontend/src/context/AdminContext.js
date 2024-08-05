@@ -1,22 +1,38 @@
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import * as Location from 'expo-location';
+// import { updateBusData } from '../data/busData'; // busData 업데이트 함수 import
+import {
+  sendBusLocation,
+  getBusStations,
+  busVisited,
+  sendStop,
+} from '../api/bus';
+
 const AdminContext = createContext();
+
 export const AdminProvider = ({ children }) => {
   const [busNumber, setBusNumber] = useState('');
   const [isTracking, setIsTracking] = useState(false);
   const [location, setLocation] = useState();
+  const [routeStops, setRouteStops] = useState([]); // routeStops 상태 추가
   const intervalRef = useRef(null);
-  // const generateRandomLocation = (latitude, longitude) => {
-  //   const radius = 0.001; // 이동 반경 (1km)
-  //   const angle = Math.random() * Math.PI * 2; // 0 ~ 2π 랜덤 각도
-  //   const deltaLat = radius * Math.cos(angle);
-  //   const deltaLng = radius * Math.sin(angle);
-  //   return {
-  //     latitude: latitude + deltaLat,
-  //     longitude: longitude + deltaLng,
-  //   };
-  // };
+
+  const calculateDistance = (lat1, lon1, lat2, lon2) => {
+    const R = 6371e3; // 지구 반지름(미터)
+    const φ1 = (lat1 * Math.PI) / 180;
+    const φ2 = (lat2 * Math.PI) / 180;
+    const Δφ = ((lat2 - lat1) * Math.PI) / 180;
+    const Δλ = ((lon1 - lon2) * Math.PI) / 180;
+
+    const a =
+      Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+      Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+    return R * c; // 거리 반환
+  };
+
   useEffect(() => {
     const startTracking = async () => {
       let { granted } = await Location.requestForegroundPermissionsAsync();
@@ -24,40 +40,92 @@ export const AdminProvider = ({ children }) => {
         console.log('위치 추적을 허용해주세요');
         return;
       }
+
       intervalRef.current = setInterval(async () => {
-        let {
-          coords: { latitude, longitude },
-        } = await Location.getCurrentPositionAsync({
-          accuracy: Location.Accuracy.BestForNavigation,
-        });
-        console.log('위치추적 정보', { latitude, longitude });
-        setLocation({ latitude, longitude });
-        // setLocation((prevLocation) => {
-        //   const newLocation = generateRandomLocation(
-        //     prevLocation.latitude,
-        //     prevLocation.longitude
-        //   );
-        //   console.log('위치추적 정보', newLocation);
-        //   return newLocation;
-        // });
+        try {
+          const { coords } = await Location.getCurrentPositionAsync({
+            accuracy: Location.Accuracy.BestForNavigation,
+          });
+          const { latitude, longitude } = coords;
+
+          // console.log('위치추적 정보', { latitude, longitude });
+          setLocation({ latitude, longitude });
+          sendBusLocation(busNumber, latitude, longitude);
+          console.log(busNumber, latitude, longitude);
+
+          // 루트 정류장 방문 여부 업데이트
+          setRouteStops((prevRouteStops) =>
+            prevRouteStops.map((stop) => {
+              const stopDistance = calculateDistance(
+                latitude,
+                longitude,
+                stop.latitude,
+                stop.longitude
+              );
+
+              if (stopDistance <= 100 && !stop.visited) {
+                console.log(`${stop.stationName} 정류장 방문 기록`);
+                busVisited(stop.id, true);
+                return { ...stop, visited: true };
+              }
+              return stop;
+            })
+          );
+
+          // 버스 데이터 업데이트
+          // updateBusData({ latitude, longitude }, busNumber, routeStops);
+        } catch (error) {
+          console.error('Error retrieving location:', error);
+        }
       }, 2000);
     };
+
     if (isTracking) {
       startTracking();
     } else {
       clearInterval(intervalRef.current);
     }
+
     return () => {
       clearInterval(intervalRef.current);
     };
-  }, [isTracking]);
+  }, [isTracking, busNumber, routeStops]);
+
+  // 버스 번호 변경 시, 해당 노선의 정류장 목록을 설정
+  useEffect(() => {
+    if (busNumber) {
+      getBusStations(busNumber)
+        .then((data) => {
+          if (data) {
+            setRouteStops(data.map((stop) => ({ ...stop, visited: false })));
+            console.log('정류장 목록:', data);
+          }
+        })
+        .catch((error) =>
+          console.error('정류장 데이터를 가져오는데 실패했습니다:', error)
+        );
+    }
+  }, [busNumber]);
+
+  // 버스정류장 목록
+  // routeStops의 변화 감지하여 출력
+  // useEffect(() => {
+  //   console.log('현재 정류장 목록:', routeStops);
+  // }, [routeStops]);
+
   const handleStartTracking = () => {
     setIsTracking(true);
   };
 
-  const handleStopTracking = () => {
-    setIsTracking(false);
+  // const handleStopTracking = () => {
+  //   setIsTracking(false);
+  // };
+
+  const handleStopTracking = async () => {
+    await sendStop(busNumber);
+    console.log('운행이 종료되었습니다.');
   };
+
   return (
     <AdminContext.Provider
       value={{
@@ -69,12 +137,14 @@ export const AdminProvider = ({ children }) => {
         setLocation,
         handleStartTracking,
         handleStopTracking,
+        routeStops, // 추가된 상태 반환
       }}
     >
       {children}
     </AdminContext.Provider>
   );
 };
+
 AdminProvider.prototypes = {
   children: PropTypes.node,
 };

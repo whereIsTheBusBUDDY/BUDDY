@@ -16,37 +16,37 @@ const AdminSelectBusScreen = () => {
       <Text style={styles.description}>운행하실 버스 호차를 선택해주세요</Text>
       <AdminSelectButton
         title={'1호차'}
-        onPress={goMap('1호차')}
+        onPress={goMap(1)}
         buttonType={ButtonType.GRAY}
         disabled={false}
       />
       <AdminSelectButton
         title={'2호차'}
-        onPress={goMap('2호차')}
+        onPress={goMap(2)}
         buttonType={ButtonType.GRAY}
         disabled={false}
       />
       <AdminSelectButton
         title={'3호차'}
-        onPress={goMap('3호차')}
+        onPress={goMap(3)}
         buttonType={ButtonType.GRAY}
         disabled={false}
       />
       <AdminSelectButton
         title={'4호차'}
-        onPress={goMap('4호차')}
+        onPress={goMap(4)}
         buttonType={ButtonType.GRAY}
         disabled={false}
       />
       <AdminSelectButton
         title={'5호차'}
-        onPress={goMap('5호차')}
+        onPress={goMap(5)}
         buttonType={ButtonType.GRAY}
         disabled={false}
       />
       <AdminSelectButton
         title={'6호차'}
-        onPress={goMap('6호차')}
+        onPress={goMap(6)}
         buttonType={ButtonType.GRAY}
         disabled={false}
       />
