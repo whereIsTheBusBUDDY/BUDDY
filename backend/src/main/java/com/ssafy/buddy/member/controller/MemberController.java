@@ -1,6 +1,7 @@
 package com.ssafy.buddy.member.controller;
 
 import com.ssafy.buddy.auth.supports.LoginMember;
+import com.ssafy.buddy.member.controller.request.PasswordRequest;
 import com.ssafy.buddy.member.controller.request.SignUpRequest;
 import com.ssafy.buddy.member.controller.request.UpdateRequest;
 import com.ssafy.buddy.member.controller.response.MemberResponse;
@@ -44,9 +45,19 @@ public class MemberController {
         return memberService.isStudentIdDuplicated(studentId);
     }
 
+    @GetMapping("/check-password")
+    public boolean checkPassword(@LoginMember Long memberId, @RequestBody PasswordRequest request) {
+        return memberService.checkPassword(memberId, request.getPassword());
+    }
+
     @PostMapping("/reset-password")
     public void resetPassword(@RequestParam("email") String email) {
         memberService.resetPassword(email);
+    }
+
+    @PutMapping("/update-password")
+    public void updatePassword(@LoginMember Long memberId, @RequestBody PasswordRequest request) {
+        memberService.updatePassword(memberId, request.getPassword());
     }
 
     @PostMapping("/scan")

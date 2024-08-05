@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UpdateRequest {
-    private String nickname;
-    private int favoriteLine;
+public class PasswordRequest {
+    private String password;
 }
