@@ -22,6 +22,7 @@ const SignupScreen = () => {
   const [nickname, setNickname] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [passwordConfirm, setPasswordConfirm] = useState('');
   const [selectedLine, setSelectedLine] = useState(null);
   const [isDisabled, setIsDisabled] = useState(true); // 버튼 활성화 상태
 
@@ -31,7 +32,15 @@ const SignupScreen = () => {
   useEffect(() => {
     // 유효성 검사 함수
     const validateForm = () => {
-      if (name && studentId && nickname && email && password && selectedLine) {
+      if (
+        name &&
+        studentId &&
+        nickname &&
+        email &&
+        password &&
+        passwordConfirm &&
+        selectedLine
+      ) {
         setIsDisabled(false); // 모든 필드가 입력되면 버튼 활성화
       } else {
         setIsDisabled(true); // 하나라도 비어 있으면 버튼 비활성화
@@ -39,9 +48,22 @@ const SignupScreen = () => {
     };
 
     validateForm(); // 유효성 검사 실행
-  }, [name, studentId, nickname, email, password, selectedLine]);
+  }, [
+    name,
+    studentId,
+    nickname,
+    email,
+    password,
+    passwordConfirm,
+    selectedLine,
+  ]);
 
   const handleRegister = async () => {
+    if (password !== passwordConfirm) {
+      Alert.alert('Error', '비밀번호가 일치하지 않습니다.');
+      return;
+    }
+
     const userData = {
       name,
       studentId,
@@ -126,6 +148,8 @@ const SignupScreen = () => {
             />
             <Input
               title={'비밀번호 확인*'}
+              value={passwordConfirm} // 비밀번호 확인 상태와 연결
+              onChangeText={(text) => setPasswordConfirm(text)} // 비밀번호 확인 상태 변경
               placeholder=""
               secureTextEntry
               style={styles.input}

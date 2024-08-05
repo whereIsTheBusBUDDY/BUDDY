@@ -17,7 +17,7 @@ export default function QrScanner() {
 
   const handleBarCodeScanned = ({ type, data }) => {
     setScanned(true);
-    alert(`{1호차}에 탑승했습니다. 채팅방, 건의하기 기능이 활성화됩니다.`);
+    console.log(`URL: ${data}`);
 
     if (data.startsWith('http://') || data.startsWith('https://')) {
       Linking.openURL(data).catch((err) =>
