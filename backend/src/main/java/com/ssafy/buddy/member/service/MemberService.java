@@ -84,8 +84,11 @@ public class MemberService {
 
     @Transactional
     public void scanQrCode(Long memberId, int busNumber) {
-        Boarding boarding = new Boarding(memberId, busNumber);
-        boardingRepository.save(boarding);
+        boardingRepository.findByMemberId(memberId)
+                .ifPresentOrElse(
+                        boarding -> boarding.updateBusNumber(busNumber),
+                        () -> boardingRepository.save(new Boarding(memberId, busNumber))
+                );
     }
 
     private Member findById(Long memberId) {
