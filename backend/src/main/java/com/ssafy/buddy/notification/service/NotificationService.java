@@ -1,9 +1,9 @@
 package com.ssafy.buddy.notification.service;
 
-import com.ssafy.buddy.member.domain.Boarding;
+import com.ssafy.buddy.boarding.domain.Boarding;
 import com.ssafy.buddy.member.domain.Member;
 import com.ssafy.buddy.member.domain.Role;
-import com.ssafy.buddy.member.repository.BoardingRepository;
+import com.ssafy.buddy.boarding.repository.BoardingRepository;
 import com.ssafy.buddy.member.repository.MemberRepository;
 import com.ssafy.buddy.notification.controller.response.NotificationResponse;
 import com.ssafy.buddy.notification.domain.Notification;
