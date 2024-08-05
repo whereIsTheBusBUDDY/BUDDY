@@ -25,7 +25,7 @@ export const signIn = async (email, password) => {
     await AsyncStorage.setItem('userEmail', email);
     await AsyncStorage.setItem('userRole', role);
 
-    // console.log('Access Token:', accessToken);
+    console.log('Access Token:', accessToken);
 
     return { role };
   } catch (error) {

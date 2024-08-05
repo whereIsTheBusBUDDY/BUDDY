@@ -9,7 +9,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { GRAY, PRIMARY } from '../constant/color';
 import BoardStack from './BoardStack';
 import ProfileStack from './ProfileStack';
-
+import BusScreen from '../screen/Map/BusScreen';
 
 const Tab = createBottomTabNavigator();
 

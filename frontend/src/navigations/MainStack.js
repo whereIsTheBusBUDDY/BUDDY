@@ -34,7 +34,9 @@ const MainStack = () => {
           headerStyle: {
             shadowColor: 'transparent',
             elevation: 0,
+            backgroundColor: 'rgba(255,255,255,255)',
           },
+          headerTransparent: false, // 헤더를 완전히 투명하게 설정
           headerShadowVisible: false,
         })}
       />
@@ -68,6 +70,7 @@ const MainStack = () => {
         component={BusScreen}
         options={{
           headerTitle: '실시간 셔틀버스',
+          headerTransparent: true,
           headerShadowVisible: false,
         }}
       />
@@ -100,6 +103,7 @@ const MainStack = () => {
         component={MapScreen}
         options={{
           headerTitle: '셔틀 노선도',
+          headerTransparent: true,
           headerShadowVisible: false,
         }}
       />

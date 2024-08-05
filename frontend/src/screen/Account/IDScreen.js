@@ -14,7 +14,7 @@ import ProgressBar from '../../components/ProgressBar';
 
 const IDScreen = () => {
   const width = useWindowDimensions().width;
-  const navigation = useNavigation();
+  const navigate = useNavigation();
   const route = useRoute();
   const step = 1;
   const [photo, setPhoto] = useState(null);
@@ -29,7 +29,7 @@ const IDScreen = () => {
 
   const handleNext = () => {
     if (step < 3) {
-      navigation.navigate('Signup');
+      navigate.navigate('Signup');
     } else {
       // 완료 로직 추가
     }
@@ -72,13 +72,13 @@ const IDScreen = () => {
             </Text>
           </View>
 
-          {/* {!result || !result.allow ? ( */}
-          {result ? (
+          {!result || !result.allow ? (
+            // {result ? (
             <View style={styles.buttonContainer}>
               <RegistButton
                 title="학생증 촬영하기"
                 buttonType="GRAY"
-                onPress={() => navigation.navigate('CameraScreen')}
+                onPress={() => navigate.navigate('CameraScreen')}
                 height={63}
               />
             </View>
