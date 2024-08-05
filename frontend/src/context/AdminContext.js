@@ -107,12 +107,6 @@ export const AdminProvider = ({ children }) => {
     }
   }, [busNumber]);
 
-  // 버스정류장 목록
-  // routeStops의 변화 감지하여 출력
-  // useEffect(() => {
-  //   console.log('현재 정류장 목록:', routeStops);
-  // }, [routeStops]);
-
   const handleStartTracking = () => {
     setIsTracking(true);
   };
