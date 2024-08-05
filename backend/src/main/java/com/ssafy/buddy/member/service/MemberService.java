@@ -51,11 +51,16 @@ public class MemberService {
     @Transactional
     public void updateInfo(Long memberId, UpdateRequest request) {
         Member member = findById(memberId);
-        member.update(request.getNickname(), passwordEncoder.encode(request.getPassword()), request.getFavoriteLine());
+        member.update(request.getNickname(), request.getFavoriteLine());
     }
 
     public boolean isStudentIdDuplicated(String studentId) {
         return memberRepository.existsByStudentId(studentId);
+    }
+
+    public boolean checkPassword(Long memberId, String password) {
+        Member member = findById(memberId);
+        return passwordEncoder.matches(password, member.getPassword());
     }
 
     @Transactional
@@ -64,11 +69,17 @@ public class MemberService {
                 .orElseThrow(() -> new IllegalArgumentException("등록된 이메일이 없습니다."));
 
         String temporaryPassword = UUID.randomUUID().toString().substring(0, 6);
-        member.resetPassword(passwordEncoder.encode(temporaryPassword));
+        member.updatePassword(passwordEncoder.encode(temporaryPassword));
 
         log.info("email : {}  password : {}", email, temporaryPassword);
 
         // TODO: emailSender.sendTemporaryPassword(email, temporaryPassword)
+    }
+
+    @Transactional
+    public void updatePassword(Long memberId, String password) {
+        Member member = findById(memberId);
+        member.updatePassword(passwordEncoder.encode(password));
     }
 
     @Transactional

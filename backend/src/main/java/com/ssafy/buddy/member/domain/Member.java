@@ -48,13 +48,12 @@ public class Member {
         this.role = role;
     }
 
-    public void update(String nickname, String password, int favoriteLine) {
+    public void update(String nickname, int favoriteLine) {
         this.nickname = nickname;
-        this.password = password;
         this.favoriteLine = favoriteLine;
     }
 
-    public void resetPassword(String password) {
+    public void updatePassword(String password) {
         this.password = password;
     }
 }
