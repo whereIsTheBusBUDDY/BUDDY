@@ -7,7 +7,7 @@ import {
   getBusStations,
   busVisited,
   sendStop,
-} from '../api/bus';
+} from '../api/busAdmin';
 
 const AdminContext = createContext();
 

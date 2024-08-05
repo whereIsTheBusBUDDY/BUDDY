@@ -1,6 +1,6 @@
-import axios from 'axios';
 import apiClient from './api';
 
+// 현재 버스 실시간 위치 전송 (운행시작)
 export const sendBusLocation = async (busId, latitude, longitude) => {
   try {
     const response = await apiClient.post(`start/${busId}`, {
@@ -14,6 +14,7 @@ export const sendBusLocation = async (busId, latitude, longitude) => {
   }
 };
 
+// 버스 운행 종료
 export const sendStop = async (busId) => {
   try {
     const response = await apiClient.get(`stop/${busId}`);
