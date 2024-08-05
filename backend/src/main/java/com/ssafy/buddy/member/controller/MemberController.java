@@ -61,7 +61,8 @@ public class MemberController {
     }
 
     @PostMapping("/scan")
-    public void scanQrCode(@LoginMember Long memberId, @RequestParam("busNumber") int busNumber) {
+    public ResponseEntity<String> scanQrCode(@LoginMember Long memberId, @RequestParam("busNumber") int busNumber) {
         memberService.scanQrCode(memberId, busNumber);
+        return ResponseEntity.status(201).body("QR code 인식 : " + busNumber);
     }
 }

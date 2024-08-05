@@ -31,4 +31,9 @@ public class Boarding {
         this.busNumber = busNumber;
         this.boardingTime = LocalDateTime.now();
     }
+
+    public void updateBusNumber(int busNumber) {
+        this.busNumber = busNumber;
+        this.boardingTime = LocalDateTime.now();
+    }
 }
