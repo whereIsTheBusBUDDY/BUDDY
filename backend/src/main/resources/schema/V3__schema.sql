@@ -39,3 +39,6 @@ CREATE TABLE sixth_bus (
     sixth_bus_longitude DOUBLE,
     sixth_bus_create_time DATETIME
 );
+
+ALTER TABLE station
+    ADD COLUMN visited BOOLEAN NOT NULL DEFAULT false;
