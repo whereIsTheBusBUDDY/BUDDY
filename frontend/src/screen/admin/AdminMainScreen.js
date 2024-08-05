@@ -44,7 +44,7 @@ const AdminMainScreen = () => {
       <Text>운행 시작시 GPS가 활성화되며,</Text>
       <Text>실시간 셔틀버스 위치가 공유됩니다.</Text>
       <StartTrackingButton
-        title={busNumber}
+        title={`${busNumber}호차`}
         onPress={isTracking ? stopBus : startBus}
         disabled={false}
         buttonType={ButtonType.PRIMARY}

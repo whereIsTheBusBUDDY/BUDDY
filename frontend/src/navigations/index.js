@@ -17,7 +17,7 @@ const Navigation = () => {
   if (screen && loginUser == null) {
     return <FirstStack />;
   } else if (!screen && loginUser != null) {
-    if (loginUser.ROLE == 'admin') {
+    if (loginUser.role === 'ADMIN') {
       return <AdminStack />;
     } else {
       return <ContentTab />;
