@@ -12,7 +12,8 @@ public enum ErrorCode {
     INVALID_TOKEN("4002", "유효하지 않은 토큰", HttpStatus.UNAUTHORIZED),
     ACCESS_DENIED("4003", "접근 권한이 없음", HttpStatus.FORBIDDEN),
     ENTITY_NOT_FOUND("4004", "엔티티 없음", HttpStatus.BAD_REQUEST),
-    ILLEGAL_ARGUMENT("4005", "적절하지 않은 인자", HttpStatus.BAD_REQUEST);
+    ILLEGAL_ARGUMENT("4005", "적절하지 않은 인자", HttpStatus.BAD_REQUEST),
+    MISSING_TOKEN("4006", "토큰 없음", HttpStatus.UNAUTHORIZED);
 
     private final String code;
     private final String message;
