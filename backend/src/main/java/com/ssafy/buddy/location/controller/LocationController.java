@@ -54,5 +54,34 @@ public class LocationController {
         SixthBus sixthBusLocation = locationService.getLatestSixthBusLocation();
         return ResponseEntity.ok(sixthBusLocation);
     }
-
+    @DeleteMapping("/location/1")
+    public ResponseEntity<?> deleteFirstBusLocation() {
+        locationService.deleteFirstBusLocation();
+        return ResponseEntity.ok().build();
+    }
+    @DeleteMapping("/location/2")
+    public ResponseEntity<?> deleteSecondBusLocation() {
+        locationService.deleteSecondBusLocation();
+        return ResponseEntity.ok().build();
+    }
+    @DeleteMapping("/location/3")
+    public ResponseEntity<?> deleteThirdBusLocation() {
+        locationService.deleteThirdBusLocation();
+        return ResponseEntity.ok().build();
+    }
+    @DeleteMapping("/location/4")
+    public ResponseEntity<?> deleteFourthBusLocation() {
+        locationService.deleteFourthBusLocation();
+        return ResponseEntity.ok().build();
+    }
+    @DeleteMapping("/location/5")
+    public ResponseEntity<?> deleteFifthBusLocation() {
+        locationService.deleteFifthBusLocation();
+        return ResponseEntity.ok().build();
+    }
+    @DeleteMapping("/location/6")
+    public ResponseEntity<?> deleteSixthBusLocation() {
+        locationService.deleteSixthBusLocation();
+        return ResponseEntity.ok().build();
+    }
 }

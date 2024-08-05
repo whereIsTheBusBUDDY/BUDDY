@@ -28,4 +28,11 @@ public class Station {
 
     @Column(name = "longitude", nullable = false)
     private double longitude;
+
+    @Column(name = "visited", nullable = false)
+    private boolean visited;
+
+    public void changeVisited(boolean visited) {
+        this.visited = visited;
+    }
 }
