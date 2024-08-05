@@ -9,6 +9,7 @@ import MainStack from './MainStack';
 import { Ionicons } from '@expo/vector-icons';
 import { GRAY, PRIMARY } from '../constant/color';
 import BoardStack from './BoardStack';
+import ProfileStack from './ProfileStack';
 
 const Tab = createBottomTabNavigator();
 
@@ -74,10 +75,9 @@ const ContentTab = () => {
       />
       <Tab.Screen
         name={'마이페이지'}
-        component={ProfileScreen}
+        component={ProfileStack}
         options={{
-          headerTitle: '마이페이지',
-          headerShadowVisible: false,
+          headerShown: false,
         }}
       />
     </Tab.Navigator>

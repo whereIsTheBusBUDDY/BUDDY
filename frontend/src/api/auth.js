@@ -25,19 +25,15 @@ export const signIn = async (email, password) => {
     await AsyncStorage.setItem('userEmail', email);
     await AsyncStorage.setItem('userRole', role);
 
-    console.log('Access Token:', accessToken);
+    // console.log('Access Token:', accessToken);
 
-    return { role }; // 역할 반환
+    return { role };
   } catch (error) {
     if (error.response) {
-      // 서버가 반환한 에러 메시지를 콘솔에 출력
-      // console.error('Login Error:', error.response.data);
       throw new Error(error.response.data.message || '로그인 실패');
     } else if (error.request) {
-      // console.error('No response was received', error.request);
       throw new Error('서버로부터 응답이 없습니다');
     } else {
-      // console.error('Error Message:', error.message);
       throw new Error('요청 설정 중 오류 발생');
     }
   }

@@ -8,9 +8,9 @@ import { Fontisto } from '@expo/vector-icons';
 import NotificationScreen from '../screen/Notification/NotificationScreen';
 import MapScreen from '../screen/Map/MapScreen';
 import QrScreen from '../screen/CheckIn/QrScreen';
-import FavoriteScreen from '../screen/Favorite/FavoriteScreen';
 import BusScreen from '../screen/Map/BusScreen';
 import CreateScreen from '../screen/Board/CreateScreen';
+import FavoriteScreen from '../screen/Favorite/FavoriteScreen';
 
 const Stack = createNativeStackNavigator();
 const MainStack = () => {
@@ -107,7 +107,7 @@ const MainStack = () => {
         name="Favorite"
         component={FavoriteScreen}
         options={{
-          headerTitle: '즐겨찾기',
+          headerTitle: '즐겨찾는 목적지',
           headerShadowVisible: false,
         }}
       />

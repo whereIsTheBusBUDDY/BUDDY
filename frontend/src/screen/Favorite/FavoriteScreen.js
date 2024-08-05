@@ -1,14 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import ModalDropdown from 'react-native-modal-dropdown';
-import axios from 'axios';
 import { BLACK, GRAY, PRIMARY, WHITE } from '../../constant/color';
-
-// url은 .env파일로 (수정 예정)
-
-// 테스트용 토큰 (수정 예정)
-const token =
-  'eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsImlkIjoxLCJleHAiOjE3MjI1NzQ2MDgsImlhdCI6MTcyMjU3MTAwOH0.fsWph9GyqyTt0nS7MYEvkeBfo-GUv_XbJci0mt-LZvw';
+import apiClient from '../../api/api';
 
 const TabButton = ({ title, isActive, onPress }) => (
   <TouchableOpacity
@@ -28,14 +22,7 @@ const MyFavorites = () => {
   useEffect(() => {
     const fetchFavorites = async () => {
       try {
-        const response = await axios.get(
-          'http://i11b109.p.ssafy.io:8080/bookmarks',
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const response = await apiClient.get('/bookmarks', {});
         setFavorites(response.data);
       } catch (error) {
         console.error('나의 즐겨찾기 조회 실패:', error);
@@ -47,14 +34,11 @@ const MyFavorites = () => {
 
   const toggleBookmark = async (stationId, isBookmarked) => {
     try {
-      const url = `http://i11b109.p.ssafy.io:8080/bookmarks?stationId=${stationId}`;
+      const url = `/bookmarks?stationId=${stationId}`;
       const method = isBookmarked ? 'DELETE' : 'POST';
-      await axios({
+      await apiClient({
         method,
         url,
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
       });
 
       setFavorites((prevFavorites) =>
@@ -110,14 +94,7 @@ const RegisterFavorites = () => {
 
     try {
       const busId = index + 1;
-      const response = await axios.get(
-        `http://i11b109.p.ssafy.io:8080/routes?busId=${busId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await apiClient.get(`/routes?busId=${busId}`);
       setBusStops(response.data);
     } catch (error) {
       console.error('호차별 노선 조회 실패:', error);
@@ -126,14 +103,11 @@ const RegisterFavorites = () => {
 
   const toggleBookmark = async (stationId, isBookmarked) => {
     try {
-      const url = `http://i11b109.p.ssafy.io:8080/bookmarks?stationId=${stationId}`;
+      const url = `/bookmarks?stationId=${stationId}`;
       const method = isBookmarked ? 'DELETE' : 'POST';
-      await axios({
+      await apiClient({
         method,
         url,
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
       });
 
       setBusStops((prevStops) =>
@@ -298,7 +272,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     paddingVertical: 10,
     paddingHorizontal: 5,
-    color: '#666',
+    color: GRAY.FONT,
   },
 });
 

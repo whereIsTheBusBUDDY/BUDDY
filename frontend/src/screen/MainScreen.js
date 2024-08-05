@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import {
   useWindowDimensions,
@@ -7,21 +7,58 @@ import {
   SafeAreaView,
   StyleSheet,
   Text,
-  Button,
+  RefreshControl,
 } from 'react-native';
 import ModalDropdown from 'react-native-modal-dropdown';
 import ImageButton, { ButtonColors } from '../components/ImageButton';
 import TimeTable from '../components/TimeTable';
 import busRoutes from '../data/busRoutes';
 import { BLACK, WHITE, SKYBLUE, GRAY } from '../constant/color';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import apiClient from '../api/api';
 
 const MainScreen = () => {
   const width = useWindowDimensions().width - 40;
-  const navigate = useNavigation();
-
+  const navigation = useNavigation();
+  const [profileData, setProfileData] = useState({});
   const [selectedBus, setSelectedBus] = useState('1호차');
+  const [refreshing, setRefreshing] = useState(false);
   const items = ['1호차', '2호차', '3호차', '4호차', '5호차', '6호차'];
+
+  const fetchProfileData = async () => {
+    try {
+      const response = await apiClient.get('/members/me');
+      const mappedData = mapProfileData(response.data);
+      setProfileData(mappedData);
+      if (mappedData.선호노선) {
+        setSelectedBus(`${mappedData.선호노선}호차`);
+      }
+      console.log(response.data);
+    } catch (error) {
+      console.error('프로필 정보를 가져오는 중 오류 발생:', error);
+    }
+  };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchProfileData();
+    }, [])
+  );
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    fetchProfileData().then(() => setRefreshing(false));
+  }, []);
+
+  const mapProfileData = (data) => {
+    return {
+      이름: data.name,
+      학번: data.studentId,
+      이메일: data.email,
+      닉네임: data.nickname,
+      선호노선: data.favoriteLine,
+    };
+  };
 
   const handleSelect = (index, value) => {
     setSelectedBus(value);
@@ -33,10 +70,14 @@ const MainScreen = () => {
       left: style.left - 41, // 조정할 값
     };
   };
-
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.scrollView}>
+      <ScrollView
+        style={styles.scrollView}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
         <StatusBar style="dark" />
         <View style={styles.topContainer}>
           <Text style={styles.notice}>공지사항 {'>'}</Text>
@@ -44,7 +85,7 @@ const MainScreen = () => {
           <ImageButton
             title={'07:00 | 1호차, 6호차는 유성온천역부터 운행합니다.'}
             onPress={() => {
-              navigate.navigate('Board');
+              navigation.navigate('Board');
             }}
             buttonColor={ButtonColors.ORANGE}
             width={width}
@@ -52,9 +93,11 @@ const MainScreen = () => {
             titleFontSize={12}
           />
           <ImageButton
-            title={'김싸피님,\n실시간 셔틀버스 위치를 확인해보세요!'}
+            title={`${
+              profileData.이름 || '사용자'
+            }님,\n실시간 셔틀버스 위치를 확인해보세요!`}
             onPress={() => {
-              navigate.navigate('Bus');
+              navigation.navigate('Bus');
             }}
             buttonColor={ButtonColors.GRAY}
             width={width}
@@ -72,7 +115,7 @@ const MainScreen = () => {
             <ImageButton
               title={'QR 코드로\n 탑승하기'}
               onPress={() => {
-                navigate.navigate('Qr');
+                navigation.navigate('Qr');
               }}
               buttonColor={ButtonColors.ORANGE}
               width={width / 2 - 10}
@@ -85,7 +128,7 @@ const MainScreen = () => {
             <ImageButton
               title="기사님, 건의할래요!"
               onPress={() => {
-                navigate.navigate('Message');
+                navigation.navigate('Message');
               }}
               width={width / 2}
               height={45}
@@ -97,7 +140,7 @@ const MainScreen = () => {
             <ImageButton
               title="채팅방 입장하기"
               onPress={() => {
-                navigate.navigate('Chat');
+                navigation.navigate('Chat');
               }}
               width={width / 2}
               height={45}
@@ -114,7 +157,7 @@ const MainScreen = () => {
             <ImageButton
               title="셔틀 노선도"
               onPress={() => {
-                navigate.navigate('Map');
+                navigation.navigate('Map');
               }}
               width={width / 2 - 10}
               height={100}
@@ -126,7 +169,7 @@ const MainScreen = () => {
             <ImageButton
               title={'즐겨찾는\n 목적지'}
               onPress={() => {
-                navigate.navigate('Favorite');
+                navigation.navigate('Favorite');
               }}
               width={width / 2 - 10}
               height={100}
@@ -194,7 +237,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: BLACK,
     fontWeight: 'bold',
-    // marginTop: 30,
     marginBottom: 10,
   },
   upperContainer: {
