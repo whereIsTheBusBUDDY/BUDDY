@@ -45,7 +45,7 @@ public class MemberController {
         return memberService.isStudentIdDuplicated(studentId);
     }
 
-    @GetMapping("/check-password")
+    @PostMapping("/check-password")
     public boolean checkPassword(@LoginMember Long memberId, @RequestBody PasswordRequest request) {
         return memberService.checkPassword(memberId, request.getPassword());
     }
@@ -58,11 +58,5 @@ public class MemberController {
     @PutMapping("/update-password")
     public void updatePassword(@LoginMember Long memberId, @RequestBody PasswordRequest request) {
         memberService.updatePassword(memberId, request.getPassword());
-    }
-
-    @PostMapping("/scan")
-    public ResponseEntity<String> scanQrCode(@LoginMember Long memberId, @RequestParam("busNumber") int busNumber) {
-        memberService.scanQrCode(memberId, busNumber);
-        return ResponseEntity.status(201).body("QR code 인식 : " + busNumber);
     }
 }

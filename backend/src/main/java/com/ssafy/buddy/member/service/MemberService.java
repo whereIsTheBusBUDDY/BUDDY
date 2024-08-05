@@ -3,10 +3,8 @@ package com.ssafy.buddy.member.service;
 import com.ssafy.buddy.member.controller.request.SignUpRequest;
 import com.ssafy.buddy.member.controller.request.UpdateRequest;
 import com.ssafy.buddy.member.controller.response.MemberResponse;
-import com.ssafy.buddy.member.domain.Boarding;
 import com.ssafy.buddy.member.domain.Member;
 import com.ssafy.buddy.member.domain.Role;
-import com.ssafy.buddy.member.repository.BoardingRepository;
 import com.ssafy.buddy.member.repository.MemberRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +21,6 @@ import java.util.UUID;
 public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
-    private final BoardingRepository boardingRepository;
 
     @Transactional
     public Long signUp(SignUpRequest request) {
@@ -80,15 +77,6 @@ public class MemberService {
     public void updatePassword(Long memberId, String password) {
         Member member = findById(memberId);
         member.updatePassword(passwordEncoder.encode(password));
-    }
-
-    @Transactional
-    public void scanQrCode(Long memberId, int busNumber) {
-        boardingRepository.findByMemberId(memberId)
-                .ifPresentOrElse(
-                        boarding -> boarding.updateBusNumber(busNumber),
-                        () -> boardingRepository.save(new Boarding(memberId, busNumber))
-                );
     }
 
     private Member findById(Long memberId) {

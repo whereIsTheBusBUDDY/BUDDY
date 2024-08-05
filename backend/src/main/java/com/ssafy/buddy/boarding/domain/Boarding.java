@@ -1,4 +1,4 @@
-package com.ssafy.buddy.member.domain;
+package com.ssafy.buddy.boarding.domain;
 
 import jakarta.persistence.*;
 import lombok.Getter;
