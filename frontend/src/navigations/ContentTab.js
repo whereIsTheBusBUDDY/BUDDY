@@ -2,7 +2,6 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import MainScreen from '../screen/MainScreen';
 import ChatScreen from '../screen/CheckIn/ChatScreen';
-import MapScreen from '../screen/Map/MapScreen';
 import BoardScreen from '../screen/Board/BoardScreen';
 import ProfileScreen from '../screen/Account/ProfileScreen';
 import MainStack from './MainStack';
@@ -10,6 +9,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { GRAY, PRIMARY } from '../constant/color';
 import BoardStack from './BoardStack';
 import ProfileStack from './ProfileStack';
+
 
 const Tab = createBottomTabNavigator();
 
@@ -60,7 +60,7 @@ const ContentTab = () => {
       />
       <Tab.Screen
         name={'실시간셔틀'}
-        component={MapScreen}
+        component={BusScreen}
         options={{
           headerTitle: '실시간 셔틀',
           headerShadowVisible: false,
