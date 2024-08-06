@@ -7,7 +7,6 @@ import {
   View,
 } from 'react-native';
 import { PRIMARY, WHITE } from '../../constant/color';
-// import { useNavigation } from '@react-navigation/native';
 import { useUserContext } from '../../context/UserContext';
 import { useFirstContext } from '../../context/FirstContent';
 import Input, { keyboardTypes } from '../../components/Input';
@@ -16,7 +15,6 @@ import { useEffect, useState } from 'react';
 import { signIn } from '../../api/auth';
 
 const LoginScreen = () => {
-  // const navigate = useNavigation();
   const { setUser, setLoginUser } = useUserContext();
   const { setScreen } = useFirstContext();
   const [email, setEmail] = useState('');
@@ -29,7 +27,7 @@ const LoginScreen = () => {
   }, [email, password]);
 
   const onSubmit = async () => {
-    if (disabled || !loading) {
+    if (!loading && !disabled) {
       Keyboard.dismiss();
       setLoading(true);
 
@@ -37,9 +35,10 @@ const LoginScreen = () => {
         const data = await signIn(email, password);
         setScreen(false);
         setLoginUser({ email, role: data.role });
-        setLoginUser(data);
       } catch (e) {
         Alert.alert('Login Error', e.message);
+      } finally {
+        setLoading(false);
       }
     }
   };
@@ -50,16 +49,16 @@ const LoginScreen = () => {
     >
       <View style={styles.container}>
         <Input
-          title={'email'}
-          placeholder={'my@email.com'}
+          title={'Email'}
+          placeholder={'이메일을 입력해주세요.'}
           keyboardType={keyboardTypes.EMAIL}
           value={email}
           secureTextEntry={false}
           onChangeText={(text) => setEmail(text.trim())}
         />
         <Input
-          title={'password'}
-          placeholder={''}
+          title={'Password'}
+          placeholder={'비밀번호를 입력해주세요.'}
           keyboardType={keyboardTypes.DEFAULT}
           value={password}
           secureTextEntry={true}

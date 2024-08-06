@@ -1,12 +1,9 @@
-import { NavigationContainer } from '@react-navigation/native';
 import ContentTab from './ContentTab';
-import MainStack from './MainStack';
 import { useFirstContext } from '../context/FirstContent';
 import FirstStack from './FirstStack';
 import { useUserContext } from '../context/UserContext';
 import LoginStack from './LoginStack';
 import AdminStack from './AdminStack';
-import AdminContext, { AdminProvider } from '../context/AdminContext';
 
 const Navigation = () => {
   const { screen } = useFirstContext();

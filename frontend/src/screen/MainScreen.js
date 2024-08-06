@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import {
   useWindowDimensions,
@@ -23,6 +23,7 @@ const MainScreen = () => {
   const [profileData, setProfileData] = useState({});
   const [selectedBus, setSelectedBus] = useState('1호차');
   const [refreshing, setRefreshing] = useState(false);
+  const [passengerData, setPassengerData] = useState({});
   const items = ['1호차', '2호차', '3호차', '4호차', '5호차', '6호차'];
 
   const fetchProfileData = async () => {
@@ -39,6 +40,19 @@ const MainScreen = () => {
     }
   };
 
+  const fetchPassengerData = async () => {
+    try {
+      const response = await apiClient.get('/boarding');
+      setPassengerData(response.data);
+    } catch (error) {
+      console.error('탑승 인원 정보를 가져오는 중 오류 발생:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchPassengerData();
+  }, []);
+
   useFocusEffect(
     React.useCallback(() => {
       fetchProfileData();
@@ -48,6 +62,7 @@ const MainScreen = () => {
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     fetchProfileData().then(() => setRefreshing(false));
+    fetchPassengerData();
   }, []);
 
   const mapProfileData = (data) => {
@@ -67,9 +82,10 @@ const MainScreen = () => {
   const adjustFrame = (style) => {
     return {
       ...style,
-      left: style.left - 41, // 조정할 값
+      left: style.left - 20, // 조정할 값
     };
   };
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView
@@ -93,9 +109,18 @@ const MainScreen = () => {
             titleFontSize={12}
           />
           <ImageButton
-            title={`${
-              profileData.이름 || '사용자'
-            }님,\n실시간 셔틀버스 위치를 확인해보세요!`}
+            title={
+              <>
+                <Text style={{ fontSize: 18, fontWeight: 'bold' }}>
+                  {profileData.이름}
+                </Text>
+                <Text style={{ fontSize: 18 }}>{'님,'}</Text>
+                <Text style={{ color: SKYBLUE.FONT }}>
+                  {'\n실시간 셔틀버스 위치'}
+                </Text>
+                <Text>{'를 확인해보세요!'}</Text>
+              </>
+            }
             onPress={() => {
               navigation.navigate('Bus');
             }}
@@ -147,7 +172,7 @@ const MainScreen = () => {
               imageSource={require('../../assets/chat.png')}
               imageWidth={30}
               imageHeight={30}
-              titleFontSize={12}
+              AVS
             />
           </View>
         </View>
@@ -183,19 +208,14 @@ const MainScreen = () => {
             <View style={styles.numOfPeople}>
               <Text style={styles.numOfPeopleText}>실시간 탑승 인원</Text>
               <View style={styles.numOfPeopleBox}>
-                {[
-                  { busNumber: '1호차', passengers: 23 },
-                  { busNumber: '2호차', passengers: 13 },
-                  { busNumber: '3호차', passengers: 18 },
-                  { busNumber: '4호차', passengers: 21 },
-                  { busNumber: '5호차', passengers: 19 },
-                  { busNumber: '6호차', passengers: 19 },
-                ].map((bus) => (
-                  <View key={bus.busNumber} style={styles.numOfPeopleBoxRow}>
-                    <Text style={styles.bustext}>{bus.busNumber}</Text>
-                    <Text style={styles.bustext}>{bus.passengers}명</Text>
-                  </View>
-                ))}
+                {Object.entries(passengerData).map(
+                  ([busNumber, passengers]) => (
+                    <View key={busNumber} style={styles.numOfPeopleBoxRow}>
+                      <Text style={styles.bustext}>{`${busNumber}호차`}</Text>
+                      <Text style={styles.bustext}>{`${passengers}명`}</Text>
+                    </View>
+                  )
+                )}
               </View>
             </View>
           </View>
@@ -304,8 +324,9 @@ const styles = StyleSheet.create({
     zIndex: 2,
   },
   dropdown: {
-    width: 120,
+    width: 80,
     paddingVertical: 5,
+    marginRight: 5,
     borderRadius: 10,
     backgroundColor: SKYBLUE.FONT,
     alignItems: 'center',
@@ -316,7 +337,7 @@ const styles = StyleSheet.create({
     color: WHITE,
   },
   dropdownBox: {
-    width: 120,
+    width: 80,
     paddingVertical: 5,
     borderRadius: 10,
     backgroundColor: WHITE,

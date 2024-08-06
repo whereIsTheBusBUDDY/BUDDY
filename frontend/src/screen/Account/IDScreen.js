@@ -11,6 +11,7 @@ import {
 import { useNavigation, useRoute } from '@react-navigation/native';
 import RegistButton from '../../components/RegistButton';
 import ProgressBar from '../../components/ProgressBar';
+import { PRIMARY } from '../../constant/color';
 
 const IDScreen = () => {
   const width = useWindowDimensions().width;
@@ -128,12 +129,11 @@ const styles = StyleSheet.create({
   origintxt: {
     marginTop: 30,
     textAlign: 'center',
-    fontWeight: 'bold',
-    fontSize: 20,
+    fontSize: 18,
     marginBottom: 50,
   },
   pointxt: {
-    color: '#f97316',
+    color: PRIMARY.DEFAULT,
   },
   box: {
     backgroundColor: '#f5f5f4',

@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { Linking } from 'react-native';
+import { StyleSheet, Text, View, Alert } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
+import { useNavigation } from '@react-navigation/native';
 import { GRAY, PRIMARY, WHITE } from '../../constant/color';
+import apiClient from '../../api/api'; // Ensure this is correctly configured
 
 export default function QrScanner() {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
+  const [busNumber, setBusNumber] = useState(null);
+  const navigation = useNavigation();
 
   useEffect(() => {
     (async () => {
@@ -15,14 +18,32 @@ export default function QrScanner() {
     })();
   }, []);
 
-  const handleBarCodeScanned = ({ type, data }) => {
+  const handleBarCodeScanned = async ({ type, data }) => {
     setScanned(true);
-    console.log(`URL: ${data}`);
+    const number = `${data}`;
+    setBusNumber(number);
+    console.log(number);
 
-    if (data.startsWith('http://') || data.startsWith('https://')) {
-      Linking.openURL(data).catch((err) =>
-        console.error('An error occurred', err)
+    try {
+      const response = await apiClient.post(`/scan?busNumber=${number}`);
+
+      if (response.status !== 201) {
+        throw new Error('Network response was not ok');
+      }
+
+      const responseData = response.data;
+      console.log('Response:', responseData);
+
+      Alert.alert(
+        `${number}호차 탑승 완료`,
+        `${number}호차 채팅방으로 이동합니다!`,
+        [
+          { text: '확인', onPress: () => navigation.navigate('Chat') }, // 'ChatRoom' 화면으로 이동
+        ]
       );
+    } catch (error) {
+      console.error('Error posting data:', error);
+      Alert.alert('Error', 'QR 코드 전송 중 문제가 발생했습니다.');
     }
   };
 
@@ -59,13 +80,7 @@ export default function QrScanner() {
     <View style={styles.container}>
       <Text style={styles.paragraph}>승차시 QR코드를 찍어주세요!</Text>
       {renderCamera()}
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => setScanned(false)}
-        disabled={!scanned}
-      >
-        <Text style={styles.buttonText}>완료</Text>
-      </TouchableOpacity>
+      {busNumber && <Text>스캔된 버스 번호: {busNumber}</Text>}
     </View>
   );
 }

@@ -5,6 +5,7 @@ import {
   StyleSheet,
   ScrollView,
   ImageBackground,
+  SafeAreaView,
 } from 'react-native';
 import { BLACK, GRAY, WHITE } from '../../constant/color';
 import Button, { ButtonColors } from '../../components/Button';
@@ -68,41 +69,47 @@ const ProfileScreen = () => {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <ImageBackground
-        source={require('../../../assets/idcard.png')}
-        style={styles.profileImage}
-      >
-        <Text style={styles.imageText}>{profileData.이름 || '이름 없음'}</Text>
-      </ImageBackground>
-      <Text style={styles.infoText}>
-        {profileData.이름
-          ? `${profileData.이름}님, 안녕하세요!`
-          : '안녕하세요!'}
-      </Text>
-      <View style={styles.infoContainer}>
-        {Object.entries(profileData).map(([key, value]) => (
-          <View style={styles.infoRow} key={key}>
-            <Text style={styles.infoLabel}>{key}</Text>
-            <Text style={styles.infoValue}>{value || '정보 없음'}</Text>
-          </View>
-        ))}
-      </View>
-      <Button
-        title="수정하기"
-        onPress={() => navigation.navigate('EditProfile', { profileData })}
-        buttonColor={ButtonColors.GRAY}
-      />
-      <Button
-        title="로그아웃"
-        onPress={logOut}
-        buttonColor={ButtonColors.ORANGE}
-      />
-    </ScrollView>
+    <SafeAreaView style={styles.safeContainer}>
+      <ScrollView contentContainerStyle={styles.container}>
+        <ImageBackground
+          source={require('../../../assets/idcard.png')}
+          style={styles.profileImage}
+        >
+          <Text style={styles.imageText}>
+            {profileData.이름 || '이름 없음'}
+          </Text>
+        </ImageBackground>
+        <Text style={styles.infoText}>{profileData.이름}님, 안녕하세요!</Text>
+        <View style={styles.infoContainer}>
+          {Object.entries(profileData).map(([key, value]) => (
+            <View style={styles.infoRow} key={key}>
+              <Text style={styles.infoLabel}>{key}</Text>
+              <Text style={styles.infoValue}>{value || '정보 없음'}</Text>
+              <View style={styles.separator} />
+            </View>
+          ))}
+        </View>
+        <Button
+          title="수정하기"
+          onPress={() => navigation.navigate('EditProfile', { profileData })}
+          buttonColor={ButtonColors.GRAY}
+          buttonStyle={styles.btn}
+        />
+        <Button
+          title="로그아웃"
+          onPress={logOut}
+          buttonColor={ButtonColors.ORANGE}
+          buttonStyle={styles.btn}
+        />
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  safeContainer: {
+    backgroundColor: WHITE,
+  },
   container: {
     flexGrow: 1,
     backgroundColor: WHITE,
@@ -110,7 +117,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   profileImage: {
-    marginVertical: 30,
+    marginTop: 10,
+    marginBottom: 30,
     width: '100%',
     height: 190,
   },
@@ -122,7 +130,7 @@ const styles = StyleSheet.create({
     borderColor: GRAY.BTN,
     borderRadius: 10,
     marginVertical: 20,
-    marginBottom: 70,
+    marginBottom: 65,
     padding: 0,
   },
   infoText: {
@@ -155,6 +163,9 @@ const styles = StyleSheet.create({
   separator: {
     height: 1,
     backgroundColor: GRAY.BTN,
+  },
+  btn: {
+    width: '100%',
   },
 });
 

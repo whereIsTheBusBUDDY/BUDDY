@@ -15,6 +15,7 @@ import RegistButton from '../../components/RegistButton';
 import ProgressBar from '../../components/ProgressBar';
 import { signUp } from '../../api/auth';
 import ModalDropdown from 'react-native-modal-dropdown';
+import apiClient from '../../api/api';
 
 const SignupScreen = () => {
   const [name, setName] = useState('');
@@ -24,13 +25,13 @@ const SignupScreen = () => {
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
   const [selectedLine, setSelectedLine] = useState(null);
-  const [isDisabled, setIsDisabled] = useState(true); // 버튼 활성화 상태
+  const [isDisabled, setIsDisabled] = useState(true);
+  const [isStudentIdChecked, setIsStudentIdChecked] = useState(false); // 학번 중복 확인 상태
 
   const navigation = useNavigation();
   const step = 2;
 
   useEffect(() => {
-    // 유효성 검사 함수
     const validateForm = () => {
       if (
         name &&
@@ -39,15 +40,16 @@ const SignupScreen = () => {
         email &&
         password &&
         passwordConfirm &&
-        selectedLine
+        selectedLine &&
+        isStudentIdChecked
       ) {
-        setIsDisabled(false); // 모든 필드가 입력되면 버튼 활성화
+        setIsDisabled(false);
       } else {
-        setIsDisabled(true); // 하나라도 비어 있으면 버튼 비활성화
+        setIsDisabled(true);
       }
     };
 
-    validateForm(); // 유효성 검사 실행
+    validateForm();
   }, [
     name,
     studentId,
@@ -56,9 +58,15 @@ const SignupScreen = () => {
     password,
     passwordConfirm,
     selectedLine,
+    isStudentIdChecked,
   ]);
 
   const handleRegister = async () => {
+    if (!isStudentIdChecked) {
+      Alert.alert('Error', '학번 중복 확인을 해주세요.');
+      return;
+    }
+
     if (password !== passwordConfirm) {
       Alert.alert('Error', '비밀번호가 일치하지 않습니다.');
       return;
@@ -70,7 +78,7 @@ const SignupScreen = () => {
       nickname,
       email,
       password,
-      favoriteLine: parseInt(selectedLine, 10), // favoriteLine을 정수형으로 변환
+      favoriteLine: parseInt(selectedLine, 10),
     };
 
     console.log('User Data to be sent:', userData);
@@ -87,14 +95,41 @@ const SignupScreen = () => {
     }
   };
 
+  const handleCheckStudentId = async () => {
+    try {
+      const response = await apiClient.get(
+        `/check-studentId?studentId=${studentId}`
+      );
+
+      if (response.data === true) {
+        // 중복된 학번인 경우
+        Alert.alert('', '이미 가입된 학번입니다.');
+        setStudentId('');
+        setIsStudentIdChecked(false);
+      } else {
+        // 사용 가능한 학번인 경우
+        Alert.alert('', '사용 가능한 학번입니다.');
+        setIsStudentIdChecked(true);
+      }
+    } catch (error) {
+      console.error('Request failed:', error.message);
+      Alert.alert('오류 발생', '학번 확인 중 문제가 발생했습니다.');
+    }
+  };
+
+  // 학번이 변경되면 중복 확인 상태를 초기화
+  const handleStudentIdChange = (text) => {
+    setStudentId(text);
+    setIsStudentIdChecked(false);
+  };
+
   // 드롭다운 위치를 조정하는 함수
   const adjustDropdownFrame = (frameStyle) => {
-    const dropdownHeight = 150; // 드롭다운 메뉴의 높이 설정
-    // 드롭다운이 화면 위로 열리도록 y 좌표를 조정
+    const dropdownHeight = 150;
     const topPosition = frameStyle.y - dropdownHeight;
     return {
       ...frameStyle,
-      y: topPosition < 0 ? frameStyle.y : topPosition, // 화면 밖으로 나가지 않도록 y를 조정
+      y: topPosition < 0 ? frameStyle.y : topPosition,
       height: dropdownHeight,
     };
   };
@@ -119,10 +154,17 @@ const SignupScreen = () => {
             <Input
               title={'학번*'}
               value={studentId}
-              onChangeText={(text) => setStudentId(text)}
+              onChangeText={handleStudentIdChange}
               placeholder=""
               style={styles.input}
             />
+            <RegistButton
+              title="중복 확인"
+              buttonType={studentId && !isStudentIdChecked ? 'PRIMARY' : 'GRAY'}
+              onPress={handleCheckStudentId}
+              disabled={!studentId || isStudentIdChecked}
+            />
+
             <Input
               title={'닉네임*'}
               value={nickname}
@@ -148,8 +190,8 @@ const SignupScreen = () => {
             />
             <Input
               title={'비밀번호 확인*'}
-              value={passwordConfirm} // 비밀번호 확인 상태와 연결
-              onChangeText={(text) => setPasswordConfirm(text)} // 비밀번호 확인 상태 변경
+              value={passwordConfirm}
+              onChangeText={(text) => setPasswordConfirm(text)}
               placeholder=""
               secureTextEntry
               style={styles.input}
@@ -165,7 +207,7 @@ const SignupScreen = () => {
                 dropdownTextStyle={styles.dropdownTextStyle}
                 defaultValue="노선을 선택하세요"
                 onSelect={(index, value) => setSelectedLine(value)}
-                adjustFrame={adjustDropdownFrame} // 위치 조정 함수 연결
+                adjustFrame={adjustDropdownFrame}
               />
             </View>
             <View style={styles.container1}>
@@ -174,7 +216,7 @@ const SignupScreen = () => {
                 buttonType="PRIMARY"
                 onPress={handleRegister}
                 height={63}
-                disabled={isDisabled} // 버튼 활성화 상태 적용
+                disabled={isDisabled}
               />
             </View>
           </View>
@@ -208,7 +250,7 @@ const styles = StyleSheet.create({
     borderColor: '#EFEEEC',
     borderWidth: 1,
     borderRadius: 8,
-    marginBottom: 20,
+    marginBottom: 10,
     paddingHorizontal: 10,
     justifyContent: 'center',
   },

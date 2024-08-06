@@ -1,10 +1,11 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { GRAY, PRIMARY, WHITE } from '../constant/color';
+import { BLACK, GRAY, PRIMARY, WHITE } from '../constant/color';
 
 export const ButtonType = {
   PRIMARY: 'PRIMARY',
   GRAY: 'GRAY',
 };
+
 const RegistButton = ({ title, onPress, disabled, buttonType }) => {
   const colors = { PRIMARY, GRAY };
   return (
@@ -19,26 +20,33 @@ const RegistButton = ({ title, onPress, disabled, buttonType }) => {
         ]}
         disabled={disabled}
       >
-        <Text style={styles.title}>{title}</Text>
+        <Text
+          style={[
+            styles.title,
+            buttonType === ButtonType.PRIMARY && { color: WHITE },
+            disabled && { color: GRAY.TEXT }, // 버튼이 비활성화될 때 텍스트 색상 변경 (옵션)
+          ]}
+        >
+          {title}
+        </Text>
       </Pressable>
     </View>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
-    borderRadius: 8,
+    borderRadius: 15,
     justifyContent: 'center',
     alignItems: 'center',
     paddingVertical: 15,
     width: '100%',
     paddingHorizontal: 10,
-    marginHorizontal: 10,
   },
   title: {
-    color: '#000000',
-    fontSize: 16,
-    fontWeight: '500',
-    lineHeight: 20,
+    color: BLACK,
+    fontSize: 18,
   },
 });
+
 export default RegistButton;
