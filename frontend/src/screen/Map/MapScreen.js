@@ -8,18 +8,13 @@ import {
   Text,
   TouchableOpacity,
   Platform,
+  Image,
 } from 'react-native';
 import MapView, { Marker, Polyline } from 'react-native-maps';
-import { FontAwesome } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import ModalDropdown from 'react-native-modal-dropdown';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { WHITE } from '../../constant/color';
-
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
-
-// Google Maps API key
-const GOOGLE_MAPS_APIKEY = 'AIzaSyAqkabjy1LZw_B8EC6Pm7kFTsEiTeoef4U';
 
 // 색상 상수 정의
 const PRIMARY = '#f97316'; // 예시: 주황색
@@ -264,16 +259,22 @@ const MapScreen = () => {
         >
           {/* API로부터 받아온 정류장 데이터를 마커로 표시 */}
           {stations.map((station) => (
-            <Marker
-              key={station.id}
-              coordinate={{
-                latitude: station.latitude,
-                longitude: station.longitude,
-              }}
-              onPress={() => setSelectedStation(station)} // 마커 클릭 시 정류장 선택
-            >
-              <FontAwesome name="map-marker" size={30} color="blue" />
-            </Marker>
+            <>
+              <Marker
+                key={station.id}
+                coordinate={{
+                  latitude: station.latitude,
+                  longitude: station.longitude,
+                }}
+                onPress={() => setSelectedStation(station)} // 마커 클릭 시 정류장 선택
+              >
+                <Image
+                  source={require('../../../assets/busStopIcon.png')} // 이미지 경로를 실제 경로로 변경하세요
+                  style={{ width: 40, height: 40 }}
+                  resizeMode="contain"
+                />
+              </Marker>
+            </>
           ))}
 
           {/* 경로 표시를 위한 Polyline */}
@@ -283,7 +284,7 @@ const MapScreen = () => {
               longitude: stop.longitude,
             }))}
             strokeWidth={4}
-            strokeColor="blue"
+            strokeColor="#f97316"
           />
         </MapView>
       ) : (
@@ -306,16 +307,8 @@ const MapScreen = () => {
 
           <View style={styles.partline} />
           <View style={styles.line}>
-            <Text style={styles.textStyle}>1호차</Text>
+            <Text style={styles.textStyle}>{selectedRoute}호차</Text>
             <Text style={styles.point}>4분 후 도착</Text>
-          </View>
-          <View style={styles.line}>
-            <Text style={styles.textStyle}>3호차</Text>
-            <Text style={styles.point}>7분 후 도착</Text>
-          </View>
-          <View style={styles.line}>
-            <Text style={styles.textStyle}>5호차</Text>
-            <Text style={styles.point}>11분 후 도착</Text>
           </View>
         </View>
       )}
@@ -353,6 +346,7 @@ const styles = StyleSheet.create({
     height: 200,
     borderWidth: 1,
     borderRadius: 20,
+    zIndex: 1000,
   },
   loadingContainer: {
     flex: 1,

@@ -8,6 +8,7 @@ import {
   Text,
   TouchableOpacity,
   Platform,
+  Image,
 } from 'react-native';
 import MapView, { Marker, Polyline } from 'react-native-maps';
 import { FontAwesome } from '@expo/vector-icons';
@@ -272,7 +273,11 @@ const BusScreen = () => {
               }}
               onPress={() => setSelectedStation(station)} // 마커 클릭 시 정류장 선택
             >
-              <FontAwesome name="map-marker" size={30} color="blue" />
+              <Image
+                source={require('../../../assets/busStopIcon.png')} // 이미지 경로를 실제 경로로 변경하세요
+                style={{ width: 40, height: 40 }}
+                resizeMode="contain"
+              />
             </Marker>
           ))}
 
