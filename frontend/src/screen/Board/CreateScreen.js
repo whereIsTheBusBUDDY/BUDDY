@@ -1,25 +1,76 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
-  Text,
   TextInput,
   Button,
   StyleSheet,
   ScrollView,
+  Alert,
 } from 'react-native';
-import { BLACK, WHITE, SKYBLUE, GRAY } from '../../constant/color';
+import { WHITE, GRAY } from '../../constant/color';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function App() {
+  const [title, setTitle] = useState('');
+  const [content, setContent] = useState('');
+
+  const handleSubmit = async () => {
+    if (!title || !content) {
+      Alert.alert('오류', '제목과 내용을 모두 입력하세요.');
+      return;
+    }
+
+    try {
+      // AsyncStorage에서 액세스 토큰 불러오기
+      const accessToken = await AsyncStorage.getItem('accessToken');
+
+      if (!accessToken) {
+        console.error('Access token is missing');
+        return;
+      }
+
+      const response = await fetch(
+        'http://i11b109.p.ssafy.io:8080/board/free',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`, // 액세스 토큰을 Authorization 헤더에 추가
+          },
+          body: JSON.stringify({
+            title: title,
+            content: content,
+          }),
+        }
+      );
+
+      if (response.ok) {
+        Alert.alert('성공', '게시글이 성공적으로 작성되었습니다!');
+        // 입력 필드 초기화
+        setTitle('');
+        setContent('');
+      } else {
+        Alert.alert('오류', `게시글 작성 실패: ${response.statusText}`);
+      }
+    } catch (error) {
+      Alert.alert('오류', `에러가 발생했습니다: ${error.message}`);
+    }
+  };
+
   return (
     <View style={styles.container}>
-      {/* header 컴포넌트 수정하고 바꾸기 */}
+      {/* 헤더 컴포넌트 수정 및 교체 */}
       <View style={styles.header}>
-        {/* <Text>{'< 글쓰기'}</Text> */}
-        <Button title="작성" onPress={() => alert('작성 버튼 클릭')} />
+        <Button title="작성" onPress={handleSubmit} />
       </View>
       <ScrollView style={styles.scrollContainer}>
         <View style={styles.titleContainer}>
-          <TextInput style={styles.titleInput} placeholder="제목" />
+          <TextInput
+            style={styles.titleInput}
+            placeholder="제목"
+            value={title}
+            onChangeText={setTitle}
+          />
         </View>
         <View style={styles.textContainer}>
           <TextInput
@@ -27,6 +78,8 @@ export default function App() {
             placeholder="내용"
             multiline
             numberOfLines={10}
+            value={content}
+            onChangeText={setContent}
           />
         </View>
       </ScrollView>
@@ -45,9 +98,6 @@ const styles = StyleSheet.create({
     backgroundColor: GRAY.BACKGROUND,
     borderRadius: 15,
   },
-  writeContainer: {
-    justifyContent: 'flex-start',
-  },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -58,11 +108,14 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: WHITE,
   },
-  titleInput: {},
+  titleInput: {
+    fontSize: 16,
+  },
   textContainer: {
     padding: 20,
   },
   textInput: {
     textAlignVertical: 'top',
+    fontSize: 16,
   },
 });
