@@ -14,11 +14,13 @@ export const currentBus = async (busId) => {
 // eta 정보 전달
 export const postBusData = async (data) => {
   try {
+    // console.log('data', data);
     const response = await apiClient.post('/eta', data, {
       headers: {
         'Content-Type': 'application/json',
       },
     });
+    console.log('eta 정보 전송', response.data);
     return response.data;
   } catch (error) {
     console.error('API 요청 중 오류 발생:', error);

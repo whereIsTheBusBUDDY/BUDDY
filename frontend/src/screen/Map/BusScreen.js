@@ -1,5 +1,4 @@
-// 실시간
-
+// 필요한 라이브러리 및 모듈 불러오기
 import React, { useEffect, useState, useRef } from 'react';
 import {
   StyleSheet,
@@ -17,6 +16,7 @@ import ModalDropdown from 'react-native-modal-dropdown';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { PRIMARY, GRAY } from '../../constant/color';
 import { currentBus } from '../../api/busUser';
+import { postBusData } from '../../api/busUser';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -28,6 +28,7 @@ const BusScreen = () => {
   const [selectedStation, setSelectedStation] = useState(null); // 선택된 정류장을 저장
   const [starSelected, setStarSelected] = useState(false); // 즐겨찾기 상태
   const [busLocation, setBusLocation] = useState(null); // 버스 위치 상태
+  const [arrivalTime, setArrivalTime] = useState(null);
   const mapRef = useRef(null);
 
   // API에서 경로 데이터를 가져오는 함수
@@ -210,13 +211,13 @@ const BusScreen = () => {
     fetchBusStops(selectedRoute);
     fetchStations(selectedRoute);
 
-    // 지도 초기 위치를 연수원으로 설정
+    // 지도 초기 위치 -> 현재위치
     if (mapRef.current) {
       mapRef.current.animateToRegion({
-        latitude: 36.3553089,
-        longitude: 127.2984993,
-        latitudeDelta: 0.0922,
-        longitudeDelta: 0.0421,
+        latitude: locationMap.latitude,
+        longitude: locationMap.longitude,
+        latitudeDelta: 0.005,
+        longitudeDelta: 0.005,
       });
     }
   }, [selectedRoute]);
@@ -237,7 +238,7 @@ const BusScreen = () => {
           return;
         }
 
-        console.log('API 응답 데이터:', responseData); // 응답 데이터 확인
+        // console.log('API 응답 데이터:', responseData); // 응답 데이터 확인
 
         // 동적으로 키 생성
         const busPrefix = [
@@ -277,6 +278,42 @@ const BusScreen = () => {
 
     return () => clearInterval(interval); // 컴포넌트 언마운트 시 인터벌 정리
   }, [selectedRoute]);
+
+  // 버스 정류장 마커 클릭 시 호출되는 함수
+  const onBusStopMarkerClick = async (station) => {
+    if (!busLocation) return;
+    // console.log('station', station);
+    // console.log('stations', stations);
+    const data = {
+      nowBusLongitude: busLocation.longitude,
+      nowBusLatitude: busLocation.latitude,
+      busLine: selectedRoute,
+      detailBusStopLongitude: station.longitude,
+      detailBusStopLatitude: station.latitude,
+      route: stations.map((stop) => ({
+        busStopLongitude: stop.longitude,
+        busStopLatitude: stop.latitude,
+        visited: stop.visited,
+      })),
+    };
+    // console.log('data', data);
+    try {
+      const responseData = await postBusData(data);
+      console.log('Response data:', responseData); // 서버 응답 확인
+      console.log('Response time:', responseData.time); // 서버 응답 확인
+
+      // 서버로부터 받은 도착 시간 정보를 상태로 저장
+      if (responseData && responseData.time) {
+        console.log('Setting arrival time:', responseData.time);
+        setArrivalTime(responseData.time);
+      } else {
+        console.warn('Arrival time not found in response');
+      }
+      setSelectedStation(station);
+    } catch (error) {
+      console.error('Error fetching arrival time:', error);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -322,7 +359,7 @@ const BusScreen = () => {
                 latitude: station.latitude,
                 longitude: station.longitude,
               }}
-              onPress={() => setSelectedStation(station)} // 마커 클릭 시 정류장 선택
+              onPress={() => onBusStopMarkerClick(station)} // 마커 클릭 시 정류장 선택 및 데이터 전송
             >
               {/* <FontAwesome name="map-marker" size={30} color="blue" /> */}
             </Marker>
@@ -359,19 +396,12 @@ const BusScreen = () => {
           <View style={styles.partline} />
           <View style={styles.line}>
             <Text style={styles.textStyle}>{selectedRoute}호차</Text>
-            <Text style={styles.point}>4분 후 도착</Text>
+            <Text style={styles.point}>
+              {arrivalTime ? `${arrivalTime}분 후 도착` : '도착 시간 정보 없음'}
+            </Text>
           </View>
         </View>
       )}
-
-      {/* {busLocation && (
-        <Marker coordinate={busLocation} title="현재 버스 위치">
-          <Image
-            source={require('../../../assets/busMarker.png')} // 버스 이미지 파일 경로 설정
-            style={{ width: 30, height: 30 }} // 이미지 크기 조정
-          />
-        </Marker>
-      )} */}
     </View>
   );
 };
