@@ -38,7 +38,7 @@ public class Board {
     @JoinColumn(name = "member_id", updatable = false)
     private Member member;
 
-    public Board(String content, String title, String category, Member member) {
+    public Board(String content, String title, String category, String nickname) {
         this.content = content;
         this.title = title;
         this.category = category;

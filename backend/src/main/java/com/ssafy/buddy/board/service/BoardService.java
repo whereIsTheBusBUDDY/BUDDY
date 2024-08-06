@@ -4,6 +4,8 @@ import com.ssafy.buddy.board.domain.Board;
 import com.ssafy.buddy.board.domain.request.BoardRequest;
 import com.ssafy.buddy.board.domain.response.BoardResponse;
 import com.ssafy.buddy.board.repository.BoardRepository;
+import com.ssafy.buddy.comment.domain.response.CommentResponse;
+import com.ssafy.buddy.comment.repository.CommentRepository;
 import com.ssafy.buddy.member.domain.Member;
 import com.ssafy.buddy.member.repository.MemberRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -25,14 +27,15 @@ public class BoardService {
 
     private final BoardRepository boardRepository;
     private final MemberRepository memberRepository;
+    private final CommentRepository commentRepository;
 
     public List<BoardResponse> getAllBoards(String category) {
         List<Board> boards = boardRepository.findByCategory(category);
         List<BoardResponse> responses = new ArrayList<>();
 
         for (Board board : boards) {
-            String name = board.getMember().getName();
-            responses.add(BoardResponse.toDto(board, name));
+            String nickname = board.getMember().getNickname();
+            responses.add(BoardResponse.toDto(board, nickname));
         }
         return responses;
     }
@@ -41,19 +44,18 @@ public class BoardService {
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
 
-        String memberName = board.getMember().getName();
+        String memberNickname = board.getMember().getNickname();
 
-        return new BoardResponse(
-                board.getBoardId(),
-                board.getTitle(),
-                board.getContent(),
-                board.getCategory(),
-                board.getCreateDate(),
-                memberName
-        );
+        List<CommentResponse> list = new ArrayList<>();
+
+        List<CommentResponse> commentList = commentRepository.findAllByBoard(board).stream()
+                .map(comment -> {
+                    list.add(CommentResponse.createComment(comment));
+                    return CommentResponse.createComment(comment);
+                }).toList();
+
+        return BoardResponse.toDto(board, memberNickname, list );
     }
-
-
 
 
     @Transactional //공지사항
@@ -71,7 +73,7 @@ public class BoardService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException(MEMBER_NOT_FOUND_MESSAGE));
 
-        Board board = new Board(request.getContent(), request.getTitle(), category, member);
+        Board board = new Board(request.getContent(), request.getTitle(), category, member.getNickname());
         boardRepository.save(board);
     }
 
