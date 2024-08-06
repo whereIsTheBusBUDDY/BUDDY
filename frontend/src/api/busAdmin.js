@@ -4,6 +4,7 @@ import apiClient from './api';
 export const sendBusLocation = async (busId, latitude, longitude) => {
   try {
     const response = await apiClient.post(`start/${busId}`, {
+      busId,
       latitude,
       longitude,
     });
@@ -42,7 +43,7 @@ export const busVisited = async (stationId, visited) => {
       `/stations/${stationId}?visited=${visited}`
     );
     console.log('정류장 방문 상태 업데이트:', response.data);
-    return response.data;
+    return response;
   } catch (error) {
     console.error('정류장 방문 상태 업데이트 실패:', error);
     throw error;
