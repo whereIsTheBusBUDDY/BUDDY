@@ -14,7 +14,7 @@ export const currentBus = async (busId) => {
 // eta 정보 전달
 export const postBusData = async (data) => {
   try {
-    // console.log('data', data);
+    console.log('data', data);
     const response = await apiClient.post('/eta', data, {
       headers: {
         'Content-Type': 'application/json',
