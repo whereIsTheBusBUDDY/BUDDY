@@ -1,6 +1,6 @@
 package com.ssafy.buddy.location.service;
 
-import com.ssafy.buddy.location.doamin.*;
+import com.ssafy.buddy.location.domain.*;
 import com.ssafy.buddy.location.repository.*;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;

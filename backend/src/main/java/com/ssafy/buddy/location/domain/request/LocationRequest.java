@@ -1,4 +1,4 @@
-package com.ssafy.buddy.location.doamin.request;
+package com.ssafy.buddy.location.domain.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
