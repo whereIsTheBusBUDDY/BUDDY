@@ -2,7 +2,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useUserContext } from '../../context/UserContext';
 import { useAdminContext } from '../../context/AdminContext';
 import AdminMainButton from '../../components/admin/AdminMainButton';
-import { PRIMARY } from '../../constant/color';
+import { PRIMARY, WHITE } from '../../constant/color';
 import { ButtonType } from '../../components/AdminSelectButton';
 import * as Location from 'expo-location';
 import { useNavigation } from '@react-navigation/native';
@@ -77,7 +77,7 @@ const AdminMainScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: WHITE,
     alignItems: 'center',
     justifyContent: 'center',
   },

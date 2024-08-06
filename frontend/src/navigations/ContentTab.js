@@ -1,9 +1,6 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import MainScreen from '../screen/MainScreen';
 import ChatScreen from '../screen/CheckIn/ChatScreen';
-import BoardScreen from '../screen/Board/BoardScreen';
-import ProfileScreen from '../screen/Account/ProfileScreen';
 import MainStack from './MainStack';
 import { Ionicons } from '@expo/vector-icons';
 import { GRAY, PRIMARY } from '../constant/color';

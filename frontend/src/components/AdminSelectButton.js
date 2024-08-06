@@ -24,19 +24,16 @@ const AdminSelectButton = ({ title, onPress, disabled, buttonType }) => {
 };
 const styles = StyleSheet.create({
   container: {
-    borderRadius: 8,
+    borderRadius: 15,
     justifyContent: 'center',
     alignItems: 'center',
     paddingVertical: 20,
     width: '100%',
     paddingHorizontal: 25,
-    marginHorizontal: 5,
   },
   title: {
     color: BLACK,
-    fontSize: 16,
-    fontWeight: '700',
-    lineHeight: 20,
+    fontSize: 20,
   },
 });
 export default AdminSelectButton;

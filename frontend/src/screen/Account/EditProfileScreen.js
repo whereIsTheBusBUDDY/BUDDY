@@ -5,9 +5,10 @@ import {
   TextInput,
   StyleSheet,
   ScrollView,
+  SafeAreaView,
   ImageBackground,
 } from 'react-native';
-import { BLACK, GRAY, WHITE } from '../../constant/color';
+import { BLACK, GRAY, PRIMARY, WHITE } from '../../constant/color';
 import Button, { ButtonColors } from '../../components/Button';
 import apiClient from '../../api/api';
 import { useNavigation } from '@react-navigation/native';
@@ -15,115 +16,123 @@ import ModalDropdown from 'react-native-modal-dropdown';
 
 const EditProfileScreen = ({ route }) => {
   const { profileData } = route.params;
-  const navigation = useNavigation(); // navigation 객체를 가져옴
+  const navigation = useNavigation();
 
-  const [name, setName] = useState(profileData.이름);
-  const [studentId, setStudentId] = useState(profileData.학번);
-  const [email, setEmail] = useState(profileData.이메일);
+  const name = profileData.이름;
+  const studentId = profileData.학번;
+  const email = profileData.이메일;
   const [nickname, setNickname] = useState(profileData.닉네임);
   const [favoriteLine, setFavoriteLine] = useState(profileData.선호노선);
-  const [password, setPassword] = useState(profileData.비밀번호);
 
   const handleSave = async () => {
     try {
+      const updatedNickName = nickname || profileData.닉네임;
+      const updatedFavoriteLine = favoriteLine.replace('호차', '');
+
       await apiClient.put('/members/me', {
-        nickname,
-        password,
-        favoriteLine,
+        nickname: updatedNickName,
+        favoriteLine: updatedFavoriteLine,
       });
-      navigation.goBack(); // 수정 후 이전 화면으로 돌아가기
+      navigation.goBack();
     } catch (error) {
       console.error('프로필 수정 중 오류 발생:', error);
     }
   };
 
+  const adjustFrame = (style) => {
+    return {
+      ...style,
+      left: style.left - 10,
+    };
+  };
+
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <ImageBackground
-        source={require('../../../assets/idcard.png')}
-        style={styles.profileImage}
-      >
-        <TextInput
-          value={name}
-          onChangeText={setName}
-          style={styles.imageTextInput}
-          placeholder="이름"
+    <SafeAreaView style={styles.safeContainer}>
+      <ScrollView contentContainerStyle={styles.container}>
+        <ImageBackground
+          source={require('../../../assets/idcard.png')}
+          style={styles.profileImage}
+        >
+          <Text style={styles.imageText}>
+            {profileData.이름 || '이름 없음'}
+          </Text>
+        </ImageBackground>
+        <Text style={styles.infoText}>
+          {profileData.이름
+            ? `${profileData.이름}님, 안녕하세요!`
+            : '안녕하세요!'}
+        </Text>
+        <View style={styles.infoContainer}>
+          <View style={styles.infoRow}>
+            <Text style={styles.infoLabel}>이름</Text>
+            <Text style={styles.infoFixedValue}>{name}</Text>
+          </View>
+          <View style={styles.separator} />
+          <View style={styles.infoRow}>
+            <Text style={styles.infoLabel}>학번</Text>
+            <Text style={styles.infoFixedValue}>{studentId}</Text>
+          </View>
+          <View style={styles.separator} />
+          <View style={styles.infoRow}>
+            <Text style={styles.infoLabel}>닉네임</Text>
+            <TextInput
+              value={nickname}
+              onChangeText={setNickname}
+              style={styles.infoValue}
+              placeholder="닉네임"
+            />
+          </View>
+          <View style={styles.separator} />
+          <View style={styles.infoRow}>
+            <Text style={styles.infoLabel}>이메일</Text>
+            <Text style={styles.infoFixedValue}>{email}</Text>
+          </View>
+          <View style={styles.separator} />
+          <View style={styles.infoRow}>
+            <Text style={styles.infoLabel}>선호노선</Text>
+            <ModalDropdown
+              options={['1호차', '2호차', '3호차', '4호차', '5호차', '6호차']}
+              defaultValue={favoriteLine} // 선택하지 않았을 때 기본값 유지
+              onSelect={(index, value) => setFavoriteLine(value)} // 선택한 값만 상태에 반영
+              style={styles.dropdown}
+              textStyle={styles.dropdownText}
+              dropdownStyle={styles.dropdownStyle}
+              dropdownTextStyle={styles.dropdownTextStyle}
+              adjustFrame={adjustFrame} // 위치 조정 함수 추가
+            />
+          </View>
+        </View>
+        <Button
+          title="저장하기"
+          onPress={handleSave}
+          buttonColor={ButtonColors.GRAY}
+          buttonStyle={styles.btn}
         />
-      </ImageBackground>
-      <Text style={styles.infoText}>
-        {name ? `${name}님, 안녕하세요!` : '안녕하세요!'}
-      </Text>
-      <View style={styles.infoContainer}>
-        <View style={styles.infoRow}>
-          <Text style={styles.infoLabel}>이름</Text>
-          <Text>{name}</Text>
-        </View>
-        <View style={styles.separator} />
-        <View style={styles.infoRow}>
-          <Text style={styles.infoLabel}>학번</Text>
-          <Text>{studentId}</Text>
-        </View>
-        <View style={styles.separator} />
-        <View style={styles.infoRow}>
-          <Text style={styles.infoLabel}>닉네임</Text>
-          <TextInput
-            value={nickname}
-            onChangeText={setNickname}
-            style={styles.infoValueInput}
-            placeholder="닉네임"
-          />
-        </View>
-        <View style={styles.separator} />
-        <View style={styles.infoRow}>
-          <Text style={styles.infoLabel}>이메일</Text>
-          <Text>{email}</Text>
-        </View>
-        <View style={styles.separator} />
-        <View style={styles.infoRow}>
-          <Text style={styles.infoLabel}>선호노선</Text>
-          <ModalDropdown
-            options={['1호차', '2호차', '3호차', '4호차', '5호차', '6호차']}
-            defaultValue={
-              favoriteLine ? `${favoriteLine}` : '선호노선을 선택하세요'
-            }
-            onSelect={(index, value) =>
-              setFavoriteLine(value.replace('호차', ''))
-            }
-            style={styles.dropdown}
-            textStyle={styles.dropdownText}
-            dropdownStyle={styles.dropdownStyle}
-            dropdownTextStyle={styles.dropdownTextStyle}
-          />
-        </View>
-        <View style={styles.separator} />
-        <View style={styles.infoRow}>
-          <Text style={styles.infoLabel}>비밀번호</Text>
-          <TextInput
-            value={password}
-            onChangeText={setPassword}
-            style={styles.infoValueInput}
-            placeholder="기존 비밀번호를 입력해주세요."
-          />
-        </View>
-      </View>
-      <Button
-        title="저장하기"
-        onPress={handleSave}
-        buttonColor={ButtonColors.GRAY}
-      />
-    </ScrollView>
+        <Button
+          title="비밀번호 수정"
+          onPress={() => {
+            navigation.navigate('ChangePassword');
+          }}
+          buttonColor={ButtonColors.ORANGE}
+          buttonStyle={styles.btn}
+        />
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flexGrow: 1,
+  safeContainer: {
     backgroundColor: WHITE,
-    alignItems: 'left',
+    height: '100%',
+  },
+  container: {
+    backgroundColor: WHITE,
     paddingHorizontal: 20,
   },
   profileImage: {
-    marginVertical: 30,
+    marginTop: 10,
+    marginBottom: 30,
     width: '100%',
     height: 190,
   },
@@ -135,7 +144,7 @@ const styles = StyleSheet.create({
     borderColor: GRAY.BTN,
     borderRadius: 10,
     marginVertical: 20,
-    marginBottom: 70,
+    marginBottom: 30,
     padding: 0,
   },
   infoText: {
@@ -144,7 +153,6 @@ const styles = StyleSheet.create({
   },
   infoRow: {
     flexDirection: 'row',
-    justifyContent: 'start',
     paddingVertical: 5,
     paddingHorizontal: 20,
     marginVertical: 8,
@@ -153,6 +161,11 @@ const styles = StyleSheet.create({
     flex: 0.7,
     fontSize: 14,
     color: GRAY.FONT,
+  },
+  infoValue: {
+    flex: 1.3,
+    fontSize: 14,
+    color: PRIMARY.DEFAULT,
   },
   infoValueInput: {
     flex: 1.3,
@@ -175,7 +188,7 @@ const styles = StyleSheet.create({
     backgroundColor: GRAY.BTN,
   },
   dropdown: {
-    flex: 1,
+    flex: 1.3,
     padding: 10,
     backgroundColor: WHITE,
     borderColor: GRAY.BTN,
@@ -184,14 +197,28 @@ const styles = StyleSheet.create({
   },
   dropdownText: {
     fontSize: 14,
-    color: BLACK,
+    color: PRIMARY.DEFAULT,
   },
   dropdownStyle: {
-    width: '80%',
+    width: '53%',
   },
   dropdownTextStyle: {
     fontSize: 14,
     color: BLACK,
+  },
+  imageText: {
+    left: 150,
+    top: 80,
+    fontSize: 18,
+    letterSpacing: 5,
+  },
+  infoFixedValue: {
+    flex: 1.3,
+    fontSize: 14,
+    color: GRAY.FONT,
+  },
+  btn: {
+    width: '100%',
   },
 });
 

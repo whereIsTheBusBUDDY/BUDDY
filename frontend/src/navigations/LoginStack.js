@@ -6,6 +6,8 @@ import LoginScreen from '../screen/Account/LoginScreen';
 import IDScreen from '../screen/Account/IDScreen';
 import SignupScreen from '../screen/Account/SignupScreen';
 import MMScreen from '../screen/Account/MMScreen';
+import AdminStack from '../navigations/AdminStack';
+import MainStack from '../navigations/MainStack';
 
 const Stack = createNativeStackNavigator();
 const LoginStack = () => {
@@ -89,6 +91,20 @@ const LoginStack = () => {
             elevation: 0,
           },
           headerShadowVisible: false,
+        }}
+      />
+      <Stack.Screen
+        name={'AdminStack'}
+        component={AdminStack}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name={'MainStack'}
+        component={MainStack}
+        options={{
+          headerShown: false,
         }}
       />
     </Stack.Navigator>
