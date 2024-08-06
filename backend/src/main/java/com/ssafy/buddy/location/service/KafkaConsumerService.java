@@ -2,8 +2,8 @@ package com.ssafy.buddy.location.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ssafy.buddy.location.doamin.*;
-import com.ssafy.buddy.location.doamin.request.LocationRequest;
+import com.ssafy.buddy.location.domain.*;
+import com.ssafy.buddy.location.domain.request.LocationRequest;
 import com.ssafy.buddy.location.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

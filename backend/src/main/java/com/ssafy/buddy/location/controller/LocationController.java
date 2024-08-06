@@ -1,6 +1,6 @@
 package com.ssafy.buddy.location.controller;
 
-import com.ssafy.buddy.location.doamin.*;
+import com.ssafy.buddy.location.domain.*;
 import com.ssafy.buddy.location.service.KafkaProducerService;
 import com.ssafy.buddy.location.service.LocationService;
 import lombok.RequiredArgsConstructor;

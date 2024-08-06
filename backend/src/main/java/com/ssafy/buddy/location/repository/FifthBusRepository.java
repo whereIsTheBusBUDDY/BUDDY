@@ -1,6 +1,6 @@
 package com.ssafy.buddy.location.repository;
 
-import com.ssafy.buddy.location.doamin.FifthBus;
+import com.ssafy.buddy.location.domain.FifthBus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

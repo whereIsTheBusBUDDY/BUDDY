@@ -1,4 +1,4 @@
-package com.ssafy.buddy.location.doamin;
+package com.ssafy.buddy.location.domain;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
