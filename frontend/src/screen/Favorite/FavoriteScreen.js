@@ -70,7 +70,11 @@ const MyFavorites = () => {
                 toggleBookmark(favorite.stationId, favorite.bookmarked)
               }
             >
-              <Text style={styles.star}>{favorite.bookmarked ? '★' : '☆'}</Text>
+              <Text
+                style={favorite.bookmarked ? styles.starSelected : styles.star}
+              >
+                ★
+              </Text>
             </TouchableOpacity>
           </View>
         ))
@@ -149,7 +153,12 @@ const RegisterFavorites = () => {
               <TouchableOpacity
                 onPress={() => toggleBookmark(stop.stationId, stop.bookmarked)}
               >
-                <Text style={styles.star}>{stop.bookmarked ? '★' : '☆'}</Text>
+                {/* <Text style={styles.star}>{stop.bookmarked ? '★' : '☆'}</Text> */}
+                <Text
+                  style={stop.bookmarked ? styles.starSelected : styles.star}
+                >
+                  ★
+                </Text>
               </TouchableOpacity>
             </View>
           ))
@@ -266,7 +275,16 @@ const styles = StyleSheet.create({
   },
   star: {
     fontSize: 20,
-    color: BLACK,
+    fontWeight: 'bold',
+    color: '#ccc', // 초기 별 색상은 회색
+    marginLeft: 10,
+    marginrRight: 20,
+  },
+  starSelected: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#f97316', // 선택 시 별 색상은 주황색
+    marginLeft: 10,
   },
   noItems: {
     fontSize: 16,
