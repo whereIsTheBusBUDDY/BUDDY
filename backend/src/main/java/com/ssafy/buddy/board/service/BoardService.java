@@ -73,7 +73,7 @@ public class BoardService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException(MEMBER_NOT_FOUND_MESSAGE));
 
-        Board board = new Board(request.getContent(), request.getTitle(), category, member.getNickname());
+        Board board = new Board(request.getContent(), request.getTitle(), category, member);
         boardRepository.save(board);
     }
 
