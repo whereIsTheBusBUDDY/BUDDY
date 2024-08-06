@@ -13,13 +13,19 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CommentResponse {
+    private Long commentId;
     private String commentContent;
     private LocalDateTime createDate;
     private String nickname;
-    private Long commentMemberId;
-
+    private Long commentMemberId;// 댓글 단 사람 아이디
 
     public static CommentResponse createComment(Comment comment) {
-        return new CommentResponse(comment.getCommentContent(), comment.getCreateDate(), comment.getMember().getNickname(), comment.getMember().getId());
+        return new CommentResponse(
+                comment.getCommentId(),
+                comment.getCommentContent(),
+                comment.getCreateDate(),
+                comment.getMember().getNickname(),
+                comment.getMember().getId()
+        );
     }
 }
