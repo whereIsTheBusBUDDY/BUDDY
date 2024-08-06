@@ -15,29 +15,19 @@ import { FontAwesome } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import ModalDropdown from 'react-native-modal-dropdown';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { WHITE } from '../../constant/color';
+import { PRIMARY, GRAY } from '../../constant/color';
+import { currentBus } from '../../api/busUser';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
-// Google Maps API key
-const GOOGLE_MAPS_APIKEY = 'AIzaSyAqkabjy1LZw_B8EC6Pm7kFTsEiTeoef4U';
-
-// 색상 상수 정의
-const PRIMARY = '#f97316'; // 예시: 주황색
-const GRAY = '#ccc'; // 예시: 회색
-
 const BusScreen = () => {
   const [selectedRoute, setSelectedRoute] = useState('1'); // 기본적으로 '1'
-  const [locationMap, setLocationMap] = useState({
-    latitude: 37.5665, // 초기 위도 (서울)
-    longitude: 126.978, // 초기 경도 (서울)
-    latitudeDelta: 0.0922,
-    longitudeDelta: 0.0421,
-  });
+  const [locationMap, setLocationMap] = useState(null); // 초기 위치를 null로 설정
   const [busStops, setBusStops] = useState([]); // 경로 데이터를 위한 상태
   const [stations, setStations] = useState([]); // 정류장 데이터를 위한 상태
   const [selectedStation, setSelectedStation] = useState(null); // 선택된 정류장을 저장
   const [starSelected, setStarSelected] = useState(false); // 즐겨찾기 상태
+  const [busLocation, setBusLocation] = useState(null); // 버스 위치 상태
   const mapRef = useRef(null);
 
   // API에서 경로 데이터를 가져오는 함수
@@ -195,19 +185,18 @@ const BusScreen = () => {
         return;
       }
 
-      // // 현재 위치 가져오기
-      // let {
-      //   coords: { latitude, longitude },
-      // } = await Location.getCurrentPositionAsync({
-      //   accuracy: Location.Accuracy.BestForNavigation,
-      // });
+      // 현재 위치 가져오기
+      let location = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.High,
+      });
 
-      // // 현재 위치로 초기 위치 설정
-      // setLocationMap((prevState) => ({
-      //   ...prevState,
-      //   latitude,
-      //   longitude,
-      // }));
+      // 현재 위치로 초기 위치 설정
+      setLocationMap({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+        latitudeDelta: 0.005,
+        longitudeDelta: 0.005,
+      });
 
       // 기본 노선에 대한 경로 및 정류장 데이터 가져오기
       fetchBusStops(selectedRoute);
@@ -237,6 +226,58 @@ const BusScreen = () => {
     fetchBookmarks(); // 선택한 정류장이 변경될 때마다 즐겨찾기 목록 업데이트
   }, [selectedStation]);
 
+  // 2초마다 버스 위치를 가져오는 useEffect 설정
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      try {
+        const responseData = await currentBus(selectedRoute); // API 요청 및 데이터 가져오기
+
+        if (!responseData) {
+          console.error('버스 데이터를 가져오지 못했습니다.');
+          return;
+        }
+
+        console.log('API 응답 데이터:', responseData); // 응답 데이터 확인
+
+        // 동적으로 키 생성
+        const busPrefix = [
+          'first',
+          'second',
+          'third',
+          'fourth',
+          'fifth',
+          'sixth',
+        ][parseInt(selectedRoute) - 1];
+
+        const latitudeKey = `${busPrefix}BusLatitude`;
+        const longitudeKey = `${busPrefix}BusLongitude`;
+
+        // 위도 및 경도 추출
+        const latitude = responseData[latitudeKey];
+        const longitude = responseData[longitudeKey];
+
+        if (latitude && longitude) {
+          const newBusLocation = {
+            latitude,
+            longitude,
+          };
+
+          setBusLocation(newBusLocation); // 버스 위치 상태 업데이트
+
+          console.log('버스 위치 업데이트:', newBusLocation); // 콘솔에 버스 위치 출력
+        } else {
+          console.error(
+            `위치 데이터가 없습니다: ${latitudeKey}, ${longitudeKey}`
+          );
+        }
+      } catch (error) {
+        console.error('버스 위치를 가져오는 중 오류 발생:', error);
+      }
+    }, 2000);
+
+    return () => clearInterval(interval); // 컴포넌트 언마운트 시 인터벌 정리
+  }, [selectedRoute]);
+
   return (
     <View style={styles.container}>
       {/* 드롭다운 메뉴 */}
@@ -263,6 +304,16 @@ const BusScreen = () => {
           }}
           showsUserLocation={true} // 사용자 위치 표시
         >
+          {/* 선택된 호차에 대한 버스 위치 마커 */}
+          {busLocation && (
+            <Marker coordinate={busLocation} title="현재 버스 위치">
+              <Image
+                source={require('../../../assets/busMarker.png')} // 버스 이미지 파일 경로 설정
+                style={{ width: 30 }} // 이미지 크기 조정
+              />
+            </Marker>
+          )}
+
           {/* API로부터 받아온 정류장 데이터를 마커로 표시 */}
           {stations.map((station) => (
             <Marker
@@ -273,11 +324,7 @@ const BusScreen = () => {
               }}
               onPress={() => setSelectedStation(station)} // 마커 클릭 시 정류장 선택
             >
-              <Image
-                source={require('../../../assets/busStopIcon.png')} // 이미지 경로를 실제 경로로 변경하세요
-                style={{ width: 40, height: 40 }}
-                resizeMode="contain"
-              />
+              {/* <FontAwesome name="map-marker" size={30} color="blue" /> */}
             </Marker>
           ))}
 
@@ -316,6 +363,15 @@ const BusScreen = () => {
           </View>
         </View>
       )}
+
+      {/* {busLocation && (
+        <Marker coordinate={busLocation} title="현재 버스 위치">
+          <Image
+            source={require('../../../assets/busMarker.png')} // 버스 이미지 파일 경로 설정
+            style={{ width: 30, height: 30 }} // 이미지 크기 조정
+          />
+        </Marker>
+      )} */}
     </View>
   );
 };
@@ -388,13 +444,13 @@ const styles = StyleSheet.create({
   star: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: GRAY, // 초기 별 색상은 회색
+    color: GRAY.DEFAULT, // 초기 별 색상은 회색
     marginLeft: 10,
   },
   starSelected: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: PRIMARY, // 선택 시 별 색상은 주황색
+    color: PRIMARY.DEFAULT, // 선택 시 별 색상은 주황색
     marginLeft: 10,
   },
   partline: {

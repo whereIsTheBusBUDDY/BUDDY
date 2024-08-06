@@ -63,7 +63,7 @@ const ImageButton = ({
 };
 
 ImageButton.propTypes = {
-  title: PropTypes.string.isRequired,
+  title: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
   onPress: PropTypes.func.isRequired,
   buttonStyle: PropTypes.object,
   buttonColor: PropTypes.oneOf(Object.values(ButtonColors)),

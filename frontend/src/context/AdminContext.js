@@ -43,12 +43,17 @@ export const AdminProvider = ({ children }) => {
 
       intervalRef.current = setInterval(async () => {
         try {
-          const { coords } = await Location.getCurrentPositionAsync({
-            accuracy: Location.Accuracy.BestForNavigation,
-          });
-          const { latitude, longitude } = coords;
+          // const { coords } = await Location.getCurrentPositionAsync({
+          //   accuracy: Location.Accuracy.BestForNavigation,
+          // });
 
-          // console.log('위치추적 정보', { latitude, longitude });
+          // const { latitude, longitude } = coords;
+
+          // // 임시위치 (3호 1번 정류장)
+          // const latitude = 36.31325;
+          // const longitude = 127.3786;
+
+          console.log('위치추적 정보', { latitude, longitude });
           setLocation({ latitude, longitude });
           sendBusLocation(busNumber, latitude, longitude);
           console.log(busNumber, latitude, longitude);
