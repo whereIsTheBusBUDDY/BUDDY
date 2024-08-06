@@ -1,37 +1,39 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { BLACK, WHITE, SKYBLUE, GRAY } from '../constant/color';
+import { View, Text, StyleSheet } from 'react-native';
+import { WHITE, GRAY, BLACK } from '../constant/color';
 
 const BoardItem = ({ board, onPress }) => {
   return (
-    <TouchableOpacity style={styles.boardCard} onPress={onPress}>
-      <Text style={styles.boardTitle}>{board.title}</Text>
-      <Text style={styles.boardContent}>{board.content}</Text>
-      <Text style={styles.boardDate}>{board.date}</Text>
-    </TouchableOpacity>
+    <View style={styles.container} onTouchEnd={onPress}>
+      <Text style={styles.title}>{board.title}</Text>
+      <Text style={styles.subtitle}>{board.memberID}</Text>
+      <Text style={styles.subtitle}>
+        {new Date(board.createDate).toLocaleString()}
+      </Text>
+      <View style={styles.separator} />
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  boardCard: {
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    borderBottomColor: WHITE,
+  container: {
+    padding: 10,
     borderBottomWidth: 1,
+    borderBottomColor: GRAY.BACKGROUND,
   },
-  boardTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 8,
+  title: {
+    fontSize: 18,
+    color: BLACK,
+    marginBottom: 10,
   },
-  boardContent: {
+  subtitle: {
     fontSize: 14,
-    color: GRAY.FONT,
-    marginBottom: 8,
+    color: GRAY.TEXT,
+    marginBottom: 10,
   },
-  boardDate: {
-    fontSize: 12,
-    color: GRAY.FONT,
+  separator: {
+    height: 1,
+    backgroundColor: WHITE,
   },
 });
 
