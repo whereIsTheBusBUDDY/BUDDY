@@ -304,12 +304,6 @@ const MapScreen = () => {
               </Text>
             </TouchableOpacity>
           </View>
-
-          <View style={styles.partline} />
-          <View style={styles.line}>
-            <Text style={styles.textStyle}>{selectedRoute}호차</Text>
-            <Text style={styles.point}>4분 후 도착</Text>
-          </View>
         </View>
       )}
     </View>
