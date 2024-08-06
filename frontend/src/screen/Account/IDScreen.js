@@ -18,7 +18,7 @@ const IDScreen = () => {
   const route = useRoute();
   const step = 1;
   const [photo, setPhoto] = useState(null);
-  const [result, setResult] = useState(null);
+  const [result, setResult] = useState('');
 
   useEffect(() => {
     if (route.params?.result) {
@@ -72,8 +72,8 @@ const IDScreen = () => {
             </Text>
           </View>
 
-          {!result || !result.allow ? (
-            // {result ? (
+          {/* {!result || !result.allow ? ( */}
+          {!result || !result.allow ? ( // 결과가 없으면 (아직 인증 진행하지 않음)
             <View style={styles.buttonContainer}>
               <RegistButton
                 title="학생증 촬영하기"
@@ -81,6 +81,11 @@ const IDScreen = () => {
                 onPress={() => navigate.navigate('CameraScreen')}
                 height={63}
               />
+              {!result.allow && result && (
+                <Text style={styles.compmsg}>
+                  인증에 실패하였습니다. 다시 시도해주세요.
+                </Text>
+              )}
             </View>
           ) : (
             <View>
