@@ -2,6 +2,13 @@ package com.ssafy.buddy.boarding.service;
 
 import com.ssafy.buddy.boarding.domain.Boarding;
 import com.ssafy.buddy.boarding.repository.BoardingRepository;
+import com.ssafy.buddy.bookmark.repository.BookmarkRepository;
+import com.ssafy.buddy.notification.domain.Notification;
+import com.ssafy.buddy.notification.domain.NotificationType;
+import com.ssafy.buddy.notification.repository.NotificationRepository;
+import com.ssafy.buddy.notification.service.NotificationService;
+import com.ssafy.buddy.station.domain.Station;
+import com.ssafy.buddy.station.repository.StationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +21,10 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class BoardingService {
     private final BoardingRepository boardingRepository;
+    private final StationRepository stationRepository;
+    private final BookmarkRepository bookmarkRepository;
+    private final NotificationRepository notificationRepository;
+    private final NotificationService notificationService;
 
     @Transactional
     public void scanQrCode(Long memberId, int busNumber) {
@@ -39,5 +50,21 @@ public class BoardingService {
         }
 
         return boardingCountByBusNumber;
+    }
+
+    public void isNextStationBookmarked(int stationId) {
+        Station currentStation = stationRepository.findById(stationId).orElseThrow();
+        int currentBusLine = currentStation.getBusLine();
+
+        int nextStationId = stationId + 1;
+
+        Station nextStation = stationRepository.findById(nextStationId).orElse(null);
+        if (nextStation == null || nextStation.getBusLine() != currentBusLine) return;
+
+        List<Long> memberIds = bookmarkRepository.findMemberIdsByStationId(nextStationId);
+        for (Long memberId : memberIds) {
+            notificationRepository.save(new Notification(memberId, currentStation));
+            notificationService.sendMessageToMember(NotificationType.ARRIVE, memberId, currentStation.getStationName());
+        }
     }
 }

@@ -1,5 +1,6 @@
 package com.ssafy.buddy.notification.domain;
 
+import com.ssafy.buddy.station.domain.Station;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,18 +28,43 @@ public class Notification {
     @Column(name = "timestamp", nullable = false)
     private LocalDateTime timestamp;
 
-    @Column(name = "post_id")
-    private Long postId;
+    @Column(name = "board_id")
+    private Long boardId;
 
-    public Notification(Long receiverId, NotificationType type) {
+    @Column(name = "sender_name")
+    private String senderName;
+
+    @Column(name = "station_name")
+    private String stationName;
+
+    @Column(name = "bus_number")
+    private int busNumber;
+
+    @Column(name = "suggestion")
+    private String suggestion;
+
+    // 도착
+    public Notification(Long receiverId, Station station) {
         this.receiverId = receiverId;
-        this.type = type;
+        this.stationName = station.getStationName();
+        this.busNumber = station.getBusLine();
+        this.type = NotificationType.ARRIVE;
         this.timestamp = LocalDateTime.now();
     }
 
-    public Notification(NotificationType type, Long postId) {
-        this.type = type;
+    // 공지사항
+    public Notification(Long boardId) {
+        this.boardId = boardId;
+        this.type = NotificationType.NOTICE;
         this.timestamp = LocalDateTime.now();
-        this.postId = postId;
+    }
+
+    // 건의
+    public Notification(Long receiverId, String senderName, String suggestion) {
+        this.receiverId = receiverId;
+        this.senderName = senderName;
+        this.suggestion = suggestion;
+        this.type = NotificationType.SUGGEST;
+        this.timestamp = LocalDateTime.now();
     }
 }

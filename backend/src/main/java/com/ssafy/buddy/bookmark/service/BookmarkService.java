@@ -26,6 +26,9 @@ public class BookmarkService {
     public void addBookmark(Long memberId, int stationId) {
         Member member = findByMemberId(memberId);
         Station station = findByStationId(stationId);
+        if (bookmarkRepository.existsByMemberIdAndStationId(memberId, stationId)) {
+            throw new IllegalArgumentException("이미 등록된 북마크.");
+        }
         Bookmark bookmark = new Bookmark(member, station);
         bookmarkRepository.save(bookmark);
     }

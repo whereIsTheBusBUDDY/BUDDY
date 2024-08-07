@@ -1,7 +1,7 @@
 package com.ssafy.buddy.notification.domain;
 
 public enum NotificationType {
-    POST,
+    NOTICE,
     ARRIVE,
     SUGGEST
 }

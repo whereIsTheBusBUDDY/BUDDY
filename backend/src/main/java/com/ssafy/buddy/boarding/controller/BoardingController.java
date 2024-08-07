@@ -23,4 +23,9 @@ public class BoardingController {
     public Map<Integer, Long> getBoardingCountByBusNumber() {
         return boardingService.getBoardingCountByBusNumber();
     }
+
+    @PostMapping("/arrive")
+    public void isNextStationBookmarked(@RequestParam("stationId") int stationId) {
+        boardingService.isNextStationBookmarked(stationId);
+    }
 }
