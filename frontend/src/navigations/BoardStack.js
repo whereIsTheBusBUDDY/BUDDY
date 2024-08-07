@@ -2,6 +2,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import BoardScreen from '../screen/Board/BoardScreen';
 import DetailScreen from '../screen/Board/DetailScreen';
 import CreateScreen from '../screen/Board/CreateScreen';
+import EditScreen from '../screen/Board/EditScreen';
 import QrScanner from '../screen/CheckIn/QrScreen';
 import { Fontisto } from '@expo/vector-icons';
 import { Image } from 'react-native';
@@ -32,6 +33,14 @@ const BoardStack = () => {
         component={CreateScreen}
         options={{
           headerTitle: '글쓰기',
+          headerShadowVisible: false,
+        }}
+      />
+      <Stack.Screen
+        name="Edit"
+        component={EditScreen}
+        options={{
+          headerTitle: '수정하기',
           headerShadowVisible: false,
         }}
       />
