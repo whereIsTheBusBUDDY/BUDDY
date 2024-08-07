@@ -8,6 +8,7 @@ import SignupScreen from '../screen/Account/SignupScreen';
 import MMScreen from '../screen/Account/MMScreen';
 import AdminStack from '../navigations/AdminStack';
 import MainStack from '../navigations/MainStack';
+import CameraScreen from '../screen/Account/CameraScreen';
 
 const Stack = createNativeStackNavigator();
 const LoginStack = () => {
@@ -21,7 +22,7 @@ const LoginStack = () => {
           headerLeft: () => (
             <Image source={require('../../assets/BUDDY.png')} />
           ),
-          headerRight: () => <Fontisto name="bell" size={24} color="black" />,
+          // headerRight: () => <Fontisto name="bell" size={24} color="black" />,
           headerStyle: {
             shadowColor: 'transparent',
             elevation: 0,
@@ -37,7 +38,7 @@ const LoginStack = () => {
           headerLeft: () => (
             <Image source={require('../../assets/BUDDY.png')} />
           ),
-          headerRight: () => <Fontisto name="bell" size={24} color="black" />,
+          // headerRight: () => <Fontisto name="bell" size={24} color="black" />,
           headerStyle: {
             shadowColor: 'transparent',
             elevation: 0,
@@ -53,7 +54,23 @@ const LoginStack = () => {
           headerLeft: () => (
             <Image source={require('../../assets/BUDDY.png')} />
           ),
-          headerRight: () => <Fontisto name="bell" size={24} color="black" />,
+          // headerRight: () => <Fontisto name="bell" size={24} color="black" />,
+          headerStyle: {
+            shadowColor: 'transparent',
+            elevation: 0,
+          },
+          headerShadowVisible: false,
+        }}
+      />
+      <Stack.Screen
+        name={'CameraScreen'}
+        component={CameraScreen}
+        options={{
+          headerTitle: '',
+          headerLeft: () => (
+            <Image source={require('../../assets/BUDDY.png')} />
+          ),
+          // headerRight: () => <Fontisto name="bell" size={24} color="black" />,
           headerStyle: {
             shadowColor: 'transparent',
             elevation: 0,
@@ -69,7 +86,7 @@ const LoginStack = () => {
           headerLeft: () => (
             <Image source={require('../../assets/BUDDY.png')} />
           ),
-          headerRight: () => <Fontisto name="bell" size={24} color="black" />,
+          // headerRight: () => <Fontisto name="bell" size={24} color="black" />,
           headerStyle: {
             shadowColor: 'transparent',
             elevation: 0,
@@ -85,7 +102,7 @@ const LoginStack = () => {
           headerLeft: () => (
             <Image source={require('../../assets/BUDDY.png')} />
           ),
-          headerRight: () => <Fontisto name="bell" size={24} color="black" />,
+          // headerRight: () => <Fontisto name="bell" size={24} color="black" />,
           headerStyle: {
             shadowColor: 'transparent',
             elevation: 0,

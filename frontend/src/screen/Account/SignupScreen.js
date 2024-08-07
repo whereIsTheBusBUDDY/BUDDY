@@ -27,6 +27,7 @@ const SignupScreen = () => {
   const [selectedLine, setSelectedLine] = useState(null);
   const [isDisabled, setIsDisabled] = useState(true);
   const [isStudentIdChecked, setIsStudentIdChecked] = useState(false); // 학번 중복 확인 상태
+  const [emailError, setEmailError] = useState(''); // 이메일 에러 메시지 상태
 
   const navigation = useNavigation();
   const step = 2;
@@ -37,7 +38,7 @@ const SignupScreen = () => {
         name &&
         studentId &&
         nickname &&
-        email &&
+        validateEmail(email) &&
         password &&
         passwordConfirm &&
         selectedLine &&
@@ -61,14 +62,22 @@ const SignupScreen = () => {
     isStudentIdChecked,
   ]);
 
+  const validateEmail = (email) => {
+    // 이메일 유효성 검사 정규식
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const isValid = emailRegex.test(email);
+    setEmailError(isValid ? '' : '이메일 형식이 아닙니다.');
+    return isValid;
+  };
+
   const handleRegister = async () => {
     if (!isStudentIdChecked) {
-      Alert.alert('Error', '학번 중복 확인을 해주세요.');
+      Alert.alert('', '학번 중복 확인을 해주세요.');
       return;
     }
 
     if (password !== passwordConfirm) {
-      Alert.alert('Error', '비밀번호가 일치하지 않습니다.');
+      Alert.alert('', '비밀번호가 일치하지 않습니다.');
       return;
     }
 
@@ -80,8 +89,6 @@ const SignupScreen = () => {
       password,
       favoriteLine: parseInt(selectedLine, 10),
     };
-
-    console.log('User Data to be sent:', userData);
 
     try {
       const result = await signUp(userData);
@@ -143,7 +150,6 @@ const SignupScreen = () => {
         <ScrollView contentContainerStyle={styles.scrollViewContent}>
           <View style={styles.container}>
             <ProgressBar step={step} />
-
             <Input
               title={'이름*'}
               value={name}
@@ -164,7 +170,6 @@ const SignupScreen = () => {
               onPress={handleCheckStudentId}
               disabled={!studentId || isStudentIdChecked}
             />
-
             <Input
               title={'닉네임*'}
               value={nickname}
@@ -175,11 +180,17 @@ const SignupScreen = () => {
             <Input
               title={'이메일*'}
               value={email}
-              onChangeText={(text) => setEmail(text)}
+              onChangeText={(text) => {
+                setEmail(text);
+                validateEmail(text);
+              }}
               placeholder=""
               style={styles.input}
               keyboardType={keyboardTypes.EMAIL}
             />
+            {email && emailError ? (
+              <Text style={styles.errorText}>{emailError}</Text>
+            ) : null}
             <Input
               title={'비밀번호*'}
               value={password}
@@ -196,7 +207,6 @@ const SignupScreen = () => {
               secureTextEntry
               style={styles.input}
             />
-
             <View style={styles.dropdowncon}>
               <Text style={styles.label}>선호하는 노선*</Text>
               <ModalDropdown
@@ -262,6 +272,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginBottom: 5,
     color: '#949089',
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 12,
+    marginBottom: 10,
   },
   dropdown: {
     justifyContent: 'center',
