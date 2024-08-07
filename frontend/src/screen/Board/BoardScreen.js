@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
-import axios from 'axios';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import BoardItem from '../../components/BoardItem';
 import TabButton from '../../components/BoardTabButton';
 import { WHITE, GRAY } from '../../constant/color';
@@ -12,20 +11,23 @@ const BoardScreen = () => {
   const [selectedCategory, setSelectedCategory] = useState('free');
   const [boards, setBoards] = useState([]);
 
-  useEffect(() => {
-    const fetchBoards = async () => {
-      try {
-        const response = await apiClient.get(
-          `/board?category=${selectedCategory}`
-        );
-        setBoards(response.data);
-      } catch (error) {
-        console.error('게시판 조회 실패:', error);
-      }
-    };
-
-    fetchBoards();
+  const fetchBoards = useCallback(async () => {
+    try {
+      const response = await apiClient.get(
+        `/board?category=${selectedCategory}`
+      );
+      setBoards(response.data);
+    } catch (error) {
+      console.error('게시판 조회 실패:', error);
+    }
   }, [selectedCategory]);
+
+  useFocusEffect(
+    useCallback(() => {
+      // 화면이 포커스될 때마다 게시판 목록을 새로고침
+      fetchBoards();
+    }, [fetchBoards])
+  );
 
   const handleBoardPress = async (boardId) => {
     try {
@@ -49,6 +51,10 @@ const BoardScreen = () => {
             title="자유게시판"
             isActive={selectedCategory === 'free'}
             onPress={() => setSelectedCategory('free')}
+          />
+          <TabButton
+            title="글쓰기"
+            onPress={() => navigate.navigate('Create')}
           />
         </View>
         <ScrollView>

@@ -17,6 +17,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { WHITE } from '../../constant/color';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
+import { BLACK, WHITE, SKYBLUE } from '../../constant/color';
 
 // 색상 상수 정의
 const PRIMARY = '#f97316'; // 예시: 주황색
