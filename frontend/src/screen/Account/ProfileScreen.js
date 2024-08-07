@@ -62,7 +62,7 @@ const ProfileScreen = () => {
       setLoginUser(null);
 
       // 로그인 화면으로 이동
-      navigation.navigate('');
+      // navigation.navigate('');
     } catch (error) {
       console.error('로그아웃 중 오류 발생:', error);
     }

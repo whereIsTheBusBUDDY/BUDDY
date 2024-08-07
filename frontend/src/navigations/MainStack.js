@@ -22,7 +22,9 @@ const MainStack = () => {
         options={({ navigation }) => ({
           headerTitle: '',
           headerLeft: () => (
-            <Image source={require('../../assets/BUDDY.png')} />
+            <TouchableOpacity onPress={() => navigation.navigate('Main')}>
+              <Image source={require('../../assets/BUDDY.png')} />
+            </TouchableOpacity>
           ),
           headerRight: () => (
             <TouchableOpacity

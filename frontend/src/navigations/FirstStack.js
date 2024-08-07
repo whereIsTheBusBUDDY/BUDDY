@@ -26,7 +26,7 @@ const FirstStack = () => {
           headerLeft: () => (
             <Image source={require('../../assets/BUDDY.png')} />
           ),
-          headerRight: () => <Fontisto name="bell" size={24} color="black" />,
+          // headerRight: () => <Fontisto name="bell" size={24} color="black" />,
           headerStyle: {
             shadowColor: 'transparent',
             elevation: 0,
@@ -42,7 +42,7 @@ const FirstStack = () => {
           headerLeft: () => (
             <Image source={require('../../assets/BUDDY.png')} />
           ),
-          headerRight: () => <Fontisto name="bell" size={24} color="black" />,
+          // headerRight: () => <Fontisto name="bell" size={24} color="black" />,
           headerStyle: {
             shadowColor: 'transparent',
             elevation: 0,
@@ -58,7 +58,7 @@ const FirstStack = () => {
           headerLeft: () => (
             <Image source={require('../../assets/BUDDY.png')} />
           ),
-          headerRight: () => <Fontisto name="bell" size={24} color="black" />,
+          // headerRight: () => <Fontisto name="bell" size={24} color="black" />,
           headerStyle: {
             shadowColor: 'transparent',
             elevation: 0,
@@ -75,7 +75,7 @@ const FirstStack = () => {
           headerLeft: () => (
             <Image source={require('../../assets/BUDDY.png')} />
           ),
-          headerRight: () => <Fontisto name="bell" size={24} color="black" />,
+          // headerRight: () => <Fontisto name="bell" size={24} color="black" />,
           headerStyle: {
             shadowColor: 'transparent',
             elevation: 0,
@@ -91,7 +91,7 @@ const FirstStack = () => {
           headerLeft: () => (
             <Image source={require('../../assets/BUDDY.png')} />
           ),
-          headerRight: () => <Fontisto name="bell" size={24} color="black" />,
+          // headerRight: () => <Fontisto name="bell" size={24} color="black" />,
           headerStyle: {
             shadowColor: 'transparent',
             elevation: 0,

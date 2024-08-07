@@ -5,6 +5,7 @@ import AdminMainScreen from '../screen/admin/AdminMainScreen';
 import AdminSelectBus from '../screen/admin/AdminSelectBusScreen';
 import AdminSelectBusScreen from '../screen/admin/AdminSelectBusScreen';
 import AdminMapScreen from '../screen/admin/AdminMapScreen';
+import BoardStack from './BoardStack';
 
 const Stack = createNativeStackNavigator();
 const AdminStack = () => {
@@ -53,6 +54,13 @@ const AdminStack = () => {
           },
           headerShadowVisible: false,
           headerTransparent: true,
+        }}
+      />
+      <Stack.Screen
+        name="Board"
+        component={BoardStack}
+        options={{
+          headerShown: false,
         }}
       />
     </Stack.Navigator>

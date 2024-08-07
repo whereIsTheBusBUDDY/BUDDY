@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, Button } from 'react-native';
 import RegistButton, { ButtonType } from '../../components/RegistButton';
 import { useNavigation } from '@react-navigation/native';
 import AdminSelectButton from '../../components/AdminSelectButton';
@@ -49,6 +49,12 @@ const AdminSelectBusScreen = () => {
         onPress={goMap(6)}
         buttonType={ButtonType.GRAY}
         disabled={false}
+      />
+      <Button
+        title="게시판 보기"
+        onPress={() => {
+          navigate.navigate('Board');
+        }}
       />
     </View>
   );
