@@ -1,4 +1,4 @@
-package com.ssafy.buddy.arrive.controller.response;
+package com.ssafy.buddy.eta.controller.response;
 
 
 import lombok.*;

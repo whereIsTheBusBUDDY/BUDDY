@@ -1,4 +1,4 @@
-package com.ssafy.buddy.arrive.controller.request;
+package com.ssafy.buddy.eta.controller.request;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -1,8 +1,8 @@
-package com.ssafy.buddy.arrive.controller;
+package com.ssafy.buddy.eta.controller;
 
-import com.ssafy.buddy.arrive.controller.request.BusDataRequest;
-import com.ssafy.buddy.arrive.controller.response.EtaResponse;
-import com.ssafy.buddy.arrive.service.EtaServiceImpl;
+import com.ssafy.buddy.eta.controller.request.BusDataRequest;
+import com.ssafy.buddy.eta.controller.response.EtaResponse;
+import com.ssafy.buddy.eta.service.EtaServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
