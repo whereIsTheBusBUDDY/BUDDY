@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { View, Text, ScrollView, StyleSheet, Button } from 'react-native';
 import SendInput from '../../components/SendInput';
 import Pagename from '../../components/PageName';
@@ -6,8 +6,8 @@ import { WHITE, GRAY, SKYBLUE } from '../../constant/color';
 import SockJS from 'sockjs-client';
 import Stomp, { Client } from '@stomp/stompjs';
 
-const ChatScreen = () => {
-  const token = "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsImlkIjoyNSwiZXhwIjoxNzIzMDA2ODI1LCJpYXQiOjE3MjMwMDMyMjV9.OWMpNh_0g9k7fBHa4Sf5ZxDNARn-oC63gMNXhx3EYjw";
+const ChatScreen1 = () => {
+  const token = "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsImlkIjoxLCJleHAiOjE3MjMwMTMyNDQsImlhdCI6MTcyMzAwOTY0NH0.mTv4ndfkUqEWdkrl53qF8JY2C5EJRqXRTVAzUpwmOpw";
   const messages = [
     {
       id: 1,
@@ -32,30 +32,7 @@ const ChatScreen = () => {
   const [connected, setConnected] = useState(false);
   const [stompClient, setStompClient] = useState(null);
   const roomId = 1;
-  const connect = () => {
-    const socket = new SockJS('http://localhost:8080/ws?token=' + token);
-    const client = new Client({
-      webSocketFactory: () => socket,
-      debug : function(str) {
-        console.log(str);
-      },
-      onConnect : (frame) => {
-        console.log("Connect: " + frame);
-        setConnected(true);
-        client.subscribe('/room/' + roomId, (message) => {
-          const receivedMessage = JSON.parse(message.body);
-          console.log("receivedMessage: " + receivedMessage);
-        });
-      },
-      onStompError: (frame) => {
-        console.error('Broker reported error: ' + frame.headers['message']);
-        console.error('Additional details: ' + frame.body);
-      },
-    });
-    client.activate();
-    setStompClient(client);
-    console.log("Opening Web Socket...11");  // 디버그 메시지 추가
-  }
+  const clientRef = useRef(null);
   const disconnect = () => {
     if(stompClient !== null){
       stompClient.deactivate();
@@ -65,28 +42,48 @@ const ChatScreen = () => {
   }
 
   const sendMessage =()=> {
-    if(stompClient !== null && connect){
-      var message = {
-        messages : "test message",
-        sender : "지원"
-      };
-      stompClient.publish({
-        destination: '/send-chat/' + roomId,
-        body: JSON.stringify(message),
-      });
-      showMessage(message);
-    }
+    var message = {
+      messages : "test message",
+      sender : "지원"
+    };
+    stompClient.publish({
+      destination: `/send-chat/${roomId}`,
+      body: JSON.stringify(message),
+    });
+    showMessage(message);
   }
   const showMessage = (message) => {
     console.log(message);
   }
+
+
+
+  
   useEffect(() => {
+    const socket = new SockJS(`http://localhost:8080/ws?token=${token}`);
+    const client = new Client({
+        webSocketFactory: () => socket,
+        debug: (str) => console.log(str),
+        onConnect: () => {
+            console.log("Connected");
+            client.subscribe(`/room/${roomId}`, (message) => {
+                const body = JSON.parse(message.body);
+                console.log(body);
+                // setMessages((prevMessages) => [...prevMessages, body]);
+            });
+        },
+        onStompError: (frame) => {
+            console.error('Broker reported error: ' + frame.headers['message']);
+            console.error('Additional details: ' + frame.body);
+        },
+    });
+    client.activate();
+    setStompClient(client);
+
     return () => {
-      if (stompClient !== null) {
-        stompClient.deactivate();
-      }
+        client.deactivate();
     };
-  }, [stompClient]);
+}, []);
 
   return (
     <View style={styles.container}>
@@ -110,9 +107,8 @@ const ChatScreen = () => {
       <View style={styles.inputContainer}>
         <SendInput placeholder="메시지를 작성해주세요!" buttonText="전송" />
       </View>
-      <Button title="Connect" onPress={connect} />
       <Button title="Send" onPress={sendMessage} />
-      <Button title="DisConnect" onPress={disconnect} />
+      {/* <Button title="DisConnect" onPress={disconnect} /> */}
     </View>
   );
 };
@@ -163,4 +159,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ChatScreen;
+export default ChatScreen1;
