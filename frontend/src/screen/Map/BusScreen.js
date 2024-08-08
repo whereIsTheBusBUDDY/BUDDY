@@ -193,8 +193,10 @@ const BusScreen = () => {
 
       // 현재 위치로 초기 위치 설정
       setLocationMap({
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
+        latitude: 36.3553089,
+        longitude: 127.2984993,
+        // latitude: location.coords.latitude,
+        // longitude: location.coords.longitude,
         latitudeDelta: 0.005,
         longitudeDelta: 0.005,
       });
@@ -216,6 +218,9 @@ const BusScreen = () => {
       mapRef.current.animateToRegion({
         latitude: locationMap.latitude,
         longitude: locationMap.longitude,
+        // latitude: 36.3553089,
+        // longitude: 127.2984993,
+
         latitudeDelta: 0.005,
         longitudeDelta: 0.005,
       });
@@ -282,30 +287,39 @@ const BusScreen = () => {
   // 버스 정류장 마커 클릭 시 호출되는 함수
   const onBusStopMarkerClick = async (station) => {
     if (!busLocation) return;
-    // console.log('station', station);
-    // console.log('stations', stations);
+
+    // 선택된 정류장의 인덱스 찾기
+    const selectedStationIndex = stations.findIndex((s) => s.id === station.id);
+
+    // 이전 정류장들만 route 배열에 포함시키기
+    const route = stations
+      .slice(0, selectedStationIndex) // selectedStation 이전의 정류장들만 선택
+      .map((stop) => ({
+        busStopLongitude: stop.longitude,
+        busStopLatitude: stop.latitude,
+        visited: stop.visited,
+      }));
+
     const data = {
       nowBusLongitude: busLocation.longitude,
       nowBusLatitude: busLocation.latitude,
       busLine: selectedRoute,
       detailBusStopLongitude: station.longitude,
       detailBusStopLatitude: station.latitude,
-      route: stations.map((stop) => ({
-        busStopLongitude: stop.longitude,
-        busStopLatitude: stop.latitude,
-        visited: stop.visited,
-      })),
+      route: route,
     };
-    // console.log('data', data);
+
     try {
       const responseData = await postBusData(data);
       console.log('Response data:', responseData); // 서버 응답 확인
       console.log('Response time:', responseData.time); // 서버 응답 확인
 
       // 서버로부터 받은 도착 시간 정보를 상태로 저장
-      if (responseData && responseData.time) {
+      if (responseData.time >= 0) {
         console.log('Setting arrival time:', responseData.time);
         setArrivalTime(responseData.time);
+      } else if (responseData.time == -1) {
+        console.log(responseData.time);
       } else {
         console.warn('Arrival time not found in response');
       }
@@ -345,8 +359,9 @@ const BusScreen = () => {
           {busLocation && (
             <Marker coordinate={busLocation} title="현재 버스 위치">
               <Image
+                resizeMode="cover"
                 source={require('../../../assets/busMarker.png')} // 버스 이미지 파일 경로 설정
-                style={{ width: 30 }} // 이미지 크기 조정
+                style={styles.busImage}
               />
             </Marker>
           )}
@@ -361,7 +376,11 @@ const BusScreen = () => {
               }}
               onPress={() => onBusStopMarkerClick(station)} // 마커 클릭 시 정류장 선택 및 데이터 전송
             >
-              {/* <FontAwesome name="map-marker" size={30} color="blue" /> */}
+              <Image
+                resizeMode="cover"
+                source={require('../../../assets/busStopIcon.png')} // 버스 이미지 파일 경로 설정
+                style={styles.image}
+              />
             </Marker>
           ))}
 
@@ -371,8 +390,8 @@ const BusScreen = () => {
               latitude: stop.latitude,
               longitude: stop.longitude,
             }))}
-            strokeWidth={4}
-            strokeColor="blue"
+            strokeWidth={10}
+            strokeColor={PRIMARY.DEFAULT}
           />
         </MapView>
       ) : (
@@ -407,6 +426,14 @@ const BusScreen = () => {
 };
 
 const styles = StyleSheet.create({
+  image: {
+    width: 50,
+    height: 50,
+  },
+  busImage: {
+    width: 30,
+    height: 42,
+  },
   container: {
     flex: 1,
     backgroundColor: '#fff',

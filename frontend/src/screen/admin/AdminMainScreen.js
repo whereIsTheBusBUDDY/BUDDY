@@ -27,9 +27,11 @@ const AdminMainScreen = () => {
   };
   const stopBus = () => {
     setIsTracking(false);
-    if (!isTracking) {
-      handleStopTracking();
-    }
+    console.log('stopBus 실행');
+    // if (!isTracking) {
+    //   handleStopTracking();
+    // }
+    handleStopTracking();
   };
   const startBus = () => {
     setIsTracking(true);
