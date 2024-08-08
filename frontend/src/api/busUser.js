@@ -23,7 +23,7 @@ export const postBusData = async (data) => {
     console.log('eta 정보 전송', response.data);
     return response.data;
   } catch (error) {
-    console.error('API 요청 중 오류 발생:', error);
+    console.error('eta API 요청 중 오류 발생:', error);
     throw error;
   }
 };

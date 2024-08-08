@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import * as Location from 'expo-location';
+// import { updateBusData } from '../data/busData'; // busData 업데이트 함수 import
 import {
   sendBusLocation,
   getBusStations,
@@ -15,8 +16,7 @@ export const AdminProvider = ({ children }) => {
   const [isTracking, setIsTracking] = useState(false);
   const [location, setLocation] = useState();
   const [routeStops, setRouteStops] = useState([]); // routeStops 상태 추가
-  const intervalRef = useRef(null); // intervalRef로 변경하여 setInterval 관리
-  const isSendingRef = useRef(false); // 비동기 작업 상태 관리
+  const intervalRef = useRef(null);
 
   const calculateDistance = (lat1, lon1, lat2, lon2) => {
     const R = 6371e3; // 지구 반지름(미터)
@@ -41,20 +41,21 @@ export const AdminProvider = ({ children }) => {
         return;
       }
 
-      const trackPosition = async () => {
-        if (isSendingRef.current) return; // 이미 전송 중이라면 중복 전송 방지
-        isSendingRef.current = true; // 전송 상태 설정
-
+      intervalRef.current = setInterval(async () => {
         try {
           const { coords } = await Location.getCurrentPositionAsync({
             accuracy: Location.Accuracy.BestForNavigation,
           });
 
           const { latitude, longitude } = coords;
+
+          // // 임시위치 (3호 1번 정류장)
+          // const latitude = 36.31325;
+          // const longitude = 127.3786;
+
           console.log('위치추적 정보', { latitude, longitude });
           setLocation({ latitude, longitude });
-
-          await sendBusLocation(busNumber, latitude, longitude);
+          sendBusLocation(busNumber, latitude, longitude);
           console.log(busNumber, latitude, longitude);
 
           // 루트 정류장 방문 여부 업데이트
@@ -75,32 +76,25 @@ export const AdminProvider = ({ children }) => {
               return stop;
             })
           );
+
+          // 버스 데이터 업데이트
+          // updateBusData({ latitude, longitude }, busNumber, routeStops);
         } catch (error) {
           console.error('Error retrieving location:', error);
-        } finally {
-          isSendingRef.current = false; // 전송 완료 후 상태 해제
         }
-      };
-
-      // 주기적인 호출이 완료될 때까지 기다렸다가 다음 주기를 시작합니다.
-      intervalRef.current = setInterval(() => {
-        if (!isSendingRef.current) {
-          trackPosition();
-        }
-      }, 2000); // 2초마다 실행
+      }, 2000);
     };
 
     if (isTracking) {
       startTracking();
+    } else {
+      clearInterval(intervalRef.current);
     }
 
     return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
+      clearInterval(intervalRef.current);
     };
-  }, [isTracking, busNumber]);
+  }, [isTracking, busNumber, routeStops]);
 
   // 버스 번호 변경 시, 해당 노선의 정류장 목록을 설정
   useEffect(() => {
@@ -119,28 +113,17 @@ export const AdminProvider = ({ children }) => {
   }, [busNumber]);
 
   const handleStartTracking = () => {
-    if (!isTracking) {
-      setIsTracking(true);
-    }
+    setIsTracking(true);
   };
+
+  // const handleStopTracking = () => {
+  //   setIsTracking(false);
+  // };
 
   const handleStopTracking = async () => {
-    setIsTracking(false);
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
-    }
+    await sendStop(busNumber);
     console.log('운행이 종료되었습니다.');
-    try {
-      await sendStop(busNumber);
-    } catch (error) {
-      console.error('sendStop오류:', error);
-    }
   };
-
-  useEffect(() => {
-    console.log('Tracking 상태:', isTracking);
-  }, [isTracking]);
 
   return (
     <AdminContext.Provider
@@ -161,7 +144,7 @@ export const AdminProvider = ({ children }) => {
   );
 };
 
-AdminProvider.propTypes = {
+AdminProvider.prototypes = {
   children: PropTypes.node,
 };
 
