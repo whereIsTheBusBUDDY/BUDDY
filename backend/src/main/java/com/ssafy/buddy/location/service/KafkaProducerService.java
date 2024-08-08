@@ -11,6 +11,7 @@ public class KafkaProducerService {
     private final KafkaTemplate<String, Object> kafkaTemplate;
     public void sendMessage(int busId, Object message) {
         String topic = TOPIC_PREFIX + busId + "-location";
+        System.out.println("topic = " + topic);
         kafkaTemplate.send(topic, message);
     }
 }
