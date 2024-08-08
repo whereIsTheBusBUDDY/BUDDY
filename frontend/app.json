@@ -27,7 +27,7 @@
     "android": {
       "package": "com.ssafy.budy",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/AppLogo.png",
         "backgroundColor": "#ffffff"
       },
       "config": {
