@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View, Text } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import BoardItem from '../../components/BoardItem';
 import TabButton from '../../components/BoardTabButton';
@@ -10,6 +10,7 @@ const BoardScreen = () => {
   const navigate = useNavigation();
   const [selectedCategory, setSelectedCategory] = useState('free');
   const [boards, setBoards] = useState([]);
+  console.log(boards);
 
   const fetchBoards = useCallback(async () => {
     try {
