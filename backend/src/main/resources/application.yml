@@ -36,7 +36,8 @@ jwt:
 naver:
   api:
     host: naveropenapi.apigw.ntruss.com
-    path: /map-direction-15/v1/driving
+    path5: /map-direction/v1/driving
+    path15: /map-direction-15/v1/driving
     naver-api-client-id: ${NAVER_API_CLIENT_ID}
     naver-api-client-secret: ${NAVER_API_CLIENT_SECRET}
     header1: X-NCP-APIGW-API-KEY-ID

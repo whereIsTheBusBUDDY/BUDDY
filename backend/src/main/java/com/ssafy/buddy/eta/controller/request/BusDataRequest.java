@@ -1,4 +1,4 @@
-package com.ssafy.buddy.arrive.controller.request;
+package com.ssafy.buddy.eta.controller.request;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -7,7 +7,7 @@ import java.util.List;
 
 @Getter
 @NoArgsConstructor
-public class BusDataRequest {
+public class  BusDataRequest {
     private double nowBusLongitude; // 현재 버스 경도
     private double nowBusLatitude; // 현재 버스 위도
     private int busLine;

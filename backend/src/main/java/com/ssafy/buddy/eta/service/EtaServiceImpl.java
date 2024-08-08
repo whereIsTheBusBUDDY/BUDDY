@@ -1,22 +1,23 @@
-package com.ssafy.buddy.arrive.service;
+package com.ssafy.buddy.eta.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ssafy.buddy.arrive.controller.request.BusDataRequest;
-import com.ssafy.buddy.arrive.controller.request.BusStopRequest;
-import com.ssafy.buddy.arrive.controller.response.EtaResponse;
+import com.ssafy.buddy.eta.controller.request.BusDataRequest;
+import com.ssafy.buddy.eta.controller.request.BusStopRequest;
+import com.ssafy.buddy.eta.controller.response.EtaResponse;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.time.Duration;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class EtaServiceImpl  implements  EtaService{
+public class EtaServiceImpl implements EtaService {
 
     private final WebClient.Builder webClientBuilder;
     private WebClient webClient;
@@ -35,8 +36,11 @@ public class EtaServiceImpl  implements  EtaService{
     @Value("${naver.api.host}")
     private String host;
 
-    @Value("${naver.api.path}")
-    private String path;
+    @Value("${naver.api.path5}")
+    private String path5;
+
+    @Value("${naver.api.path15}")
+    private String path15;
 
     @Value("${naver.api.header1}")
     private String header1;
@@ -44,72 +48,64 @@ public class EtaServiceImpl  implements  EtaService{
     @Value("${naver.api.header2}")
     private String header2;
 
-
+    @Override
     public EtaResponse calculateEta(BusDataRequest busDataRequest) {
-
+        int busLine = busDataRequest.getBusLine();
         String start = busDataRequest.getNowBusLongitude() + "," + busDataRequest.getNowBusLatitude(); // 출발위치
         String goal = busDataRequest.getDetailBusStopLongitude() + "," + busDataRequest.getDetailBusStopLatitude();// 도착위치
         String option = "tracomfort"; //길 찾기 옵션
-        String response;
+        String waypoints = createWaypoints(busDataRequest.getRoute());
 
-        // 경유지 생성 (방문 여부가 false인 경유지들만)
-        List<BusStopRequest> route = busDataRequest.getRoute();
+        String path = (busLine == 3 || busLine == 5) ? path5 : path15;
+        String response = fetchEtaResponse(start, goal, waypoints, option, path);
+
+        return processData(response, busLine);
+    }
+
+    private String createWaypoints(List<BusStopRequest> route) {
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < route.size(); i++) {
-            BusStopRequest stop = route.get(i);
+        for (BusStopRequest stop : route) {
             if (!stop.isVisited()) {
-                if (sb.length() > 0) {
+                if (!sb.isEmpty()) {
                     sb.append("|");
                 }
                 sb.append(String.format("%.6f,%.6f", stop.getBusStopLongitude(), stop.getBusStopLatitude()));
             }
         }
-
-        String waypoints = sb.toString();
-        if (waypoints.equals("")) { // 경유지 없을 때
-            response = webClient
-                    .get()
-                    .uri(uriBuilder -> uriBuilder
-                            .scheme("https")
-                            .host(host)
-                            .path(path)
-                            .queryParam("start", start)
-                            .queryParam("goal", goal)
-                            .queryParam("option", option)
-                            .build())
-                    .header(header1, clientId)
-                    .header(header2, clientSecret)
-                    .retrieve()
-                    .bodyToMono(String.class)
-                    .block(); // 블로킹 방식으로 동작
-        } else {
-            response = webClient
-                    .get()
-                    .uri(uriBuilder -> uriBuilder
-                            .scheme("https")
-                            .host(host)
-                            .path(path)
-                            .queryParam("start", start)
-                            .queryParam("goal", goal)
-                            .queryParam("waypoints", waypoints)
-                            .queryParam("option", option)
-                            .build())
-                    .header(header1, clientId)
-                    .header(header2, clientSecret)
-                    .retrieve()
-                    .bodyToMono(String.class)
-                    .block(); // 블로킹 방식으로 동작
-        }
-        return processData(response, busDataRequest.getBusLine());
+        return sb.toString();
     }
 
+    private String fetchEtaResponse(String start, String goal, String waypoints, String option, String path) {
+        try {
+            return webClient.get()
+                    .uri(uriBuilder -> {
+                        uriBuilder.scheme("https")
+                                .host(host)
+                                .path(path)
+                                .queryParam("start", start)
+                                .queryParam("goal", goal)
+                                .queryParam("option", option);
+                        if (!waypoints.isEmpty()) {
+                            uriBuilder.queryParam("waypoints", waypoints);
+                        }
+                        return uriBuilder.build();
+                    })
+                    .header(header1, clientId)
+                    .header(header2, clientSecret)
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .timeout(Duration.ofSeconds(3))
+                    .block();
+        } catch (Exception e) { // 타임 아웃이나 다른 에러 시 null 반환
+            return null;
+        }
+    }
 
     public EtaResponse processData(String response, int busLine) {
         ObjectMapper mapper = new ObjectMapper();
         EtaResponse etaResponse = new EtaResponse();
 
         try {
-            //json에서 해당 하는 값으로 접근
             JsonNode root = mapper.readTree(response);
             JsonNode routeNode = root.get("route");
             JsonNode optionNode = routeNode.path("tracomfort").get(0);
@@ -125,12 +121,12 @@ public class EtaServiceImpl  implements  EtaService{
                     totalDuration += waypoint.path("duration").asInt();
                 }
             }
-            //
+
             int time = totalDuration / 60000;
             etaResponse.setBusLine(busLine);
             etaResponse.setTime(time);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            etaResponse.setTime(-1); // json 파싱 오류 시 -1 설정
         }
         return etaResponse;
     }
