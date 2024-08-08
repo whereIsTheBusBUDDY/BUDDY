@@ -87,9 +87,6 @@ const ChatScreen = ({ route }) => {
         />
         <Button title="Send" onPress={handleSend} disabled={!isConnected} />
       </View>
-      <Button title="Connect" onPress={connect} />
-      <Button title="Send" onPress={sendMessage} />
-      <Button title="DisConnect" onPress={disconnect} />
     </View>
   );
 };
