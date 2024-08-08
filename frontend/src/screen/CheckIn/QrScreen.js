@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Alert } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { GRAY, PRIMARY, WHITE } from '../../constant/color';
-import apiClient from '../../api/api'; // Ensure this is correctly configured
+import apiClient from '../../api/api';
 
 export default function QrScanner() {
   const [hasPermission, setHasPermission] = useState(null);
@@ -25,10 +26,13 @@ export default function QrScanner() {
     console.log(number);
 
     try {
+      await AsyncStorage.setItem('busNumber', number);
+      console.log(`저장된 호차 번호: ${number}`);
+
       const response = await apiClient.post(`/scan?busNumber=${number}`);
 
       if (response.status !== 201) {
-        throw new Error('Network response was not ok');
+        throw new Error('문제가 발생했습니다.');
       }
 
       const responseData = response.data;
@@ -36,14 +40,14 @@ export default function QrScanner() {
 
       Alert.alert(
         `${number}호차 탑승 완료`,
-        `${number}호차 채팅방으로 이동합니다!`,
-        [
-          { text: '확인', onPress: () => navigation.navigate('Chat') }, // 'ChatRoom' 화면으로 이동
-        ]
+        `채팅방과 건의하기 기능이 활성화되었습니다.`,
+        [{ text: '확인', onPress: () => navigation.navigate('Main') }]
       );
     } catch (error) {
-      console.error('Error posting data:', error);
-      Alert.alert('Error', 'QR 코드 전송 중 문제가 발생했습니다.');
+      console.error('', error);
+      Alert.alert('', '다시 시도해주세요.', [
+        { text: '확인', onPress: () => navigation.goBack },
+      ]);
     }
   };
 
@@ -71,7 +75,7 @@ export default function QrScanner() {
   if (hasPermission === false) {
     return (
       <View style={styles.container}>
-        <Text style={styles.text}>Camera permission not granted</Text>
+        <Text style={styles.text}>카메라 권한이 없습니다.</Text>
       </View>
     );
   }

@@ -33,6 +33,29 @@ export const AdminProvider = ({ children }) => {
     return R * c; // 거리 반환
   };
 
+  // 주어진 위도와 경도에서 90미터 반경 내에 랜덤 좌표 생성
+  const generateRandomNearbyCoordinates = (
+    latitude,
+    longitude,
+    radiusInMeters
+  ) => {
+    const radiusInDegrees = radiusInMeters / 111300; // 미터를 위도/경도로 변환 (약 111.3km는 1도의 위도 차이)
+
+    const u = Math.random();
+    const v = Math.random();
+
+    const w = radiusInDegrees * Math.sqrt(u);
+    const t = 2 * Math.PI * v;
+    const x = w * Math.cos(t);
+    const y = w * Math.sin(t);
+
+    // x가 latitude 차이, y가 longitude 차이
+    const newLatitude = latitude + x;
+    const newLongitude = longitude + y;
+
+    return { latitude: newLatitude, longitude: newLongitude };
+  };
+
   useEffect(() => {
     const startTracking = async () => {
       let { granted } = await Location.requestForegroundPermissionsAsync();

@@ -1,3 +1,4 @@
+import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useUserContext } from '../../context/UserContext';
 import { useAdminContext } from '../../context/AdminContext';
@@ -21,10 +22,12 @@ const AdminMainScreen = () => {
     handleStopTracking,
   } = useAdminContext();
   const navigate = useNavigation();
+
   const logout = () => {
     handleStopTracking();
     setLoginUser(null);
   };
+
   const stopBus = () => {
     setIsTracking(false);
     console.log('stopBus 실행');
@@ -33,9 +36,10 @@ const AdminMainScreen = () => {
     // }
     handleStopTracking();
   };
+
   const startBus = () => {
     setIsTracking(true);
-    if (isTracking) {
+    if (!isTracking) {
       handleStartTracking();
     }
     navigate.navigate('AdminMapScreen');
@@ -76,6 +80,7 @@ const AdminMainScreen = () => {
     </View>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,

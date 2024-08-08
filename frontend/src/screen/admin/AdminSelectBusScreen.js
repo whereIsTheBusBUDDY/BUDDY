@@ -53,7 +53,7 @@ const AdminSelectBusScreen = () => {
       <Button
         title="게시판 보기"
         onPress={() => {
-          navigate.navigate('Board');
+          navigate.navigate('UserBoard');
         }}
       />
     </View>

@@ -39,6 +39,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 15,
     borderRadius: 15,
+    zIndex: 1,
   },
   sendButtonText: {
     color: WHITE,

@@ -57,7 +57,7 @@ const AdminStack = () => {
         }}
       />
       <Stack.Screen
-        name="Board"
+        name="UserBoard"
         component={BoardStack}
         options={{
           headerShown: false,

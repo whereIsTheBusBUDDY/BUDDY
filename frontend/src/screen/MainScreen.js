@@ -8,6 +8,7 @@ import {
   StyleSheet,
   Text,
   RefreshControl,
+  Alert,
 } from 'react-native';
 import ModalDropdown from 'react-native-modal-dropdown';
 import ImageButton, { ButtonColors } from '../components/ImageButton';
@@ -15,7 +16,9 @@ import TimeTable from '../components/TimeTable';
 import busRoutes from '../data/busRoutes';
 import { BLACK, WHITE, SKYBLUE, GRAY } from '../constant/color';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import apiClient from '../api/api';
+import { useWebSocket } from '../context/WebSocketContext';
 
 const MainScreen = () => {
   const width = useWindowDimensions().width - 40;
@@ -25,6 +28,7 @@ const MainScreen = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [passengerData, setPassengerData] = useState({});
   const items = ['1호차', '2호차', '3호차', '4호차', '5호차', '6호차'];
+  const { connect, disconnect } = useWebSocket();
 
   const fetchProfileData = async () => {
     try {
@@ -84,6 +88,19 @@ const MainScreen = () => {
       ...style,
       left: style.left - 20, // 조정할 값
     };
+  };
+
+  const GoChatRoom = async () => {
+    try {
+      const busNumber = await AsyncStorage.getItem('busNumber');
+      if (busNumber) {
+        navigation.navigate('Chat', { roomId: busNumber });
+      } else {
+        Alert.alert('알림', 'QR 스캔 후 이용 가능합니다.');
+      }
+    } catch (error) {
+      console.error('오류 발생', error);
+    }
   };
 
   return (
@@ -164,15 +181,12 @@ const MainScreen = () => {
             />
             <ImageButton
               title="채팅방 입장하기"
-              onPress={() => {
-                navigation.navigate('Chat');
-              }}
+              onPress={GoChatRoom}
               width={width / 2}
               height={45}
               imageSource={require('../../assets/chat.png')}
               imageWidth={30}
               imageHeight={30}
-              AVS
             />
           </View>
         </View>
