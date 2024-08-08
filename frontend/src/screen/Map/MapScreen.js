@@ -14,7 +14,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import ModalDropdown from 'react-native-modal-dropdown';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { WHITE } from '../../constant/color';
+// import { WHITE } from '../../constant/color';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 import { BLACK, WHITE, SKYBLUE } from '../../constant/color';

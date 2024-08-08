@@ -11,6 +11,7 @@ import QrScreen from '../screen/CheckIn/QrScreen';
 import BusScreen from '../screen/Map/BusScreen';
 import CreateScreen from '../screen/Board/CreateScreen';
 import FavoriteScreen from '../screen/Favorite/FavoriteScreen';
+import DetailScreen from '../screen/Board/DetailScreen';
 
 const Stack = createNativeStackNavigator();
 const MainStack = () => {
@@ -48,6 +49,14 @@ const MainStack = () => {
         component={NotificationScreen}
         options={{
           headerTitle: '알림',
+          headerShadowVisible: false,
+        }}
+      />
+      <Stack.Screen
+        name="Detail"
+        component={DetailScreen}
+        options={{
+          headerTitle: '',
           headerShadowVisible: false,
         }}
       />
