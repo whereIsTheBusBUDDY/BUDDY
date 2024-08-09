@@ -74,6 +74,10 @@ public class MemberService {
         return memberRepository.existsByStudentId(studentId);
     }
 
+    public boolean isNicknameDuplicated(String nickname) {
+        return memberRepository.existsByNickname(nickname);
+    }
+
     public boolean checkPassword(Long memberId, String password) {
         Member member = findById(memberId);
         return passwordEncoder.matches(password, member.getPassword());
