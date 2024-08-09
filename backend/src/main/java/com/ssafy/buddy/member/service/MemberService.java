@@ -29,7 +29,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
 
-    @Value("${app.fastapi.url")
+    @Value("${app.fastapi.url}")
     private String fastApiUrl;
 
     @Transactional

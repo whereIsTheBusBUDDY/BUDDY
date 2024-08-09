@@ -23,6 +23,10 @@ jwt:
   secret-key: ${SECRET_KEY}
   refresh-key: ${REFRESH_KEY}
 
+app:
+  fastapi:
+    url: http://70.12.130.121:8001/ai
+
 naver:
   api:
     host: naveropenapi.apigw.ntruss.com
@@ -44,7 +48,6 @@ spring:
     username: ${DB_NAME}
     password: ${DB_PASSWORD}
 
-
 # dev 환경
 ---
 spring:
@@ -55,10 +58,3 @@ spring:
     url: jdbc:mysql://rds-test.cfsok8siyava.ap-northeast-2.rds.amazonaws.com:3306/rdstest
     username: ${RDS_NAME}
     password: ${RDS_PASSWORD}
-
-
-# fastapi
-app:
-  fastapi:
-    url: http://70.12.130.121:8001/ai
-
