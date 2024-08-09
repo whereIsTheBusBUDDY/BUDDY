@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   View,
   TextInput,
@@ -7,11 +8,22 @@ import {
 } from 'react-native';
 import { WHITE, GRAY, PRIMARY } from '../constant/color';
 
-const SendInput = ({ placeholder, buttonText }) => {
+const SendInput = ({
+  placeholder,
+  buttonText,
+  value,
+  onChangeText,
+  onPress,
+}) => {
   return (
     <View style={styles.container}>
-      <TextInput style={styles.input} placeholder={placeholder} />
-      <TouchableOpacity style={styles.sendButton}>
+      <TextInput
+        style={styles.input}
+        placeholder={placeholder}
+        value={value}
+        onChangeText={onChangeText}
+      />
+      <TouchableOpacity style={styles.sendButton} onPress={onPress}>
         <Text style={styles.sendButtonText}>{buttonText}</Text>
       </TouchableOpacity>
     </View>

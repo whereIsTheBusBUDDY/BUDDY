@@ -15,11 +15,14 @@ import { BLACK, WHITE, SKYBLUE, GRAY, PRIMARY } from '../../constant/color';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import CommentItem from '../../components/CommentItem';
+import { useUserContext } from '../../context/UserContext';
+import SendInput from '../../components/SendInput';
 
 const DetailScreen = ({ route }) => {
+  const { setUser, setLoginUser } = useUserContext();
   const [board, setBoard] = useState(route.params.board);
   const [comment, setComment] = useState('');
-  const [comments, setComments] = useState((board.comments || []).reverse()); // 댓글 상태 추가
+  const [comments, setComments] = useState(board.comments || []); // 댓글 상태 추가
   const navigation = useNavigation();
 
   useFocusEffect(
@@ -138,7 +141,7 @@ const DetailScreen = ({ route }) => {
             <View style={styles.tabContainer}>
               <Text style={styles.boardTitle}>{board.title}</Text>
               <Text style={styles.boardDate}>
-                작성자: {board.memberID}{' '}
+                작성자: {board.memberID}
                 {new Date(board.createDate).toLocaleString()}
               </Text>
             </View>
@@ -158,11 +161,21 @@ const DetailScreen = ({ route }) => {
               <View style={styles.commentContainer}>
                 {comments.length > 0 ? (
                   comments.map((comment) => (
-                    <CommentItem
-                      key={comment.commentId}
-                      comment={comment}
-                      onDelete={handleCommentDelete}
-                    />
+                    <View key={comment.commentId} style={styles.comment}>
+                      <Text style={styles.commentAuthor}>
+                        {comment.nickname}
+                      </Text>
+                      <Text style={styles.commentText}>
+                        {comment.commentContent}
+                      </Text>
+                      <Text style={styles.commentDate}>
+                        {new Date(comment.createDate).toLocaleString()}
+                      </Text>
+                      <Button
+                        title="삭제"
+                        onPress={() => handleCommentDelete(comment.commentId)}
+                      />
+                    </View>
                   ))
                 ) : (
                   <Text style={styles.noComments}>댓글이 없습니다.</Text>
@@ -173,13 +186,20 @@ const DetailScreen = ({ route }) => {
         </ScrollView>
         {board.category === 'free' && (
           <View style={styles.commentInputContainer}>
-            <TextInput
+            {/* <TextInput
               style={styles.commentInput}
               placeholder="댓글을 입력해주세요!"
               value={comment}
               onChangeText={setComment}
+            /> */}
+            {/* <Button title="작성" onPress={handleCommentSubmit} /> */}
+            <SendInput
+              placeholder="댓글을 입력해주세요!"
+              buttonText="작성"
+              value={comment}
+              onChangeText={setComment}
+              onPress={handleCommentSubmit}
             />
-            <Button title="작성" onPress={handleCommentSubmit} />
           </View>
         )}
       </KeyboardAvoidingView>
@@ -196,15 +216,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: WHITE,
   },
-  innerContainer: {
-    flex: 1,
-  },
   scrollContainer: {
     flexGrow: 1,
     paddingHorizontal: 20,
     paddingTop: 20,
-    paddingBottom: 20, // 스크롤 가능한 영역 확보를 위해 여백 추가
-    marginBottom: 10, // 추가 여백
+    paddingBottom: 400, // 스크롤 가능한 영역 확보를 위해 여백 추가
   },
   noticeContainer: {
     minHeight: '60%',
@@ -241,15 +257,16 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: GRAY.FONT,
   },
-  commentContainer: {
-    marginBottom: 20,
-  },
   comment: {
     marginBottom: 10,
     backgroundColor: GRAY.BACKGROUND,
     borderRadius: 15,
     paddingVertical: 10,
     paddingHorizontal: 20,
+  },
+
+  commentContainer: {
+    marginBottom: 20,
   },
   commentTitle: {
     fontSize: 18,
@@ -263,7 +280,7 @@ const styles = StyleSheet.create({
   },
   commentText: {
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: 'semibold',
     color: BLACK,
     marginVertical: 5,
   },
@@ -272,6 +289,7 @@ const styles = StyleSheet.create({
     color: GRAY.FONT,
     marginLeft: 3,
   },
+
   noComments: {
     fontSize: 14,
     color: GRAY.FONT,
