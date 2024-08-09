@@ -18,7 +18,6 @@ import TimeTable from '../components/TimeTable';
 import busRoutes from '../data/busRoutes';
 import { BLACK, WHITE, SKYBLUE, GRAY } from '../constant/color';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import apiClient from '../api/api';
 import { useWebSocket } from '../context/WebSocketContext';
 
