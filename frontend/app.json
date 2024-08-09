@@ -5,10 +5,10 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "sdkVersion": "51.0.0",
-    "icon": "./assets/AppLogo.png",
+    "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/AppLogo.png",
+      "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -35,6 +35,7 @@
           "apiKey": "AIzaSyAq4Boum-hSew2whKsnJBSqmbxQuFM7NTw"
         }
       },
+      "usesCleartextTraffic": true,
       "permissions": [
         "ACCESS_FINE_LOCATION",
         "ACCESS_COARSE_LOCATION",
@@ -42,7 +43,8 @@
         "FOREGROUND_SERVICE",
         "ACCESS_BACKGROUND_LOCATION",
         "CAMERA",
-        "RECORD_AUDIO"
+        "RECORD_AUDIO",
+        "ACCESS_NETWORK_STATE"
       ]
     },
     "web": {
@@ -58,6 +60,14 @@
         "expo-location",
         {
           "locationAlwaysAndWhenInUsePermission": "Allow buddy-app to access your location"
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "usesCleartextTraffic": true
+          }
         }
       ]
     ]

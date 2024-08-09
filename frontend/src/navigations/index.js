@@ -4,6 +4,11 @@ import FirstStack from './FirstStack';
 import { useUserContext } from '../context/UserContext';
 import LoginStack from './LoginStack';
 import AdminStack from './AdminStack';
+import { AppRegistry } from 'react-native';
+// import App from '../App'; // App 컴포넌트의 정확한 경로를 확인하세요.
+import { name as appName } from '../../app.json'; // app.json 파일의 정확한 경로를 확인하세요.
+
+AppRegistry.registerComponent(appName, () => App);
 
 const Navigation = () => {
   const { screen } = useFirstContext();
