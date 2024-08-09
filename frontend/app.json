@@ -13,7 +13,7 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "package": "com.ssafy.budy",
+      "package": "com.ssafy.buddy",
       "supportsTablet": true,
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "This app needs access to your location to track your movements.",
@@ -25,7 +25,7 @@
       }
     },
     "android": {
-      "package": "com.ssafy.budy",
+      "package": "com.ssafy.buddy",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff",

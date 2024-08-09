@@ -29,7 +29,6 @@ public class KafkaConsumerService {
     public void consumeBus1(ConsumerRecord<String, String> record, Acknowledgment ack) {
         ObjectMapper objectMapper = new ObjectMapper();
         String location = record.value();
-        System.out.println("location = " + location);
         try{
             LocationRequest locationRequest = objectMapper.readValue(location, LocationRequest.class);
             Date date = new Date();
@@ -46,7 +45,6 @@ public class KafkaConsumerService {
     public void consumeBus2(ConsumerRecord<String, String> record, Acknowledgment ack) {
         ObjectMapper objectMapper = new ObjectMapper();
         String location = record.value();
-        System.out.println("2location = " + location);
         try{
             LocationRequest locationRequest = objectMapper.readValue(location, LocationRequest.class);
             Date date = new Date();
@@ -63,7 +61,6 @@ public class KafkaConsumerService {
     public void consumeBus3(ConsumerRecord<String, String> record, Acknowledgment ack) {
         ObjectMapper objectMapper = new ObjectMapper();
         String location = record.value();
-        System.out.println("3location = " + location);
         try{
             LocationRequest locationRequest = objectMapper.readValue(location, LocationRequest.class);
             Date date = new Date();
@@ -80,7 +77,6 @@ public class KafkaConsumerService {
     public void consumeBus4(ConsumerRecord<String, String> record, Acknowledgment ack) {
         ObjectMapper objectMapper = new ObjectMapper();
         String location = record.value();
-        System.out.println("4location = " + location);
         try{
             LocationRequest locationRequest = objectMapper.readValue(location, LocationRequest.class);
             Date date = new Date();
@@ -97,7 +93,6 @@ public class KafkaConsumerService {
     public void consumeBus5(ConsumerRecord<String, String> record, Acknowledgment ack) {
         ObjectMapper objectMapper = new ObjectMapper();
         String location = record.value();
-        System.out.println("5location = " + location);
         try{
             LocationRequest locationRequest = objectMapper.readValue(location, LocationRequest.class);
             Date date = new Date();
@@ -114,7 +109,6 @@ public class KafkaConsumerService {
     public void consumeBus6(ConsumerRecord<String, String> record, Acknowledgment ack) {
         ObjectMapper objectMapper = new ObjectMapper();
         String location = record.value();
-        System.out.println("6location = " + location);
         try{
             LocationRequest locationRequest = objectMapper.readValue(location, LocationRequest.class);
             Date date = new Date();

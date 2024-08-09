@@ -1,5 +1,6 @@
 package com.ssafy.buddy.location.service;
 
+import com.ssafy.buddy.boarding.repository.BoardingRepository;
 import com.ssafy.buddy.location.domain.*;
 import com.ssafy.buddy.location.repository.*;
 import jakarta.persistence.EntityNotFoundException;
@@ -16,6 +17,7 @@ public class LocationService {
     private final FourthRepository fourthRepository;
     private final FifthBusRepository fifthBusRepository;
     private final SixthBusRepository sixthBusRepository;
+    private final BoardingRepository boardingRepository;
     public FirstBus getLatestFirstBusLocation() {
         return firstBusRepository.findFirstBusLastLocation()
                 .orElseThrow(() -> new EntityNotFoundException("1호차 위치가 존재하지 않습니다."));
@@ -78,5 +80,29 @@ public class LocationService {
         fourthRepository.deleteAll();
         fifthBusRepository.deleteAll();
         sixthBusRepository.deleteAll();
+    }
+    @Transactional
+    public void stopBus(int budId){
+        if(budId == 1){
+            boardingRepository.deleteBoardingByBusNumber(budId);
+            firstBusRepository.deleteAll();
+        }else if(budId == 2){
+            boardingRepository.deleteBoardingByBusNumber(budId);
+            secondBusRepository.deleteAll();
+        }else if(budId == 3){
+            boardingRepository.deleteBoardingByBusNumber(budId);
+            thirdBusRepository.deleteAll();
+        }else if(budId == 4){
+            boardingRepository.deleteBoardingByBusNumber(budId);
+            fourthRepository.deleteAll();
+        }else if(budId == 5){
+            boardingRepository.deleteBoardingByBusNumber(budId);
+            fifthBusRepository.deleteAll();
+        }else if(budId == 6){
+            boardingRepository.deleteBoardingByBusNumber(budId);
+            sixthBusRepository.deleteAll();
+        }else {
+            throw new IllegalArgumentException("유효하지 않은 버스번호입니다");
+        }
     }
 }
