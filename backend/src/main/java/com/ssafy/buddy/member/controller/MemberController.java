@@ -47,6 +47,11 @@ public class MemberController {
         return memberService.isStudentIdDuplicated(studentId);
     }
 
+    @GetMapping("/check-nickname")
+    public boolean isNicknameDuplicated(@RequestParam("nickname") String nickname) {
+        return memberService.isNicknameDuplicated(nickname);
+    }
+
     @PostMapping("/check-password")
     public boolean checkPassword(@LoginMember Long memberId, @RequestBody PasswordRequest request) {
         return memberService.checkPassword(memberId, request.getPassword());

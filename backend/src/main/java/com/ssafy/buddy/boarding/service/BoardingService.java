@@ -52,11 +52,13 @@ public class BoardingService {
         return boardingCountByBusNumber;
     }
 
-    public void isNextStationBookmarked(int stationId) {
+    public void isNextStationBookmarked(int stationId, int time) {
         Station currentStation = stationRepository.findById(stationId).orElseThrow();
         int currentBusLine = currentStation.getBusLine();
 
-        int nextStationId = stationId + 1;
+        int nextStationId;
+        if (time == 1) nextStationId = stationId + 1;
+        else nextStationId = stationId - 1;
 
         Station nextStation = stationRepository.findById(nextStationId).orElse(null);
         if (nextStation == null || nextStation.getBusLine() != currentBusLine) return;

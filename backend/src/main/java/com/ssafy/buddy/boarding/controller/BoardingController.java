@@ -25,7 +25,7 @@ public class BoardingController {
     }
 
     @PostMapping("/arrive")
-    public void isNextStationBookmarked(@RequestParam("stationId") int stationId) {
-        boardingService.isNextStationBookmarked(stationId);
+    public void isNextStationBookmarked(@RequestParam("stationId") int stationId, @RequestParam("time") int time) {
+        boardingService.isNextStationBookmarked(stationId, time);
     }
 }
