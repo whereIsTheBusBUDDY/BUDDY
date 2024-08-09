@@ -65,13 +65,10 @@ const CameraScreen = () => {
           name: fileName,
         });
 
-        const response = await fetch(
-          'http://192.168.68.199:8000/idcard/predict',
-          {
-            method: 'POST',
-            body: formData,
-          }
-        );
+        const response = await fetch('http://i11b109.p.ssafy.io:8080/upload', {
+          method: 'POST',
+          body: formData,
+        });
         const result = await response.json();
         console.log(result);
         navigation.navigate('IDScreen', { result });
