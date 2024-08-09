@@ -67,8 +67,9 @@ public class EtaService {
     }
 
     public EtaResponse useGpuEta(BusDataRequest busDataRequest) {
+        String yoloUrl = fastApiUrl + "/eta";
         return this.webClient.post()
-                .uri(fastApiUrl + "/eta") // FastAPI 엔드포인트
+                .uri(yoloUrl) // FastAPI 엔드포인트
                 .body(Mono.just(busDataRequest), BusDataRequest.class)
                 .retrieve()
                 .bodyToMono(EtaResponse.class)
