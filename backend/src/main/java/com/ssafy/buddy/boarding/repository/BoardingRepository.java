@@ -12,4 +12,5 @@ public interface BoardingRepository extends JpaRepository<Boarding, Long> {
 
     @Query("select busNumber, count(*) from Boarding GROUP BY busNumber")
     List<Object[]> countBoardingByBusNumber();
+    void deleteBoardingByBusNumber(int busNumber);
 }

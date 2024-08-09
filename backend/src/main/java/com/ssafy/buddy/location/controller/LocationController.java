@@ -24,6 +24,11 @@ public class LocationController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("위치 저장 실패");
         }
     }
+    @GetMapping("/stop/{busId}")
+    public ResponseEntity<?> stop(@PathVariable int busId) {
+        locationService.stopBus(busId);
+        return ResponseEntity.ok("운행 종료 성공");
+    }
     @GetMapping("/location/1")
     public ResponseEntity<?> firstBusLocation() {
         FirstBus firstBusLocation = locationService.getLatestFirstBusLocation();
