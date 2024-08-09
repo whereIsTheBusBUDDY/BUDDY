@@ -19,6 +19,8 @@ import busRoutes from '../data/busRoutes';
 import { BLACK, WHITE, SKYBLUE, GRAY } from '../constant/color';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import apiClient from '../api/api';
+import { useWebSocket } from '../context/WebSocketContext';
+
 const MainScreen = () => {
   const width = useWindowDimensions().width - 40;
   const navigation = useNavigation();
@@ -27,6 +29,8 @@ const MainScreen = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [passengerData, setPassengerData] = useState({});
   const items = ['1호차', '2호차', '3호차', '4호차', '5호차', '6호차'];
+  const { connect, disconnect } = useWebSocket();
+
   useEffect(() => {
     registerForPushNotificationsAsync();
     fetchPassengerData();
