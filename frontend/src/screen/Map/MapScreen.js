@@ -14,7 +14,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import ModalDropdown from 'react-native-modal-dropdown';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-// import { WHITE } from '../../constant/color';
+import { WHITE, PRIMARY, GRAY } from '../../constant/color';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 import { BLACK, WHITE, SKYBLUE } from '../../constant/color';
@@ -26,10 +26,11 @@ const GRAY = '#ccc'; // 예시: 회색
 const MapScreen = () => {
   const [selectedRoute, setSelectedRoute] = useState('1'); // 기본적으로 '1'
   const [locationMap, setLocationMap] = useState({
-    latitude: 37.5665, // 초기 위도 (서울)
-    longitude: 126.978, // 초기 경도 (서울)
-    latitudeDelta: 0.0922,
-    longitudeDelta: 0.0421,
+    // 연수원
+    latitude: 36.3553089,
+    longitude: 127.2984993,
+    latitudeDelta: 0.005,
+    longitudeDelta: 0.005,
   });
   const [busStops, setBusStops] = useState([]); // 경로 데이터를 위한 상태
   const [stations, setStations] = useState([]); // 정류장 데이터를 위한 상태
@@ -272,8 +273,8 @@ const MapScreen = () => {
               latitude: stop.latitude,
               longitude: stop.longitude,
             }))}
-            strokeWidth={4}
-            strokeColor="blue"
+            strokeWidth={10}
+            strokeColor={PRIMARY.DEFAULT}
           />
         </MapView>
       ) : (

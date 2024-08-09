@@ -1,14 +1,14 @@
 {
   "expo": {
-    "name": "buddy-app",
-    "slug": "buddy-app",
+    "name": "buddy",
+    "slug": "buddy",
     "version": "1.0.0",
     "orientation": "portrait",
     "sdkVersion": "51.0.0",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/bus.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/bus.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -49,11 +49,11 @@
       ]
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/bus.png"
     },
     "extra": {
       "eas": {
-        "projectId": "6262af48-55de-4ec3-bfd0-b79ab62c2b51"
+        "projectId": "b14ea7dc-90f9-42d5-a1a5-a713f55a52c3"
       }
     },
     "plugins": [
