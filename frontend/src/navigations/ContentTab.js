@@ -47,14 +47,14 @@ const ContentTab = () => {
         component={MainStack}
         options={{ headerShown: false }}
       />
-      <Tab.Screen
+      {/* <Tab.Screen
         name={'채팅'}
         component={ChatScreen}
         options={{
           headerTitle: '채팅',
           headerShadowVisible: false,
         }}
-      />
+      /> */}
       <Tab.Screen
         name={'실시간셔틀'}
         component={BusScreen}

@@ -1,4 +1,5 @@
 // 필요한 라이브러리 및 모듈 불러오기
+import { useFocusEffect } from '@react-navigation/native';
 import React, { useEffect, useState, useRef } from 'react';
 import {
   StyleSheet,
@@ -30,6 +31,7 @@ const BusScreen = () => {
   const [busLocation, setBusLocation] = useState(null); // 버스 위치 상태
   const [arrivalTime, setArrivalTime] = useState(null);
   const mapRef = useRef(null);
+  const intervalRef = useRef(null);
 
   // API에서 경로 데이터를 가져오는 함수
   const fetchBusStops = async (busLine) => {
@@ -233,56 +235,63 @@ const BusScreen = () => {
   }, [selectedStation]);
 
   // 2초마다 버스 위치를 가져오는 useEffect 설정
-  useEffect(() => {
-    const interval = setInterval(async () => {
-      try {
-        const responseData = await currentBus(selectedRoute); // API 요청 및 데이터 가져오기
 
-        if (!responseData) {
-          console.error('버스 데이터를 가져오지 못했습니다.');
-          return;
+  useFocusEffect(
+    React.useCallback(() => {
+      intervalRef.current = setInterval(async () => {
+        try {
+          const responseData = await currentBus(selectedRoute); // API 요청 및 데이터 가져오기
+
+          if (!responseData) {
+            console.error('버스 데이터를 가져오지 못했습니다.');
+            return;
+          }
+
+          // console.log('API 응답 데이터:', responseData); // 응답 데이터 확인
+
+          // 동적으로 키 생성
+          const busPrefix = [
+            'first',
+            'second',
+            'third',
+            'fourth',
+            'fifth',
+            'sixth',
+          ][parseInt(selectedRoute) - 1];
+
+          const latitudeKey = `${busPrefix}BusLatitude`;
+          const longitudeKey = `${busPrefix}BusLongitude`;
+
+          // 위도 및 경도 추출
+          const latitude = responseData[latitudeKey];
+          const longitude = responseData[longitudeKey];
+
+          if (latitude && longitude) {
+            const newBusLocation = {
+              latitude,
+              longitude,
+            };
+
+            setBusLocation(newBusLocation); // 버스 위치 상태 업데이트
+
+            console.log('버스 위치 업데이트:', newBusLocation); // 콘솔에 버스 위치 출력
+          } else {
+            console.error(
+              `위치 데이터가 없습니다: ${latitudeKey}, ${longitudeKey}`
+            );
+          }
+        } catch (error) {
+          console.error('버스 위치를 가져오는 중 오류 발생:', error);
         }
+      }, 2000);
 
-        // console.log('API 응답 데이터:', responseData); // 응답 데이터 확인
-
-        // 동적으로 키 생성
-        const busPrefix = [
-          'first',
-          'second',
-          'third',
-          'fourth',
-          'fifth',
-          'sixth',
-        ][parseInt(selectedRoute) - 1];
-
-        const latitudeKey = `${busPrefix}BusLatitude`;
-        const longitudeKey = `${busPrefix}BusLongitude`;
-
-        // 위도 및 경도 추출
-        const latitude = responseData[latitudeKey];
-        const longitude = responseData[longitudeKey];
-
-        if (latitude && longitude) {
-          const newBusLocation = {
-            latitude,
-            longitude,
-          };
-
-          setBusLocation(newBusLocation); // 버스 위치 상태 업데이트
-
-          console.log('버스 위치 업데이트:', newBusLocation); // 콘솔에 버스 위치 출력
-        } else {
-          console.error(
-            `위치 데이터가 없습니다: ${latitudeKey}, ${longitudeKey}`
-          );
+      return () => {
+        if (intervalRef.current) {
+          clearInterval(intervalRef.current);
         }
-      } catch (error) {
-        console.error('버스 위치를 가져오는 중 오류 발생:', error);
-      }
-    }, 2000);
-
-    return () => clearInterval(interval); // 컴포넌트 언마운트 시 인터벌 정리
-  }, [selectedRoute]);
+      };
+    }, [selectedRoute])
+  );
 
   // 버스 정류장 마커 클릭 시 호출되는 함수
   const onBusStopMarkerClick = async (station) => {

@@ -149,9 +149,13 @@ export const AdminProvider = ({ children }) => {
 
   const handleStopTracking = async () => {
     setIsTracking(false);
+    console.log('check');
     if (intervalRef.current) {
+      console.log('check');
       clearInterval(intervalRef.current);
+      console.log('check');
       intervalRef.current = null;
+      console.log('check');
     }
     console.log('운행이 종료되었습니다.');
     try {
