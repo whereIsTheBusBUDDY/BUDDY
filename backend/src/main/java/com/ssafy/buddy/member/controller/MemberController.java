@@ -24,9 +24,6 @@ import java.net.URI;
 public class MemberController {
     private final MemberService memberService;
 
-    @Value("${app.fastapi.url")
-    private String fastApiUrl;
-
     @PostMapping("/sign-up")
     public ResponseEntity<Void> signUp(@Valid @RequestBody SignUpRequest request) {
         Long memberId = memberService.signUp(request);
@@ -71,35 +68,6 @@ public class MemberController {
 
     @PostMapping("/upload")
     public ResponseEntity<IdcardCheckResponse> image(@RequestParam("image") MultipartFile image) {
-        if (image == null || image.isEmpty()) {
-            throw new IllegalArgumentException("File is missing");
-        }
-
-        try {
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-
-            MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-            body.add("file", image.getResource());
-
-            HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
-
-            //FastAPI 서버로 요청 전송
-            String yoloUrl = fastApiUrl + "/yolo";
-            RestTemplate restTemplate = new RestTemplate();
-            ResponseEntity<IdcardCheckResponse> response = restTemplate.exchange(
-                    fastApiUrl,
-                    HttpMethod.POST,
-                    requestEntity,
-                    IdcardCheckResponse.class
-            );
-
-            // FastAPI 응답을 프론트엔드로 반환
-            return response;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException("Error uploading image", e);
-        }
+        return memberService.sendImageToFastApi(image);
     }
 }
