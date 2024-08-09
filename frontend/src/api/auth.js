@@ -7,9 +7,10 @@ export const signIn = (email, password) => {
   return apiClient
     .post(signIn_url, { email, password })
     .then(async (response) => {
-      const { accessToken, role } = response.data;
+      const { accessToken, role, refreshToken } = response.data;
 
       await AsyncStorage.setItem('accessToken', accessToken);
+      await AsyncStorage.setItem('refreshToken', refreshToken);
       await AsyncStorage.setItem('userEmail', email);
       await AsyncStorage.setItem('userRole', role);
 

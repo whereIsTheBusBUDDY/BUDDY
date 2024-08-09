@@ -26,27 +26,51 @@ apiClient.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    if (error.response.status === 4000) {
-      try {
-        const refreshToken = await AsyncStorage.getItem('refreshToken');
+    if (
+      error.response &&
+      (error.response.status === 401 || error.response.data.code === '4000')
+    ) {
+      console.log('액세스 토큰 만료:', error.response.data.message);
 
-        if (refreshToken) {
-          const response = await apiClient.post(
-            `/refresh?refreshToken=${refreshToken}`
-          );
+      if (!originalRequest._retry) {
+        originalRequest._retry = true;
 
-          const newAccessToken = response.data.accessToken;
-          await AsyncStorage.setItem('accessToken', newAccessToken);
+        try {
+          const refreshToken = await AsyncStorage.getItem('refreshToken');
+          console.log('리프레시 토큰 있음');
+          if (refreshToken) {
+            console.log('요청 보낼게');
+            const response = await apiClient.post(
+              `/refresh?refreshToken=${refreshToken}`
+            );
+            console.log('요청 보냈음');
 
-          const newRefreshToken = response.data.refreshToken;
-          await AsyncStorage.setItem('refreshToken', newRefreshToken);
+            if (response.status === 200) {
+              console.log('요청 잘 됐음');
+              const newAccessToken = response.data.accessToken;
+              const newRefreshToken = response.data.refreshToken;
 
-          originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
-          return apiClient(originalRequest);
+              await AsyncStorage.setItem('accessToken', newAccessToken);
+              await AsyncStorage.setItem('refreshToken', newRefreshToken);
+              console.log('저장 잘 됐음');
+              originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+              console.log('다시 시도 요청 보낼게');
+              return apiClient(originalRequest);
+            } else {
+              console.log('토큰 갱신 실패:', response.data);
+            }
+          } else {
+            console.log('리프레시 토큰이 없습니다.');
+          }
+        } catch (err) {
+          console.error('토큰 갱신 중 오류 발생:', err);
         }
-      } catch (err) {
-        console.error('Token Refresh failed:', err);
       }
+    } else {
+      console.error(
+        '응답 오류:',
+        error.response ? error.response.data : error.message
+      );
     }
 
     return Promise.reject(error);
