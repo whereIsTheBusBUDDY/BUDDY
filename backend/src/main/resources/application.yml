@@ -12,13 +12,15 @@ spring:
         dialect: org.hibernate.dialect.MySQLDialect
         format_sql: true
     defer-datasource-initialization: true
-
   sql:
     init:
       mode: always
   kafka:
     bootstrap-servers: ${KAFKA_SERVER}
-
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      
 jwt:
   secret-key: ${SECRET_KEY}
   refresh-key: ${REFRESH_KEY}
@@ -58,3 +60,4 @@ spring:
     url: jdbc:mysql://rds-test.cfsok8siyava.ap-northeast-2.rds.amazonaws.com:3306/rdstest
     username: ${RDS_NAME}
     password: ${RDS_PASSWORD}
+
