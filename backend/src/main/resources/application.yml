@@ -57,3 +57,8 @@ spring:
     password: ${RDS_PASSWORD}
 
 
+# fastapi
+app:
+  fastapi:
+    url: http://70.12.130.121:8001/ai
+
