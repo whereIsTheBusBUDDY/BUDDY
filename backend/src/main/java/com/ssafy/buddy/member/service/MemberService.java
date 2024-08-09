@@ -7,18 +7,20 @@ import com.ssafy.buddy.member.controller.response.MemberResponse;
 import com.ssafy.buddy.member.domain.Member;
 import com.ssafy.buddy.member.domain.Role;
 import com.ssafy.buddy.member.repository.MemberRepository;
+import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.UUID;
 
@@ -28,6 +30,13 @@ import java.util.UUID;
 public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
+    private final WebClient.Builder webClientBuilder;
+    private WebClient webClient;
+
+    @PostConstruct
+    public void init() {
+        this.webClient = webClientBuilder.build();
+    }
 
     @Value("${app.fastapi.url}")
     private String fastApiUrl;
@@ -100,29 +109,14 @@ public class MemberService {
             throw new IllegalArgumentException("File is missing");
         }
 
-        try {
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+        String yoloUrl = fastApiUrl + "/yolo";
 
-            MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-            body.add("file", image.getResource());
-
-            HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
-
-            // FastAPI 서버로 요청 전송
-            String yoloUrl = fastApiUrl + "/yolo";
-            RestTemplate restTemplate = new RestTemplate();
-            ResponseEntity<IdcardCheckResponse> response = restTemplate.exchange(
-                    yoloUrl,
-                    HttpMethod.POST,
-                    requestEntity,
-                    IdcardCheckResponse.class
-            );
-            return response;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException("Error uploading image", e);
-        }
+        return webClient.post()
+                .uri(yoloUrl)
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.MULTIPART_FORM_DATA_VALUE)
+                .body(BodyInserters.fromMultipartData("file", image.getResource()))
+                .retrieve()
+                .toEntity(IdcardCheckResponse.class)
+                .block(); // 동기적으로 응답을 기다림
     }
 }
