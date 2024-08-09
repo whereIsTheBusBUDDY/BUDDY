@@ -10,9 +10,11 @@ import {
 import { WHITE, GRAY } from '../../constant/color';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function App() {
+export default function App({ route }) {
+  const [category, setcategory] = useState(route.params.selectedCategory);
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+  console.log(category);
 
   const handleSubmit = async () => {
     if (!title || !content) {
@@ -30,7 +32,7 @@ export default function App() {
       }
 
       const response = await fetch(
-        'http://i11b109.p.ssafy.io:8080/board/free',
+        `http://i11b109.p.ssafy.io:8080/board/${category}`,
         {
           method: 'POST',
           headers: {

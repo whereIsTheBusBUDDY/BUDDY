@@ -55,7 +55,10 @@ const BoardScreen = () => {
           />
           <TabButton
             title="글쓰기"
-            onPress={() => navigate.navigate('Create')}
+            onPress={() => {
+              navigate.navigate('Create', { selectedCategory });
+              console.log(selectedCategory);
+            }}
           />
         </View>
         <ScrollView>

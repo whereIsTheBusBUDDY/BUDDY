@@ -27,8 +27,9 @@
     "android": {
       "package": "com.ssafy.budy",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/AppLogo.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff",
+        "googleServicesFile": "./google-services.json"
       },
       "config": {
         "googleMaps": {

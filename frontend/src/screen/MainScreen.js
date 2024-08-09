@@ -11,6 +11,8 @@ import {
   Alert,
 } from 'react-native';
 import ModalDropdown from 'react-native-modal-dropdown';
+import * as Notifications from 'expo-notifications';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import ImageButton, { ButtonColors } from '../components/ImageButton';
 import TimeTable from '../components/TimeTable';
 import busRoutes from '../data/busRoutes';
@@ -29,6 +31,44 @@ const MainScreen = () => {
   const [passengerData, setPassengerData] = useState({});
   const items = ['1호차', '2호차', '3호차', '4호차', '5호차', '6호차'];
   const { connect, disconnect } = useWebSocket();
+
+  useEffect(() => {
+    registerForPushNotificationsAsync();
+    fetchPassengerData();
+  }, []);
+
+  const registerForPushNotificationsAsync = async () => {
+    try {
+      const { status: existingStatus } =
+        await Notifications.getPermissionsAsync();
+      let finalStatus = existingStatus.status;
+
+      if (existingStatus.status !== 'granted') {
+        const { status } = await Notifications.requestPermissionsAsync();
+        finalStatus = status;
+      }
+
+      if (finalStatus !== 'granted') {
+        alert('푸시 알림 권한이 필요합니다!');
+        return;
+      }
+
+      const token = (await Notifications.getExpoPushTokenAsync()).data;
+      console.log('Expo Push Token:', token);
+
+      // 토큰을 AsyncStorage에 저장
+      await AsyncStorage.setItem('expoPushToken', token);
+
+      // 저장된 토큰을 가져오기
+      const storedToken = await AsyncStorage.getItem('expoPushToken');
+      console.log('Stored Expo Push Token:', storedToken);
+
+      // 서버에 토큰 저장 로직 추가 가능
+      // 예: await saveTokenToServer(token);
+    } catch (error) {
+      console.error('푸시 알림 등록 실패:', error);
+    }
+  };
 
   const fetchProfileData = async () => {
     try {
@@ -52,10 +92,6 @@ const MainScreen = () => {
       console.error('탑승 인원 정보를 가져오는 중 오류 발생:', error);
     }
   };
-
-  useEffect(() => {
-    fetchPassengerData();
-  }, []);
 
   useFocusEffect(
     React.useCallback(() => {
