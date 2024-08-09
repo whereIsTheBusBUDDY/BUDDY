@@ -38,7 +38,7 @@ public class JwtTokenProvider {
     }
 
     public String createAccessToken(Member member) {
-        return createToken(member, 1000 * 60 * 3, secretKey);
+        return createToken(member, 1000 * 60 * 60, secretKey);
     }
 
     public String createRefreshToken(Member member) {
