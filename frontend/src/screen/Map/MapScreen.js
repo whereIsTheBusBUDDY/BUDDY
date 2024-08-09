@@ -17,11 +17,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { WHITE, PRIMARY, GRAY } from '../../constant/color';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
-import { BLACK, WHITE, SKYBLUE } from '../../constant/color';
-
-// 색상 상수 정의
-const PRIMARY = '#f97316'; // 예시: 주황색
-const GRAY = '#ccc'; // 예시: 회색
 
 const MapScreen = () => {
   const [selectedRoute, setSelectedRoute] = useState('1'); // 기본적으로 '1'
@@ -382,13 +377,13 @@ const styles = StyleSheet.create({
   star: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: GRAY, // 초기 별 색상은 회색
+    color: GRAY.DEFAULT, // 초기 별 색상은 회색
     marginLeft: 10,
   },
   starSelected: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: PRIMARY, // 선택 시 별 색상은 주황색
+    color: PRIMARY.DEFAULT, // 선택 시 별 색상은 주황색
     marginLeft: 10,
   },
   partline: {
