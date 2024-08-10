@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { CameraType } from 'expo-camera/build/legacy/Camera.types';
 import { useState, useRef } from 'react';
@@ -59,21 +61,32 @@ const CameraScreen = () => {
         const fileName = fileUri.split('/').pop();
         const fileType = `image/${fileName.split('.').pop()}`;
 
-        formData.append('file', {
+        formData.append('image', {
           uri: fileUri,
           type: fileType,
           name: fileName,
         });
 
-        const response = await fetch('http://i11b109.p.ssafy.io:8080/upload', {
-          method: 'POST',
-          body: formData,
-        });
-        const result = await response.json();
-        console.log(result);
-        navigation.navigate('IDScreen', { result });
+        console.log('Sending photo to server...', formData);
+
+        // 서버로 요청 보내기
+        const response = await axios.post(
+          'http://i11b109.p.ssafy.io:8080/upload', // 올바른 URL인지 확인
+          formData,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data', // 정확한 헤더 설정
+            },
+          }
+        );
+
+        console.log('서버 응답:', response.data);
+        navigation.navigate('IDScreen', { result: response.data });
       } catch (error) {
-        console.error('Error uploading image:', error);
+        console.error(
+          '이미지 업로드 에러:',
+          error.response ? error.response.data : error.message
+        );
         // 오류 발생 시 버튼을 다시 활성화
         setButtonDisabled(false);
       }

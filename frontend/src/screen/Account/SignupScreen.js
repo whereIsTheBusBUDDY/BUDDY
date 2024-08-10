@@ -14,8 +14,10 @@ import Input, { keyboardTypes } from '../../components/SignupInput';
 import RegistButton from '../../components/RegistButton';
 import ProgressBar from '../../components/ProgressBar';
 import { signUp } from '../../api/auth';
-import ModalDropdown from 'react-native-modal-dropdown';
 import apiClient from '../../api/api';
+import InputWithButton from '../../components/InputWithButton'; // 새롭게 만든 컴포넌트 임포트
+import ModalDropdown from 'react-native-modal-dropdown';
+import { PRIMARY } from '../../constant/color';
 
 const SignupScreen = () => {
   const [name, setName] = useState('');
@@ -26,8 +28,9 @@ const SignupScreen = () => {
   const [passwordConfirm, setPasswordConfirm] = useState('');
   const [selectedLine, setSelectedLine] = useState(null);
   const [isDisabled, setIsDisabled] = useState(true);
-  const [isStudentIdChecked, setIsStudentIdChecked] = useState(false); // 학번 중복 확인 상태
-  const [emailError, setEmailError] = useState(''); // 이메일 에러 메시지 상태
+  const [isStudentIdChecked, setIsStudentIdChecked] = useState(false);
+  const [isNicknameChecked, setIsNicknameChecked] = useState(false);
+  const [emailError, setEmailError] = useState('');
 
   const navigation = useNavigation();
   const step = 2;
@@ -36,13 +39,14 @@ const SignupScreen = () => {
     const validateForm = () => {
       if (
         name &&
-        studentId &&
-        nickname &&
+        studentId.length === 7 &&
+        isStudentIdChecked && // 학번 중복 확인 여부
+        nickname.trim() !== '' &&
+        isNicknameChecked && // 닉네임 중복 확인 여부
         validateEmail(email) &&
         password &&
         passwordConfirm &&
-        selectedLine &&
-        isStudentIdChecked
+        selectedLine
       ) {
         setIsDisabled(false);
       } else {
@@ -60,10 +64,10 @@ const SignupScreen = () => {
     passwordConfirm,
     selectedLine,
     isStudentIdChecked,
+    isNicknameChecked,
   ]);
 
   const validateEmail = (email) => {
-    // 이메일 유효성 검사 정규식
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const isValid = emailRegex.test(email);
     setEmailError(isValid ? '' : '이메일 형식이 아닙니다.');
@@ -73,6 +77,11 @@ const SignupScreen = () => {
   const handleRegister = async () => {
     if (!isStudentIdChecked) {
       Alert.alert('', '학번 중복 확인을 해주세요.');
+      return;
+    }
+
+    if (!isNicknameChecked) {
+      Alert.alert('', '닉네임 중복 확인을 해주세요.');
       return;
     }
 
@@ -109,12 +118,10 @@ const SignupScreen = () => {
       );
 
       if (response.data === true) {
-        // 중복된 학번인 경우
         Alert.alert('', '이미 가입된 학번입니다.');
         setStudentId('');
         setIsStudentIdChecked(false);
       } else {
-        // 사용 가능한 학번인 경우
         Alert.alert('', '사용 가능한 학번입니다.');
         setIsStudentIdChecked(true);
       }
@@ -124,13 +131,38 @@ const SignupScreen = () => {
     }
   };
 
-  // 학번이 변경되면 중복 확인 상태를 초기화
-  const handleStudentIdChange = (text) => {
-    setStudentId(text);
-    setIsStudentIdChecked(false);
+  const handleCheckNickname = async () => {
+    try {
+      const response = await apiClient.get(
+        `/check-nickname?nickname=${nickname}`
+      );
+
+      if (response.data === true) {
+        Alert.alert('', '이미 사용 중인 닉네임입니다.');
+        setNickname('');
+        setIsNicknameChecked(false);
+      } else {
+        Alert.alert('', '사용 가능한 닉네임입니다.');
+        setIsNicknameChecked(true);
+      }
+    } catch (error) {
+      console.error('Request failed:', error.message);
+      Alert.alert('오류 발생', '닉네임 확인 중 문제가 발생했습니다.');
+    }
   };
 
-  // 드롭다운 위치를 조정하는 함수
+  const handleStudentIdChange = (text) => {
+    // 숫자만 입력되도록 하고, 7자리가 아니면 버튼 비활성화
+    const numericText = text.replace(/[^0-9]/g, '');
+    setStudentId(numericText);
+    setIsStudentIdChecked(false); // 학번 변경 시 중복 확인 상태 초기화
+  };
+
+  const handleNicknameChange = (text) => {
+    setNickname(text);
+    setIsNicknameChecked(false); // 닉네임 변경 시 중복 확인 상태 초기화
+  };
+
   const adjustDropdownFrame = (frameStyle) => {
     const dropdownHeight = 150;
     const topPosition = frameStyle.y - dropdownHeight;
@@ -157,25 +189,24 @@ const SignupScreen = () => {
               placeholder=""
               style={styles.input}
             />
-            <Input
-              title={'학번*'}
+            <InputWithButton
+              placeholder="학번*"
+              buttonText="중복 확인"
               value={studentId}
               onChangeText={handleStudentIdChange}
-              placeholder=""
-              style={styles.input}
-            />
-            <RegistButton
-              title="중복 확인"
-              buttonType={studentId && !isStudentIdChecked ? 'PRIMARY' : 'GRAY'}
               onPress={handleCheckStudentId}
-              disabled={!studentId || isStudentIdChecked}
+              keyboardType="numeric"
+              maxLength={7}
+              disabled={studentId.length !== 7} // 7자리가 아니면 버튼 비활성화
             />
-            <Input
-              title={'닉네임*'}
+            <InputWithButton
+              placeholder="닉네임*"
+              buttonText="중복 확인"
               value={nickname}
-              onChangeText={(text) => setNickname(text)}
-              placeholder=""
-              style={styles.input}
+              onChangeText={handleNicknameChange}
+              onPress={handleCheckNickname}
+              keyboardType="default" // 기본 키보드 설정
+              disabled={nickname.trim() === ''} // 닉네임이 비어있으면 버튼 비활성화
             />
             <Input
               title={'이메일*'}
@@ -274,7 +305,8 @@ const styles = StyleSheet.create({
     color: '#949089',
   },
   errorText: {
-    color: 'red',
+    color: PRIMARY.DEFAULT,
+    marginLeft: 15,
     fontSize: 12,
     marginBottom: 10,
   },

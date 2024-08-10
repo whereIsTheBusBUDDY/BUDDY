@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
   View,
   Text,
@@ -9,20 +9,25 @@ import {
 } from 'react-native';
 import { useWebSocket } from '../../context/WebSocketContext';
 import apiClient from '../../api/api';
+import { SKYBLUE } from '../../constant/color';
 
 const ChatScreen = ({ route }) => {
   const { roomId } = route.params;
-  const { connect, sendMessage, messages } = useWebSocket();
+  const { connect, disconnect, sendMessage, messages, connected } =
+    useWebSocket();
   const [text, setText] = useState('');
   const [username, setUsername] = useState('');
-  const [isConnected, setIsConnected] = useState(false);
+  const flatListRef = useRef(null);
 
   useEffect(() => {
-    if (!isConnected) {
+    if (!connected) {
       connect(roomId);
-      setIsConnected(true);
     }
-  }, []);
+
+    return () => {
+      disconnect();
+    };
+  }, [roomId]);
 
   useEffect(() => {
     const fetchNickname = async () => {
@@ -42,41 +47,52 @@ const ChatScreen = ({ route }) => {
     if (text.trim()) {
       sendMessage(roomId, text, username);
       setText('');
+      // 전송 후 자동 스크롤
+      if (flatListRef.current) {
+        flatListRef.current.scrollToEnd({ animated: true });
+      }
     }
   };
 
-  const renderMessage = ({ item }) => {
-    const isUserMessage = item.sender === username;
-    return (
-      <View
-        style={[
-          styles.messageContainer,
-          isUserMessage
-            ? styles.userMessageContainer
-            : styles.otherMessageContainer,
-        ]}
-      >
-        <View
-          style={[
-            styles.messageBubble,
-            isUserMessage
-              ? styles.userMessageBubble
-              : styles.otherMessageBubble,
-          ]}
-        >
-          <Text style={styles.messageText}>{item.message}</Text>
-        </View>
-        <Text style={styles.senderText}>{item.sender}</Text>
-      </View>
-    );
+  const scrollToBottom = () => {
+    if (flatListRef.current) {
+      flatListRef.current.scrollToEnd({ animated: false });
+    }
   };
 
   return (
     <View style={{ flex: 1, padding: 16 }}>
       <FlatList
+        ref={flatListRef}
         data={messages}
         keyExtractor={(item, index) => index.toString()}
-        renderItem={renderMessage}
+        renderItem={({ item }) => {
+          const isUserMessage = item.sender === username;
+          return (
+            <View
+              style={[
+                styles.messageContainer,
+                isUserMessage
+                  ? styles.userMessageContainer
+                  : styles.otherMessageContainer,
+              ]}
+            >
+              <View
+                style={[
+                  styles.messageBubble,
+                  isUserMessage
+                    ? styles.userMessageBubble
+                    : styles.otherMessageBubble,
+                ]}
+              >
+                <Text style={styles.messageText}>{item.message}</Text>
+              </View>
+              <Text style={styles.senderText}>{item.sender}</Text>
+            </View>
+          );
+        }}
+        onLayout={scrollToBottom} // 처음 렌더링 시 맨 아래로 스크롤
+        onContentSizeChange={scrollToBottom} // 내용이 변경될 때 맨 아래로 스크롤
       />
       <View style={styles.inputContainer}>
         <TextInput
@@ -85,7 +101,7 @@ const ChatScreen = ({ route }) => {
           placeholder="Type a message"
           style={styles.input}
         />
-        <Button title="Send" onPress={handleSend} disabled={!isConnected} />
+        <Button title="Send" onPress={handleSend} disabled={!connected} />
       </View>
     </View>
   );
@@ -109,7 +125,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   userMessageBubble: {
-    backgroundColor: '#DCF8C6',
+    backgroundColor: SKYBLUE.FONT,
   },
   otherMessageBubble: {
     backgroundColor: '#E5E5EA',
