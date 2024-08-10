@@ -30,8 +30,6 @@ public class KafkaProducer {
         config.put(ProducerConfig.BUFFER_MEMORY_CONFIG, 33554432);
         config.put(ProducerConfig.RETRIES_CONFIG, Integer.MAX_VALUE);
         config.put(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, 6);
-        config.put(ProducerConfig.MAX_BLOCK_MS_CONFIG, 5000);
-
         return new DefaultKafkaProducerFactory<>(config);
     }
     @Bean
