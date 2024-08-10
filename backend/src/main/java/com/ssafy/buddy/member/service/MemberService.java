@@ -34,6 +34,7 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
     private final WebClient.Builder webClientBuilder;
     private WebClient webClient;
+    private final EmailSender emailSender;
 
     @PostConstruct
     public void init() {
@@ -93,9 +94,7 @@ public class MemberService {
         String temporaryPassword = UUID.randomUUID().toString().substring(0, 6);
         member.updatePassword(passwordEncoder.encode(temporaryPassword));
 
-        log.info("email : {}  password : {}", email, temporaryPassword);
-
-        // TODO: emailSender.sendTemporaryPassword(email, temporaryPassword)
+        emailSender.sendTemporaryPassword(email, temporaryPassword);
     }
 
     @Transactional
