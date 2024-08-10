@@ -1,5 +1,6 @@
 package com.ssafy.buddy.member.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.buddy.member.controller.request.SignUpRequest;
 import com.ssafy.buddy.member.controller.request.UpdateRequest;
@@ -109,7 +110,7 @@ public class MemberService {
     }
 
     //fastAPI yolo 요청
-    public ResponseEntity<IdcardCheckResponse> sendImageToFastApi(MultipartFile image) throws Exception {
+    public ResponseEntity<IdcardCheckResponse> sendImageToFastApi(MultipartFile image){
         if (image == null || image.isEmpty()) {
             throw new IllegalArgumentException("File is missing");
         }
@@ -127,7 +128,12 @@ public class MemberService {
         System.out.println(responseBody); // 응답 내용 확인
 
         ObjectMapper mapper = new ObjectMapper();
-        IdcardCheckResponse response = mapper.readValue(responseBody, IdcardCheckResponse.class);
+        IdcardCheckResponse response = null;
+        try {
+            response = mapper.readValue(responseBody, IdcardCheckResponse.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
 
         // ResponseEntity로 IdcardCheckResponse 객체를 반환
         return ResponseEntity.ok(response);
