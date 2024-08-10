@@ -14,7 +14,6 @@ export default function App({ route }) {
   const [category, setcategory] = useState(route.params.selectedCategory);
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  console.log(category);
 
   const handleSubmit = async () => {
     if (!title || !content) {

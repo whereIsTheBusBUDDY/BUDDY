@@ -55,9 +55,7 @@ const EditScreen = ({ route, navigation }) => {
       if (response.ok) {
         Alert.alert('성공', '게시글이 성공적으로 수정되었습니다!');
         // 수정이 완료되면 DetailScreen으로 수정된 데이터를 전달하여 이동
-        navigation.navigate('Detail', {
-          board: { ...board, title, boardContent }, // 수정된 내용 전달
-        });
+        navigation.navigate('Board');
       } else {
         Alert.alert('오류', `게시글 수정 실패: ${response.statusText}`);
       }
