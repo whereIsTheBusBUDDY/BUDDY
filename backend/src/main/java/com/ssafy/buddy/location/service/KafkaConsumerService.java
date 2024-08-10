@@ -27,6 +27,7 @@ public class KafkaConsumerService {
 
     @KafkaListener(topics = "bus-1-location", groupId = "bus-1-group")
     public void consumeBus1(ConsumerRecord<String, String> record, Acknowledgment ack) {
+        log.info("Consuming message from bus-1-location: {}", record.value());
         ObjectMapper objectMapper = new ObjectMapper();
         String location = record.value();
         try{
@@ -43,6 +44,7 @@ public class KafkaConsumerService {
     }
     @KafkaListener(topics = "bus-2-location", groupId = "bus-2-group")
     public void consumeBus2(ConsumerRecord<String, String> record, Acknowledgment ack) {
+        log.info("Consuming message from bus-2-location: {}", record.value());
         ObjectMapper objectMapper = new ObjectMapper();
         String location = record.value();
         try{
@@ -59,6 +61,7 @@ public class KafkaConsumerService {
     }
     @KafkaListener(topics = "bus-3-location", groupId = "bus-3-group")
     public void consumeBus3(ConsumerRecord<String, String> record, Acknowledgment ack) {
+        log.info("Consuming message from bus-3-location: {}", record.value());
         ObjectMapper objectMapper = new ObjectMapper();
         String location = record.value();
         try{
@@ -75,6 +78,7 @@ public class KafkaConsumerService {
     }
     @KafkaListener(topics = "bus-4-location", groupId = "bus-4-group")
     public void consumeBus4(ConsumerRecord<String, String> record, Acknowledgment ack) {
+        log.info("Consuming message from bus-4-location: {}", record.value());
         ObjectMapper objectMapper = new ObjectMapper();
         String location = record.value();
         try{
@@ -91,6 +95,7 @@ public class KafkaConsumerService {
     }
     @KafkaListener(topics = "bus-5-location", groupId = "bus-5-group")
     public void consumeBus5(ConsumerRecord<String, String> record, Acknowledgment ack) {
+        log.info("Consuming message from bus-5-location: {}", record.value());
         ObjectMapper objectMapper = new ObjectMapper();
         String location = record.value();
         try{
@@ -108,6 +113,7 @@ public class KafkaConsumerService {
     }
     @KafkaListener(topics = "bus-6-location", groupId = "bus-6-group")
     public void consumeBus6(ConsumerRecord<String, String> record, Acknowledgment ack) {
+        log.info("Consuming message from bus-6-location: {}", record.value());
         ObjectMapper objectMapper = new ObjectMapper();
         String location = record.value();
         try{
