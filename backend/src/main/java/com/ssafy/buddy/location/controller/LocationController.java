@@ -30,10 +30,10 @@ public class LocationController {
         return ResponseEntity.ok("운행 종료 성공");
     }
 
-    @GetMapping("/start/check/{busId}")
-    public ResponseEntity<?> startCheck(@PathVariable int busId) {
-        boolean b = locationService.checkBusStart(busId);
-        return ResponseEntity.ok(b);
+    @GetMapping("/start/check")
+    public ResponseEntity<?> startCheck() {
+        boolean checkBusStart = locationService.checkBusStart();
+        return ResponseEntity.ok(checkBusStart);
     }
 
     @GetMapping("/location/1")
