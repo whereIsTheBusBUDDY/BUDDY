@@ -69,4 +69,8 @@ public class BoardingService {
             notificationService.sendMessageToMember(NotificationType.ARRIVE, memberId, currentStation.getStationName());
         }
     }
+
+    public int countBoardingByBusNumber(int busNumber) {
+        return boardingRepository.countBoardingByBusNumber(busNumber);
+    }
 }

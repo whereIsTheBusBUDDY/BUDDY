@@ -2,6 +2,7 @@ package com.ssafy.buddy.location.domain;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.util.Date;
 
@@ -11,6 +12,7 @@ import static lombok.AccessLevel.PROTECTED;
 @Getter
 @Table(name = "fifth_bus")
 @NoArgsConstructor(access = PROTECTED)
+@ToString
 public class FifthBus {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

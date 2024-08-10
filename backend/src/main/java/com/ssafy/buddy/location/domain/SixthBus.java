@@ -3,6 +3,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.util.Date;
 
@@ -13,6 +14,7 @@ import static lombok.AccessLevel.PROTECTED;
 @Table(name = "sixth_bus")
 @NoArgsConstructor(access = PROTECTED)
 @AllArgsConstructor
+@ToString
 public class SixthBus {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

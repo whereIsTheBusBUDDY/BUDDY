@@ -105,4 +105,27 @@ public class LocationService {
             throw new IllegalArgumentException("유효하지 않은 버스번호입니다");
         }
     }
+    public boolean checkBusStart(int busId){
+        if(busId == 1){
+            long count = firstBusRepository.count();
+            return count != 0;
+        }else if(busId == 2){
+            long count = secondBusRepository.count();
+            return count != 0;
+        }else if(busId == 3){
+            long count = thirdBusRepository.count();
+            return count != 0;
+        }else if(busId == 4){
+            long count = fourthRepository.count();
+            return count != 0;
+        }else if(busId == 5){
+            long count = fifthBusRepository.count();
+            return count != 0;
+        }else if(busId == 6){
+            long count = sixthBusRepository.count();
+            return count != 0;
+        }else {
+            return false;
+        }
+    }
 }

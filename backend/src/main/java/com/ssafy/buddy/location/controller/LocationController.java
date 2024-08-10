@@ -29,6 +29,13 @@ public class LocationController {
         locationService.stopBus(busId);
         return ResponseEntity.ok("운행 종료 성공");
     }
+
+    @GetMapping("/start/check/{busId}")
+    public ResponseEntity<?> startCheck(@PathVariable int busId) {
+        boolean b = locationService.checkBusStart(busId);
+        return ResponseEntity.ok(b);
+    }
+
     @GetMapping("/location/1")
     public ResponseEntity<?> firstBusLocation() {
         FirstBus firstBusLocation = locationService.getLatestFirstBusLocation();
