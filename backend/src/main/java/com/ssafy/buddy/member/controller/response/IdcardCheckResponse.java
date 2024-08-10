@@ -10,5 +10,5 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class IdcardCheckResponse {
-    private String allow;
+    private boolean allow;
 }
