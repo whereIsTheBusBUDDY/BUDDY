@@ -6,7 +6,7 @@ export const ButtonType = {
   PRIMARY: 'PRIMARY',
   GRAY: 'GRAY',
 };
-const StartTrackingButton = ({
+const StopTrackingButton = ({
   title,
   onPress,
   disabled,
@@ -28,17 +28,10 @@ const StartTrackingButton = ({
         ]}
         disabled={disabled}
       >
-        <View style={styles.img_contianer}>
-          <Image
-            source={require('../../../assets/busLogo.png')}
-            style={styles.img}
-          />
-          <View style={styles.title_contianer}>
-            <Text style={[styles.title, { color: textColor }]}>{title}</Text>
-            <Text style={[styles.title, { color: textColor }]}>
-              {'운행시작'}
-            </Text>
-          </View>
+        <View style={styles.title_contianer}>
+          <Text style={[styles.title, { color: textColor }]}>
+            {title} 운행종료
+          </Text>
         </View>
       </Pressable>
     </View>
@@ -53,26 +46,16 @@ const styles = StyleSheet.create({
     width: '100%',
     paddingHorizontal: 25,
     marginHorizontal: 5,
+    marginBottom: 30,
   },
   title: {
     color: '#000',
-    fontSize: 30,
+    fontSize: 15,
     fontWeight: 'bold',
     justifyContent: 'center',
-  },
-  img_contianer: {
-    // alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-  },
-  img: {
-    width: 110,
-    height: 90,
-    resizeMode: 'cover',
-    marginRight: 20,
   },
   title_contianer: {
     alignItems: 'center',
   },
 });
-export default StartTrackingButton;
+export default StopTrackingButton;
