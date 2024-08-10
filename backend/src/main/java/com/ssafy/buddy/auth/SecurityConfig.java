@@ -46,7 +46,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/sign-up", "/admin", "/login", "/refresh",
-                                "/check-studentId", "/reset-password", "/ws/**").permitAll()
+                                "/check-studentId", "/reset-password", "/ws/**","/upload").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
