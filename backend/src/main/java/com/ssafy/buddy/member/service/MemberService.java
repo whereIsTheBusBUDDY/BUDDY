@@ -1,5 +1,6 @@
 package com.ssafy.buddy.member.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.buddy.member.controller.request.SignUpRequest;
 import com.ssafy.buddy.member.controller.request.UpdateRequest;
 import com.ssafy.buddy.member.controller.response.IdcardCheckResponse;
@@ -108,19 +109,27 @@ public class MemberService {
     }
 
     //fastAPI yolo 요청
-    public ResponseEntity<IdcardCheckResponse> sendImageToFastApi(MultipartFile image) {
+    public ResponseEntity<IdcardCheckResponse> sendImageToFastApi(MultipartFile image) throws Exception {
         if (image == null || image.isEmpty()) {
             throw new IllegalArgumentException("File is missing");
         }
 
         String yoloUrl = fastApiUrl + "/yolo";
 
-        return webClient.post()
+        String responseBody = webClient.post()
                 .uri(yoloUrl)
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.MULTIPART_FORM_DATA_VALUE)
                 .body(BodyInserters.fromMultipartData("file", image.getResource()))
                 .retrieve()
-                .toEntity(IdcardCheckResponse.class)
-                .block(); // 동기적으로 응답을 기다림
+                .bodyToMono(String.class)
+                .block();
+
+        System.out.println(responseBody); // 응답 내용 확인
+
+        ObjectMapper mapper = new ObjectMapper();
+        IdcardCheckResponse response = mapper.readValue(responseBody, IdcardCheckResponse.class);
+
+        // ResponseEntity로 IdcardCheckResponse 객체를 반환
+        return ResponseEntity.ok(response);
     }
 }
