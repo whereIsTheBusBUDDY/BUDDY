@@ -1,23 +1,37 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { ScrollView, StyleSheet, View, Text } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import BoardItem from '../../components/BoardItem';
 import TabButton from '../../components/BoardTabButton';
 import { WHITE, GRAY } from '../../constant/color';
 import apiClient from '../../api/api';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const BoardScreen = () => {
   const navigate = useNavigation();
-  const [selectedCategory, setSelectedCategory] = useState('free');
+  const [selectedCategory, setSelectedCategory] = useState('notice');
   const [boards, setBoards] = useState([]);
-  console.log(boards);
+  const [role, setRole] = useState('');
+
+  useEffect(() => {
+    const fetchUserRole = async () => {
+      try {
+        const userRole = await AsyncStorage.getItem('userRole');
+        setRole(userRole);
+      } catch (error) {
+        console.error('역할 정보 조회 실패:', error);
+      }
+    };
+
+    fetchUserRole();
+  }, []);
 
   const fetchBoards = useCallback(async () => {
     try {
       const response = await apiClient.get(
         `/board?category=${selectedCategory}`
       );
-      setBoards(response.data);
+      setBoards(response.data.reverse()); // 게시물을 역순으로 저장하여 최신 게시물이 위로 오도록 설정
     } catch (error) {
       console.error('게시판 조회 실패:', error);
     }
@@ -25,7 +39,6 @@ const BoardScreen = () => {
 
   useFocusEffect(
     useCallback(() => {
-      // 화면이 포커스될 때마다 게시판 목록을 새로고침
       fetchBoards();
     }, [fetchBoards])
   );
@@ -53,13 +66,24 @@ const BoardScreen = () => {
             isActive={selectedCategory === 'free'}
             onPress={() => setSelectedCategory('free')}
           />
-          <TabButton
-            title="글쓰기"
-            onPress={() => {
-              navigate.navigate('Create', { selectedCategory });
-              console.log(selectedCategory);
-            }}
-          />
+          {selectedCategory === 'notice' && role === 'ADMIN' && (
+            <TabButton
+              title="글쓰기"
+              onPress={() => {
+                navigate.navigate('Create', { selectedCategory });
+                console.log(selectedCategory);
+              }}
+            />
+          )}
+          {selectedCategory === 'free' && (
+            <TabButton
+              title="글쓰기"
+              onPress={() => {
+                navigate.navigate('Create', { selectedCategory });
+                console.log(selectedCategory);
+              }}
+            />
+          )}
         </View>
         <ScrollView>
           {boards.map((board, index) => (

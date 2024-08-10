@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import {
   View,
   Text,
@@ -6,7 +6,6 @@ import {
   ScrollView,
   Alert,
   Button,
-  TextInput,
   SafeAreaView,
   KeyboardAvoidingView,
   Platform,
@@ -14,16 +13,32 @@ import {
 import { BLACK, WHITE, SKYBLUE, GRAY, PRIMARY } from '../../constant/color';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
-import CommentItem from '../../components/CommentItem';
 import { useUserContext } from '../../context/UserContext';
 import SendInput from '../../components/SendInput';
+import apiClient from '../../api/api';
 
 const DetailScreen = ({ route }) => {
   const { setUser, setLoginUser } = useUserContext();
   const [board, setBoard] = useState(route.params.board);
   const [comment, setComment] = useState('');
   const [comments, setComments] = useState(board.comments || []); // 댓글 상태 추가
+  const [nickname, setNickname] = useState(''); // 현재 사용자의 닉네임 상태 추가
   const navigation = useNavigation();
+
+  // API를 통해 닉네임 가져오기
+  useEffect(() => {
+    const fetchNickname = async () => {
+      try {
+        const response = await apiClient.get('/members/me');
+        const { nickname } = response.data;
+        setNickname(nickname);
+      } catch (error) {
+        console.error('닉네임 가져오기 실패:', error);
+      }
+    };
+
+    fetchNickname();
+  }, []);
 
   useFocusEffect(
     useCallback(() => {
@@ -31,7 +46,7 @@ const DetailScreen = ({ route }) => {
       const updatedBoard = route.params.board;
       if (updatedBoard) {
         setBoard(updatedBoard);
-        setComments((updatedBoard.comments || []).reverse()); // 최신 댓글이 위로 오도록 역순 정렬
+        setComments(updatedBoard.comments || []); // 댓글을 원래 순서대로 저장
       }
     }, [route.params.board])
   );
@@ -102,10 +117,10 @@ const DetailScreen = ({ route }) => {
           commentId: new Date().getTime().toString(), // 임시 ID
           commentContent: comment,
           createDate: new Date().toISOString(), // 현재 시간을 ISO 문자열로 변환
-          nickname: '익명', // 임시 닉네임
+          nickname: nickname || '익명', // 사용자 닉네임
         };
-        setComments((prevComments) => [newComment, ...prevComments]); // 새로운 댓글을 맨 앞에 추가
-        setComment(''); // 입력 필드를 초기화합니다.
+        setComments((prevComments) => [...prevComments, newComment]); // 새로운 댓글을 맨 아래에 추가
+        setComment('');
         Alert.alert('성공', '댓글이 성공적으로 작성되었습니다!');
       } else {
         const errorText = await response.text();
@@ -118,8 +133,27 @@ const DetailScreen = ({ route }) => {
   };
 
   const handleCommentDelete = (deletedCommentId) => {
-    setComments((prevComments) =>
-      prevComments.filter((comment) => comment.commentId !== deletedCommentId)
+    Alert.alert(
+      '삭제 확인',
+      '댓글을 삭제하시겠습니까?',
+      [
+        {
+          text: '취소',
+          style: 'cancel',
+        },
+        {
+          text: '삭제',
+          onPress: () => {
+            setComments((prevComments) =>
+              prevComments.filter(
+                (comment) => comment.commentId !== deletedCommentId
+              )
+            );
+          },
+          style: 'destructive',
+        },
+      ],
+      { cancelable: true }
     );
   };
 
@@ -141,7 +175,7 @@ const DetailScreen = ({ route }) => {
             <View style={styles.tabContainer}>
               <Text style={styles.boardTitle}>{board.title}</Text>
               <Text style={styles.boardDate}>
-                작성자: {board.memberID}
+                작성자: {board.boardMemberNickname} |{' '}
                 {new Date(board.createDate).toLocaleString()}
               </Text>
             </View>
@@ -149,50 +183,53 @@ const DetailScreen = ({ route }) => {
               <Text style={styles.boardContent}>{board.boardContent}</Text>
             </View>
           </View>
-          <Button title="삭제" color="red" onPress={handleDeleteBoard} />
-          <Button
-            title="수정"
-            color="blue"
-            onPress={() => navigation.navigate('Edit', { board })}
-          />
+          {nickname === board.boardMemberNickname && (
+            <View style={styles.buttonContainer}>
+              <Button title="삭제" color="red" onPress={handleDeleteBoard} />
+              <Button
+                title="수정"
+                color="blue"
+                onPress={() => navigation.navigate('Edit', { board })}
+              />
+            </View>
+          )}
           {board.category === 'free' && (
             <>
-              <Text style={styles.commentTitle}>댓글</Text>
-              <View style={styles.commentContainer}>
-                {comments.length > 0 ? (
-                  comments.map((comment) => (
-                    <View key={comment.commentId} style={styles.comment}>
-                      <Text style={styles.commentAuthor}>
-                        {comment.nickname}
-                      </Text>
-                      <Text style={styles.commentText}>
-                        {comment.commentContent}
-                      </Text>
-                      <Text style={styles.commentDate}>
-                        {new Date(comment.createDate).toLocaleString()}
-                      </Text>
-                      <Button
-                        title="삭제"
-                        onPress={() => handleCommentDelete(comment.commentId)}
-                      />
-                    </View>
-                  ))
-                ) : (
-                  <Text style={styles.noComments}>댓글이 없습니다.</Text>
-                )}
-              </View>
+              <ScrollView style={styles.commentScrollContainer}>
+                <Text style={styles.commentTitle}>댓글</Text>
+                <View style={styles.commentContainer}>
+                  {comments.length > 0 ? (
+                    comments.map((comment) => (
+                      <View key={comment.commentId} style={styles.comment}>
+                        <Text style={styles.commentAuthor}>
+                          {comment.nickname}
+                        </Text>
+                        <Text style={styles.commentText}>
+                          {comment.commentContent}
+                        </Text>
+                        <Text style={styles.commentDate}>
+                          {new Date(comment.createDate).toLocaleString()}
+                        </Text>
+                        {nickname === comment.nickname && (
+                          <Button
+                            title="삭제"
+                            onPress={() =>
+                              handleCommentDelete(comment.commentId)
+                            }
+                          />
+                        )}
+                      </View>
+                    ))
+                  ) : (
+                    <Text style={styles.noComments}>댓글이 없습니다.</Text>
+                  )}
+                </View>
+              </ScrollView>
             </>
           )}
         </ScrollView>
         {board.category === 'free' && (
           <View style={styles.commentInputContainer}>
-            {/* <TextInput
-              style={styles.commentInput}
-              placeholder="댓글을 입력해주세요!"
-              value={comment}
-              onChangeText={setComment}
-            /> */}
-            {/* <Button title="작성" onPress={handleCommentSubmit} /> */}
             <SendInput
               placeholder="댓글을 입력해주세요!"
               buttonText="작성"
@@ -220,7 +257,6 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     paddingHorizontal: 20,
     paddingTop: 20,
-    paddingBottom: 400, // 스크롤 가능한 영역 확보를 위해 여백 추가
   },
   noticeContainer: {
     minHeight: '60%',
@@ -229,7 +265,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   noticeFullHeight: {
-    minHeight: '100%',
+    minHeight: '80%',
     marginBottom: 0,
   },
   freeContainer: {
@@ -257,16 +293,24 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: GRAY.FONT,
   },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginVertical: 10,
+    paddingHorizontal: 20,
+  },
+  commentScrollContainer: {
+    maxHeight: 200, // 댓글 리스트가 스크롤되도록 최대 높이 설정
+  },
+  commentContainer: {
+    marginBottom: 20,
+  },
   comment: {
     marginBottom: 10,
     backgroundColor: GRAY.BACKGROUND,
     borderRadius: 15,
     paddingVertical: 10,
     paddingHorizontal: 20,
-  },
-
-  commentContainer: {
-    marginBottom: 20,
   },
   commentTitle: {
     fontSize: 18,
@@ -289,7 +333,6 @@ const styles = StyleSheet.create({
     color: GRAY.FONT,
     marginLeft: 3,
   },
-
   noComments: {
     fontSize: 14,
     color: GRAY.FONT,
