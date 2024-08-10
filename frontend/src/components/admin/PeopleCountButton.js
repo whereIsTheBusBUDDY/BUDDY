@@ -11,6 +11,7 @@ const PeopleCountButton = ({
   disabled,
   buttonType,
   height,
+  value,
 }) => {
   const colors = { PRIMARY, GRAY };
   const textColor = buttonType === ButtonType.PRIMARY ? WHITE : BLACK;
@@ -29,7 +30,9 @@ const PeopleCountButton = ({
         <View style={styles.img_contianer}>
           <View style={styles.title_contianer}>
             <Text style={[styles.title, { color: textColor }]}>{title}</Text>
-            <Text style={[styles.count, { color: PRIMARY.DEFAULT }]}>23명</Text>
+            <Text style={[styles.count, { color: PRIMARY.DEFAULT }]}>
+              {`${value}명`}
+            </Text>
           </View>
         </View>
       </Pressable>

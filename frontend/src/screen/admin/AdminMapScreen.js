@@ -1,4 +1,5 @@
 import {
+  Alert,
   Button,
   Dimensions,
   Image,
@@ -13,6 +14,9 @@ import MapView, { Marker } from 'react-native-maps';
 import { useEffect, useRef, useState } from 'react';
 import * as Location from 'expo-location';
 import { FontAwesome } from '@expo/vector-icons'; // 아이콘을 사용하기 위해 추가
+import StopTrackingButton from '../../components/admin/StopTrackingButton';
+import { ButtonType } from '../../components/AdminSelectButton';
+import { useNavigation } from '@react-navigation/native';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const AdminMapScreen = () => {
@@ -24,8 +28,11 @@ const AdminMapScreen = () => {
     handleStopTracking,
     setLocation,
     location,
+    setIsTracking,
     isTracking,
   } = useAdminContext();
+  const navigate = useNavigation();
+
   const moveToMarker = () => {
     if (locationMap && mapRef.current) {
       mapRef.current.animateToRegion({
@@ -35,6 +42,17 @@ const AdminMapScreen = () => {
       });
     }
   };
+  const stopBus = () => {
+    setIsTracking(false);
+    console.log('stopBus 실행');
+    // if (!isTracking) {
+    //   handleStopTracking();
+    // }
+    handleStopTracking();
+    Alert.alert('운행을 종료합니다.');
+    navigate.navigate('AdminMain');
+  };
+
   // const ask = async () => {
   //   let {
   //     coords: { latitude, longitude },
@@ -81,6 +99,15 @@ const AdminMapScreen = () => {
           <Text style={styles.cityName}>Loading...</Text>
         </View>
       )}
+      <View style={styles.closebus}>
+        <StopTrackingButton
+          title={`${busNumber}호차`}
+          onPress={stopBus}
+          disabled={false}
+          buttonType={ButtonType.PRIMARY}
+          height={50}
+        />
+      </View>
       <TouchableOpacity style={styles.button} onPress={moveToMarker}>
         <FontAwesome name="location-arrow" size={24} color="white" />
       </TouchableOpacity>
@@ -122,9 +149,17 @@ const styles = StyleSheet.create({
     marginTop: -30,
     fontSize: 60,
   },
+  closebus: {
+    position: 'absolute',
+    bottom: -50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 10,
+    width: '100%',
+  },
   button: {
     position: 'absolute',
-    bottom: 20,
+    bottom: 90,
     right: 20,
     backgroundColor: 'orange',
     borderRadius: 30,

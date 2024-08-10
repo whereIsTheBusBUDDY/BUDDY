@@ -49,6 +49,7 @@ export const busVisited = async (stationId, visited) => {
   }
 };
 
+// 즐겨찾기 전 정류장 알림
 export const sendAlarm = async (stationId, time) => {
   try {
     const response = await apiClient.post(
@@ -59,5 +60,15 @@ export const sendAlarm = async (stationId, time) => {
   } catch (error) {
     console.error('즐겨찾기 정류장 알림 전송 실패', error);
     throw error;
+  }
+};
+
+// 탑승인원 불러오기
+export const boardingCount = async (busId) => {
+  try {
+    const response = await apiClient.get(`/boarding/count?busId=${busId}`);
+    return response.data;
+  } catch (error) {
+    console.error('탑승인원 불러오기 실패', error);
   }
 };
