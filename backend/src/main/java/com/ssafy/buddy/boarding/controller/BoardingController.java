@@ -28,4 +28,9 @@ public class BoardingController {
     public void isNextStationBookmarked(@RequestParam("stationId") int stationId, @RequestParam("time") int time) {
         boardingService.isNextStationBookmarked(stationId, time);
     }
+    @GetMapping("/boarding/count")
+    public ResponseEntity<?> getBoardingCount(@RequestParam("busId") int busId) {
+        int count = boardingService.countBoardingByBusNumber(busId);
+        return ResponseEntity.status(200).body(count);
+    }
 }

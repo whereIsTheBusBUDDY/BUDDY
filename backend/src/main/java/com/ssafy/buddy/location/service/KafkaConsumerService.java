@@ -97,6 +97,7 @@ public class KafkaConsumerService {
             LocationRequest locationRequest = objectMapper.readValue(location, LocationRequest.class);
             Date date = new Date();
             FifthBus fifthBus = new FifthBus(locationRequest.getLatitude(), locationRequest.getLongitude(), date);
+            System.out.println("fifthBus = " + fifthBus.toString());
             fifthBusRepository.save(fifthBus);
             ack.acknowledge();
         }catch (JsonProcessingException e) {
@@ -113,6 +114,7 @@ public class KafkaConsumerService {
             LocationRequest locationRequest = objectMapper.readValue(location, LocationRequest.class);
             Date date = new Date();
             SixthBus sixthBus = new SixthBus(locationRequest.getLatitude(), locationRequest.getLongitude(), date);
+            System.out.println("sixthBus = " + sixthBus.toString());
             sixthBusRepository.save(sixthBus);
             ack.acknowledge();
         }catch (JsonProcessingException e) {

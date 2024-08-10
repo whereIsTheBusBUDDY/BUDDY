@@ -25,11 +25,12 @@ public class KafkaConsumer {
         config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, KAFKA_SERVER_URL);
         config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+
         config.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, 1);
         config.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
-        config.put(ConsumerConfig.FETCH_MAX_BYTES_CONFIG, 1);
-        config.put(ConsumerConfig.FETCH_MAX_WAIT_MS_CONFIG, 1);
+        config.put(ConsumerConfig.FETCH_MAX_WAIT_MS_CONFIG, 100);
         config.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+
         return new DefaultKafkaConsumerFactory<>(config);
     }
     @Bean
@@ -37,7 +38,7 @@ public class KafkaConsumer {
         ConcurrentKafkaListenerContainerFactory<String, Object> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
         factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL_IMMEDIATE);
-        factory.setConcurrency(3);
+        factory.setConcurrency(6);
         return factory;
     }
 }
