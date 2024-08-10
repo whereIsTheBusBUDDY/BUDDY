@@ -194,11 +194,6 @@ const MapScreen = () => {
         longitudeDelta: 0.005,
       });
 
-      setCurrentLocation({
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-      });
-
       let current_location = await Location.getCurrentPositionAsync({
         accuracy: Location.Accuracy.High,
       });
