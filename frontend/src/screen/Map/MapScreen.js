@@ -8,6 +8,7 @@ import {
   Text,
   TouchableOpacity,
   Platform,
+  Image,
 } from 'react-native';
 import MapView, { Marker, Polyline } from 'react-native-maps';
 import { FontAwesome } from '@expo/vector-icons';
@@ -20,13 +21,7 @@ const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 const MapScreen = () => {
   const [selectedRoute, setSelectedRoute] = useState('1'); // 기본적으로 '1'
-  const [locationMap, setLocationMap] = useState({
-    // 연수원
-    latitude: 36.3553089,
-    longitude: 127.2984993,
-    latitudeDelta: 0.005,
-    longitudeDelta: 0.005,
-  });
+  const [locationMap, setLocationMap] = useState();
   const [busStops, setBusStops] = useState([]); // 경로 데이터를 위한 상태
   const [stations, setStations] = useState([]); // 정류장 데이터를 위한 상태
   const [selectedStation, setSelectedStation] = useState(null); // 선택된 정류장을 저장
@@ -204,6 +199,18 @@ const MapScreen = () => {
         longitude: location.coords.longitude,
       });
 
+      let current_location = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.High,
+      });
+
+      // 현재 위치로 초기 위치 설정
+      setLocationMap({
+        latitude: current_location.coords.latitude,
+        longitude: current_location.coords.longitude,
+        latitudeDelta: 0.005,
+        longitudeDelta: 0.005,
+      });
+
       // 기본 노선에 대한 경로 및 정류장 데이터 가져오기
       fetchBusStops(selectedRoute);
       fetchStations(selectedRoute);
@@ -258,7 +265,10 @@ const MapScreen = () => {
               }}
               onPress={() => setSelectedStation(station)} // 마커 클릭 시 정류장 선택
             >
-              <FontAwesome name="map-marker" size={30} color="blue" />
+              <Image
+                source={require('../../../assets/busStopIcon.png')}
+                style={styles.stationMarker}
+              />
             </Marker>
           ))}
 
@@ -400,6 +410,11 @@ const styles = StyleSheet.create({
   },
   point: {
     color: '#f97316',
+  },
+  stationMarker: {
+    width: 50,
+    height: 50,
+    resizeMode: 'cover',
   },
 });
 
