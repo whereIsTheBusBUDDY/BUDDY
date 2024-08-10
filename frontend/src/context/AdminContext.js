@@ -17,6 +17,7 @@ export const AdminProvider = ({ children }) => {
   const [routeStops, setRouteStops] = useState([]); // routeStops 상태 추가
   const intervalRef = useRef(null); // intervalRef로 변경하여 setInterval 관리
   const isSendingRef = useRef(false); // 비동기 작업 상태 관리
+  const [time, setTime] = useState(null);
 
   const calculateDistance = (lat1, lon1, lat2, lon2) => {
     const R = 6371e3; // 지구 반지름(미터)
@@ -31,29 +32,6 @@ export const AdminProvider = ({ children }) => {
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
     return R * c; // 거리 반환
-  };
-
-  // 주어진 위도와 경도에서 90미터 반경 내에 랜덤 좌표 생성
-  const generateRandomNearbyCoordinates = (
-    latitude,
-    longitude,
-    radiusInMeters
-  ) => {
-    const radiusInDegrees = radiusInMeters / 111300; // 미터를 위도/경도로 변환 (약 111.3km는 1도의 위도 차이)
-
-    const u = Math.random();
-    const v = Math.random();
-
-    const w = radiusInDegrees * Math.sqrt(u);
-    const t = 2 * Math.PI * v;
-    const x = w * Math.cos(t);
-    const y = w * Math.sin(t);
-
-    // x가 latitude 차이, y가 longitude 차이
-    const newLatitude = latitude + x;
-    const newLongitude = longitude + y;
-
-    return { latitude: newLatitude, longitude: newLongitude };
   };
 
   useEffect(() => {
@@ -80,6 +58,19 @@ export const AdminProvider = ({ children }) => {
           await sendBusLocation(busNumber, latitude, longitude);
           console.log(busNumber, latitude, longitude);
 
+          const checkTime = () => {
+            const currentTime = new Date().getHours();
+            if (currentTime < 12) {
+              setTime(1);
+            } else {
+              setTime(2);
+            }
+            console.log('현재시간(시기준)', currentTime);
+            console.log('오전오후시간', time);
+          };
+
+          checkTime();
+
           // 루트 정류장 방문 여부 업데이트
           setRouteStops((prevRouteStops) =>
             prevRouteStops.map((stop) => {
@@ -93,6 +84,7 @@ export const AdminProvider = ({ children }) => {
               if (stopDistance <= 100 && !stop.visited) {
                 console.log(`${stop.stationName} 정류장 방문 기록`);
                 busVisited(stop.id, true);
+                sendAlarm(stop.id, time);
                 return { ...stop, visited: true };
               }
               return stop;
@@ -105,7 +97,6 @@ export const AdminProvider = ({ children }) => {
         }
       };
 
-      // 주기적인 호출이 완료될 때까지 기다렸다가 다음 주기를 시작합니다.
       intervalRef.current = setInterval(() => {
         if (!isSendingRef.current) {
           trackPosition();

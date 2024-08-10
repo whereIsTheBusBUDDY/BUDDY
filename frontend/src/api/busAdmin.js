@@ -17,11 +17,11 @@ export const sendBusLocation = async (busId, latitude, longitude) => {
 // 버스 운행 종료
 export const sendStop = async (busId) => {
   try {
-    // const response = await apiClient.get(`stop/${busId}`);
-    // console.log('운행 종료 데이터 전송 성공:', response.data);
-    // return response.data;
+    const response = await apiClient.get(`stop/${busId}`);
+    console.log('운행 종료 데이터 전송 성공:', response.data);
+    return response.data;
   } catch (error) {
-    // console.error('운행 종료 데이터 전송 실패:', error);
+    console.error('운행 종료 데이터 전송 실패:', error);
   }
 };
 
@@ -45,6 +45,19 @@ export const busVisited = async (stationId, visited) => {
     return response;
   } catch (error) {
     console.error('정류장 방문 상태 업데이트 실패:', error);
+    throw error;
+  }
+};
+
+export const sendAlarm = async (stationId, time) => {
+  try {
+    const response = await apiClient.post(
+      `/arrive?stationId=${stationId}=&time=${time}`
+    );
+    console.log('즐겨찾기 전 정류장 알림', response.data);
+    return response;
+  } catch (error) {
+    console.error('즐겨찾기 정류장 알림 전송 실패', error);
     throw error;
   }
 };
