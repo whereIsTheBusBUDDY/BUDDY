@@ -18,6 +18,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { PRIMARY, GRAY } from '../../constant/color';
 import { currentBus } from '../../api/busUser';
 import { postBusData } from '../../api/busUser';
+import RenderingScreen from '../common/RenderingScreen';
+import StationMarker from './StationMarker';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -377,20 +379,7 @@ const BusScreen = () => {
 
           {/* API로부터 받아온 정류장 데이터를 마커로 표시 */}
           {stations.map((station) => (
-            <Marker
-              key={station.id}
-              coordinate={{
-                latitude: station.latitude,
-                longitude: station.longitude,
-              }}
-              onPress={() => onBusStopMarkerClick(station)} // 마커 클릭 시 정류장 선택 및 데이터 전송
-            >
-              <Image
-                resizeMode="cover"
-                source={require('../../../assets/busStopIcon.png')} // 버스 이미지 파일 경로 설정
-                style={styles.image}
-              />
-            </Marker>
+            <StationMarker station={station} onPress={onBusStopMarkerClick} />
           ))}
 
           {/* 경로 표시를 위한 Polyline */}
@@ -404,9 +393,7 @@ const BusScreen = () => {
           />
         </MapView>
       ) : (
-        <View style={styles.loadingContainer}>
-          <Text style={styles.loadingText}>Loading...</Text>
-        </View>
+        <RenderingScreen />
       )}
 
       {/* 선택된 정류장이 있을 때만 표시 */}
