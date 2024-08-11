@@ -124,8 +124,6 @@ public class MemberService {
                 .bodyToMono(String.class)
                 .block();
 
-        System.out.println(responseBody); // 응답 내용 확인
-
         ObjectMapper mapper = new ObjectMapper();
         IdcardCheckResponse response = null;
         try {
