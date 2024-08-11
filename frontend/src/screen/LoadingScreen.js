@@ -4,7 +4,7 @@ import { Image, StyleSheet, View } from 'react-native';
 const LoadingPage = () => {
   const navigate = useNavigation();
   setTimeout(() => {
-    navigate.navigate('Login');
+    navigate.navigate('introduce');
   }, 2000);
   return (
     <View style={styles.container}>
