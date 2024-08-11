@@ -15,9 +15,9 @@ import RegistButton from '../../components/RegistButton';
 import ProgressBar from '../../components/ProgressBar';
 import { signUp } from '../../api/auth';
 import apiClient from '../../api/api';
-import InputWithButton from '../../components/InputWithButton'; // 새롭게 만든 컴포넌트 임포트
+import InputWithButton from '../../components/InputWithButton';
 import ModalDropdown from 'react-native-modal-dropdown';
-import { PRIMARY } from '../../constant/color';
+import { GRAY, PRIMARY, WHITE, BLACK } from '../../constant/color';
 
 const SignupScreen = () => {
   const [name, setName] = useState('');
@@ -186,27 +186,26 @@ const SignupScreen = () => {
               title={'이름*'}
               value={name}
               onChangeText={(text) => setName(text)}
-              placeholder=""
               style={styles.input}
             />
             <InputWithButton
-              placeholder="학번*"
-              buttonText="중복 확인"
+              title={'학번*'}
+              buttonText="중복확인"
               value={studentId}
               onChangeText={handleStudentIdChange}
               onPress={handleCheckStudentId}
               keyboardType="numeric"
               maxLength={7}
-              disabled={studentId.length !== 7} // 7자리가 아니면 버튼 비활성화
+              disabled={studentId.length !== 7 || isStudentIdChecked} // 7자리가 아니거나 중복확인 통과하면 버튼 비활성화
             />
             <InputWithButton
-              placeholder="닉네임*"
-              buttonText="중복 확인"
+              title={'닉네임*'}
+              buttonText="중복확인"
               value={nickname}
               onChangeText={handleNicknameChange}
               onPress={handleCheckNickname}
               keyboardType="default" // 기본 키보드 설정
-              disabled={nickname.trim() === ''} // 닉네임이 비어있으면 버튼 비활성화
+              disabled={nickname.trim() === '' || isNicknameChecked} // 닉네임이 비어있거나 중복확인 통과하면 버튼 비활성화
             />
             <Input
               title={'이메일*'}
@@ -215,7 +214,6 @@ const SignupScreen = () => {
                 setEmail(text);
                 validateEmail(text);
               }}
-              placeholder=""
               style={styles.input}
               keyboardType={keyboardTypes.EMAIL}
             />
@@ -226,7 +224,6 @@ const SignupScreen = () => {
               title={'비밀번호*'}
               value={password}
               onChangeText={(text) => setPassword(text)}
-              placeholder=""
               secureTextEntry
               style={styles.input}
             />
@@ -234,7 +231,6 @@ const SignupScreen = () => {
               title={'비밀번호 확인*'}
               value={passwordConfirm}
               onChangeText={(text) => setPasswordConfirm(text)}
-              placeholder=""
               secureTextEntry
               style={styles.input}
             />
@@ -280,7 +276,6 @@ const styles = StyleSheet.create({
     alignItems: 'stretch',
     padding: 20,
     width: '100%',
-    backgroundColor: '#ffffff',
   },
   container1: {
     alignItems: 'center',
@@ -288,7 +283,6 @@ const styles = StyleSheet.create({
   input: {
     width: '100%',
     height: 48,
-    borderColor: '#EFEEEC',
     borderWidth: 1,
     borderRadius: 8,
     marginBottom: 10,
@@ -297,12 +291,13 @@ const styles = StyleSheet.create({
   },
   box: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: WHITE,
   },
   label: {
+    marginLeft: 5,
     fontSize: 14,
     marginBottom: 5,
-    color: '#949089',
+    color: GRAY.FONT,
   },
   errorText: {
     color: PRIMARY.DEFAULT,
@@ -312,21 +307,23 @@ const styles = StyleSheet.create({
   },
   dropdown: {
     justifyContent: 'center',
+    borderColor: GRAY.DEFAULT,
   },
   dropdownText: {
     fontSize: 16,
-    color: '#000',
+    color: GRAY.FONT,
   },
   dropdownStyle: {
     width: '80%',
   },
   dropdownTextStyle: {
     fontSize: 16,
-    color: '#000',
+    color: GRAY.FONT,
   },
   dropdowncon: {
     marginTop: 5,
     marginHorizontal: 10,
+    // borderColor: GRAY.DEFAULT,
   },
 });
 

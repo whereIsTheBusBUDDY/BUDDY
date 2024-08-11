@@ -13,6 +13,7 @@ import {
   Pressable,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { GRAY, PRIMARY, WHITE, BLACK } from '../../constant/color';
 
 const CameraScreen = () => {
   const [facing, setFacing] = useState(CameraType.back);
@@ -115,9 +116,9 @@ const CameraScreen = () => {
         <View style={styles.buttonRow}>
           <Pressable
             onPress={() => setPhoto(null)}
-            style={styles.pressableButton}
+            style={styles.repressableButton}
           >
-            <Text style={styles.buttonText}>다시 촬영</Text>
+            <Text style={styles.buttonText}>다시 촬영하기</Text>
           </Pressable>
           <Pressable
             onPress={buttonDisabled ? null : sendPhotoToServer}
@@ -127,7 +128,10 @@ const CameraScreen = () => {
             ]}
           >
             <Text
-              style={[styles.buttonText, buttonDisabled && styles.disabledText]}
+              style={[
+                styles.usebuttonText,
+                buttonDisabled && styles.disabledText,
+              ]}
             >
               사용
             </Text>
@@ -142,7 +146,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    backgroundColor: '#fff', // 배경색을 추가하여 사진 외의 부분을 검은색으로
+    backgroundColor: WHITE, // 배경색을 추가하여 사진 외의 부분을 검은색으로
   },
   message: {
     textAlign: 'center',
@@ -163,9 +167,9 @@ const styles = StyleSheet.create({
   cardOutline: {
     width: '90%',
     height: '30%',
-    borderColor: 'white',
+    borderColor: WHITE,
     borderWidth: 2,
-    borderRadius: 3,
+    borderRadius: 10,
     position: 'absolute',
     justifyContent: 'center',
     alignItems: 'center',
@@ -174,7 +178,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     backgroundColor: 'transparent',
-    margin: 64,
+    margin: 50,
   },
   buttonRow: {
     flexDirection: 'row',
@@ -185,13 +189,17 @@ const styles = StyleSheet.create({
   },
   button: {
     flex: 1,
+    backgroundColor: PRIMARY.DEFAULT,
+    width: '100%',
+    height: 60,
+    borderRadius: 15,
     alignSelf: 'flex-end',
+    justifyContent: 'center',
     alignItems: 'center',
   },
   text: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: 'white',
+    fontSize: 20,
+    color: WHITE,
   },
   photo: {
     flex: 1,
@@ -201,23 +209,37 @@ const styles = StyleSheet.create({
   photobutton: {
     marginBottom: 20,
   },
+  repressableButton: {
+    width: '44%',
+    paddingVertical: 20,
+    paddingHorizontal: 20,
+    backgroundColor: GRAY.BACKGROUND, // 버튼 배경색
+    borderRadius: 10, // 둥근 모서리
+    marginHorizontal: 5, // 양옆 여백
+    alignItems: 'center',
+  },
   pressableButton: {
     width: '44%',
     paddingVertical: 20,
     paddingHorizontal: 20,
-    backgroundColor: '#e7e5e4', // 버튼 배경색
+    backgroundColor: PRIMARY.DEFAULT, // 버튼 배경색
     borderRadius: 10, // 둥근 모서리
     marginHorizontal: 5, // 양옆 여백
     alignItems: 'center',
   },
   disabledButton: {
-    backgroundColor: '#ccc', // 비활성화된 버튼 배경색
+    backgroundColor: GRAY.CLICK, // 비활성화된 버튼 배경색
   },
   disabledText: {
-    color: '#fff', // 비활성화된 텍스트 색상
+    color: WHITE, // 비활성화된 텍스트 색상
   },
   buttonText: {
-    color: '#000', // 버튼 텍스트 색상
+    color: BLACK, // 버튼 텍스트 색상
+    fontSize: 20,
+    // fontWeight: 'bold',
+  },
+  usebuttonText: {
+    color: WHITE, // 버튼 텍스트 색상
     fontSize: 20,
     // fontWeight: 'bold',
   },

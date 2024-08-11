@@ -1,6 +1,5 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import IntroduceScreen from '../screen/IntroduceScreen';
-import { Fontisto } from '@expo/vector-icons';
 import { Image } from 'react-native';
 import LoginScreen from '../screen/Account/LoginScreen';
 import IDScreen from '../screen/Account/IDScreen';
@@ -23,7 +22,6 @@ const LoginStack = () => {
           headerLeft: () => (
             <Image source={require('../../assets/BUDDY.png')} />
           ),
-          // headerRight: () => <Fontisto name="bell" size={24} color="black" />,
           headerStyle: {
             shadowColor: 'transparent',
             elevation: 0,
@@ -39,7 +37,6 @@ const LoginStack = () => {
           headerLeft: () => (
             <Image source={require('../../assets/BUDDY.png')} />
           ),
-          // headerRight: () => <Fontisto name="bell" size={24} color="black" />,
           headerStyle: {
             shadowColor: 'transparent',
             elevation: 0,
@@ -55,7 +52,6 @@ const LoginStack = () => {
           headerLeft: () => (
             <Image source={require('../../assets/BUDDY.png')} />
           ),
-          // headerRight: () => <Fontisto name="bell" size={24} color="black" />,
           headerStyle: {
             shadowColor: 'transparent',
             elevation: 0,
@@ -71,7 +67,6 @@ const LoginStack = () => {
           headerLeft: () => (
             <Image source={require('../../assets/BUDDY.png')} />
           ),
-          // headerRight: () => <Fontisto name="bell" size={24} color="black" />,
           headerStyle: {
             shadowColor: 'transparent',
             elevation: 0,
@@ -83,11 +78,10 @@ const LoginStack = () => {
         name={'CameraScreen'}
         component={CameraScreen}
         options={{
-          headerTitle: '',
+          headerTitle: '학생증 촬영하기',
           headerLeft: () => (
             <Image source={require('../../assets/BUDDY.png')} />
           ),
-          // headerRight: () => <Fontisto name="bell" size={24} color="black" />,
           headerStyle: {
             shadowColor: 'transparent',
             elevation: 0,
@@ -103,7 +97,6 @@ const LoginStack = () => {
           headerLeft: () => (
             <Image source={require('../../assets/BUDDY.png')} />
           ),
-          // headerRight: () => <Fontisto name="bell" size={24} color="black" />,
           headerStyle: {
             shadowColor: 'transparent',
             elevation: 0,
@@ -119,7 +112,6 @@ const LoginStack = () => {
           headerLeft: () => (
             <Image source={require('../../assets/BUDDY.png')} />
           ),
-          // headerRight: () => <Fontisto name="bell" size={24} color="black" />,
           headerStyle: {
             shadowColor: 'transparent',
             elevation: 0,

@@ -196,6 +196,8 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   compmsg: {
+    fontSize: 18,
+    // fontWeight: 'bold',
     textAlign: 'center',
     color: '#f97316',
     marginLeft: 10,
