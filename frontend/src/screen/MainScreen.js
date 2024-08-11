@@ -140,6 +140,39 @@ const MainScreen = () => {
     }
   };
 
+  const checkBusStatus = async () => {
+    try {
+      const response = await apiClient.get('/start/check');
+      return response.data;
+    } catch (error) {
+      console.error('운행 상태 확인 중 오류 발생:', error);
+      return false;
+    }
+  };
+
+  const handleBusLocationPress = async () => {
+    const isBusRunning = await checkBusStatus();
+    console.log(isBusRunning);
+    if (isBusRunning) {
+      navigation.navigate('Bus');
+    } else {
+      Alert.alert('알림', '운행중인 버스가 없습니다.');
+    }
+  };
+
+  const GoMessage = async () => {
+    try {
+      const busNumber = await AsyncStorage.getItem('busNumber');
+      if (busNumber) {
+        navigation.navigate('Message');
+      } else {
+        Alert.alert('알림', 'QR 스캔 후 이용 가능합니다.');
+      }
+    } catch (error) {
+      console.error('오류 발생', error);
+    }
+  };
+
   const fetchPassengerData = async () => {
     try {
       const response = await apiClient.get('/boarding');
