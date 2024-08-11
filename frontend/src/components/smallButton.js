@@ -64,15 +64,15 @@ const styles = StyleSheet.create({
     color: GRAY.BTN,
     justifyContent: 'center',
     paddingHorizontal: 15,
-    borderRadius: 15,
-    marginBottom: 10,
-    height: 50,
+    borderRadius: 10,
+    margin: 3,
+    height: 60,
   },
   content: {
     alignItems: 'center',
   },
   contentText: {
-    fontSize: 20,
+    fontSize: 15,
   },
 });
 

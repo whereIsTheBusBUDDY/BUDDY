@@ -1,26 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  TextInput,
-  Button,
-  StyleSheet,
-  ScrollView,
-  Alert,
-} from 'react-native';
+import { View, TextInput, StyleSheet, ScrollView, Alert } from 'react-native';
 import { WHITE, GRAY } from '../../constant/color';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Button, { ButtonColors } from '../../components/Button';
 
 const EditScreen = ({ route, navigation }) => {
-  const { board } = route.params; // 전달받은 게시글 정보
+  const { board } = route.params;
   const [title, setTitle] = useState('');
-  const [boardContent, setBoardContent] = useState(''); // 변수 이름 변경
+  const [boardContent, setBoardContent] = useState('');
 
   useEffect(() => {
     if (board) {
-      setTitle(board.title); // 게시글의 제목 설정
-      setBoardContent(board.boardContent); // 게시글의 내용 설정
+      setTitle(board.title);
+      setBoardContent(board.boardContent);
     }
-  }, [board]); // board가 변경될 때마다 실행
+  }, [board]);
 
   const handleSubmit = async () => {
     if (!title || !boardContent) {
@@ -29,7 +23,6 @@ const EditScreen = ({ route, navigation }) => {
     }
 
     try {
-      // AsyncStorage에서 액세스 토큰 불러오기
       const accessToken = await AsyncStorage.getItem('accessToken');
 
       if (!accessToken) {
@@ -43,18 +36,17 @@ const EditScreen = ({ route, navigation }) => {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${accessToken}`, // 액세스 토큰을 Authorization 헤더에 추가
+            Authorization: `Bearer ${accessToken}`,
           },
           body: JSON.stringify({
             title: title,
-            content: boardContent, // 변수 이름 변경
+            content: boardContent,
           }),
         }
       );
 
       if (response.ok) {
         Alert.alert('성공', '게시글이 성공적으로 수정되었습니다!');
-        // 수정이 완료되면 DetailScreen으로 수정된 데이터를 전달하여 이동
         navigation.navigate('Board');
       } else {
         Alert.alert('오류', `게시글 수정 실패: ${response.statusText}`);
@@ -66,10 +58,6 @@ const EditScreen = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
-      {/* 헤더 컴포넌트 수정 및 교체 */}
-      <View style={styles.header}>
-        <Button title="수정 완료" onPress={handleSubmit} />
-      </View>
       <ScrollView style={styles.scrollContainer}>
         <View style={styles.titleContainer}>
           <TextInput
@@ -83,11 +71,18 @@ const EditScreen = ({ route, navigation }) => {
             style={styles.textInput}
             multiline
             numberOfLines={10}
-            value={boardContent} // 변수 이름 변경
-            onChangeText={setBoardContent} // 변수 이름 변경
+            value={boardContent}
+            onChangeText={setBoardContent}
           />
         </View>
       </ScrollView>
+
+      <Button
+        title="수정 완료"
+        onPress={handleSubmit}
+        buttonColor={ButtonColors.SKYBLUE}
+        buttonStyle={styles.createBtn}
+      />
     </View>
   );
 };
@@ -122,6 +117,11 @@ const styles = StyleSheet.create({
   textInput: {
     textAlignVertical: 'top',
     fontSize: 16,
+  },
+  createBtn: {
+    marginTop: 10,
+    width: '100%',
+    color: WHITE,
   },
 });
 
