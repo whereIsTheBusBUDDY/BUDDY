@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import React, { useEffect, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useUserContext } from '../../context/UserContext';
 import { useAdminContext } from '../../context/AdminContext';
 import AdminMainButton from '../../components/admin/AdminMainButton';
