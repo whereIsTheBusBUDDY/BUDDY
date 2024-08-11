@@ -123,6 +123,38 @@ const MainScreen = () => {
       left: style.left - 20, // 조정할 값
     };
   };
+  const checkBusStatus = async () => {
+    try {
+      const response = await apiClient.get('/start/check');
+      return response.data;
+    } catch (error) {
+      console.error('운행 상태 확인 중 오류 발생:', error);
+      return false;
+    }
+  };
+
+  const handleBusLocationPress = async () => {
+    const isBusRunning = await checkBusStatus();
+    console.log(isBusRunning);
+    if (isBusRunning) {
+      navigation.navigate('Bus');
+    } else {
+      Alert.alert('알림', '운행중인 버스가 없습니다.');
+    }
+  };
+
+  const GoMessage = async () => {
+    try {
+      const busNumber = await AsyncStorage.getItem('busNumber');
+      if (busNumber) {
+        navigation.navigate('Message');
+      } else {
+        Alert.alert('알림', 'QR 스캔 후 이용 가능합니다.');
+      }
+    } catch (error) {
+      console.error('오류 발생', error);
+    }
+  };
 
   const GoChatRoom = async () => {
     try {
@@ -172,9 +204,7 @@ const MainScreen = () => {
                 <Text>{'를 확인해보세요!'}</Text>
               </>
             }
-            onPress={() => {
-              navigation.navigate('Bus');
-            }}
+            onPress={handleBusLocationPress}
             buttonColor={ButtonColors.GRAY}
             width={width}
             height={160}
@@ -203,9 +233,7 @@ const MainScreen = () => {
           <View style={styles.upperRightPad}>
             <ImageButton
               title="기사님, 건의할래요!"
-              onPress={() => {
-                navigation.navigate('Message');
-              }}
+              onPress={GoMessage}
               width={width / 2}
               height={45}
               imageSource={require('../../assets/driver.png')}

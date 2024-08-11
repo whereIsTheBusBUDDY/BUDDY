@@ -9,6 +9,7 @@ import MMScreen from '../screen/Account/MMScreen';
 import AdminStack from '../navigations/AdminStack';
 import MainStack from '../navigations/MainStack';
 import CameraScreen from '../screen/Account/CameraScreen';
+import ResetPasswordScreen from '../screen/Account/ResetPasswordScreen';
 
 const Stack = createNativeStackNavigator();
 const LoginStack = () => {
@@ -33,6 +34,22 @@ const LoginStack = () => {
       <Stack.Screen
         name={'Login'}
         component={LoginScreen}
+        options={{
+          headerTitle: '',
+          headerLeft: () => (
+            <Image source={require('../../assets/BUDDY.png')} />
+          ),
+          // headerRight: () => <Fontisto name="bell" size={24} color="black" />,
+          headerStyle: {
+            shadowColor: 'transparent',
+            elevation: 0,
+          },
+          headerShadowVisible: false,
+        }}
+      />
+      <Stack.Screen
+        name={'ResetPassword'}
+        component={ResetPasswordScreen}
         options={{
           headerTitle: '',
           headerLeft: () => (
