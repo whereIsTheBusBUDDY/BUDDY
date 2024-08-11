@@ -14,7 +14,6 @@ export const ReturnKeyTypes = {
 
 const Input = ({
   title,
-  placeholder,
   keyboardType,
   value,
   onChangeText,
@@ -41,8 +40,6 @@ const Input = ({
           value && styles.hasValueInput,
           isFocus && styles.focusedInput,
         ]}
-        placeholder={placeholder ?? title}
-        placeholderTextColor={GRAY.FONT}
         autoCapitalize={'none'}
         autoCorrect={false}
         textContentType={'none'}
@@ -58,7 +55,6 @@ const Input = ({
 
 Input.propTypes = {
   title: PropTypes.string,
-  placeholder: PropTypes.string,
   keyboardType: PropTypes.oneOf(Object.values(keyboardTypes)),
 };
 
@@ -73,7 +69,6 @@ const styles = StyleSheet.create({
     color: GRAY.FONT,
     paddingLeft: 5,
     fontSize: 14,
-    // paddingBottom: 3,
   },
   input: {
     borderColor: GRAY.BTN,

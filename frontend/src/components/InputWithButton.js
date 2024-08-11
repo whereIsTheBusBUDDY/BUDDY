@@ -1,4 +1,4 @@
-import React from 'react';
+import { useState } from 'react';
 import {
   View,
   TextInput,
@@ -6,10 +6,10 @@ import {
   Text,
   StyleSheet,
 } from 'react-native';
-import { GRAY, PRIMARY, WHITE } from '../constant/color';
+import { GRAY, PRIMARY, WHITE, BLACK } from '../constant/color';
 
 const InputWithButton = ({
-  placeholder,
+  title,
   buttonText,
   value,
   onChangeText,
@@ -19,49 +19,76 @@ const InputWithButton = ({
   maxLength,
   disabled,
 }) => {
+  const [isFocus, setIsFocus] = useState(false);
   return (
-    <View style={styles.container}>
-      <TextInput
-        style={styles.input}
-        placeholder={placeholder}
-        value={value}
-        onChangeText={onChangeText}
-        secureTextEntry={secureTextEntry}
-        keyboardType={keyboardType}
-        maxLength={maxLength}
-      />
-      <TouchableOpacity
-        style={[styles.button, disabled && styles.buttonDisabled]}
-        onPress={onPress}
-        disabled={disabled}
+    <View style={styles.outside}>
+      <Text
+        style={[
+          styles.title,
+          value && styles.hasValueTitle,
+          isFocus && styles.focusedTitle,
+        ]}
       >
-        <Text style={styles.buttonText}>{buttonText}</Text>
-      </TouchableOpacity>
+        {title}
+      </Text>
+      <View style={styles.container}>
+        <TextInput
+          style={[
+            styles.input,
+            value && styles.hasValueInput,
+            isFocus && styles.focusedInput,
+          ]}
+          value={value}
+          onChangeText={onChangeText}
+          secureTextEntry={secureTextEntry}
+          keyboardType={keyboardType}
+          maxLength={maxLength}
+        />
+        <TouchableOpacity
+          style={[styles.button, disabled && styles.buttonDisabled]}
+          onPress={onPress}
+          disabled={disabled}
+        >
+          <Text style={styles.buttonText}>{buttonText}</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  outside: {
+    paddingHorizontal: 10,
+    marginVertical: 5,
+  },
   container: {
     flexDirection: 'row',
-    alignItems: 'center',
     width: '100%',
+    paddingHorizontal: 20,
+    marginVertical: 5,
     height: 48,
-    borderColor: GRAY.BTN,
+    borderColor: GRAY.DEFAULT,
     borderWidth: 1,
     borderRadius: 8,
-    marginBottom: 10,
     paddingHorizontal: 10,
+    alignItems: 'center',
+  },
+  title: {
+    color: GRAY.FONT,
+    paddingLeft: 5,
+    fontSize: 14,
   },
   input: {
     flex: 1,
-    height: '100%',
+    paddingHorizontal: 10,
   },
   button: {
     backgroundColor: PRIMARY.DEFAULT,
-    borderRadius: 8,
-    paddingVertical: 10,
-    paddingHorizontal: 15,
+    justifyContent: 'center',
+    height: '75%',
+    borderRadius: 10,
+    paddingVertical: 1,
+    paddingHorizontal: 10,
     marginLeft: 10,
   },
   buttonDisabled: {

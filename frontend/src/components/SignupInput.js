@@ -1,5 +1,6 @@
 import { StyleSheet, Text, View, TextInput } from 'react-native';
 import PropTypes from 'prop-types';
+import { GRAY } from '../constant/color';
 
 export const keyboardTypes = {
   DEFAULT: 'default',
@@ -9,7 +10,6 @@ export const keyboardTypes = {
 
 const Input = ({
   title,
-  placeholder,
   value,
   onChangeText,
   keyboardType,
@@ -23,8 +23,6 @@ const Input = ({
         style={styles.input}
         value={value}
         onChangeText={onChangeText}
-        placeholder={placeholder ?? title}
-        placeholderTextColor={'#a3a3a3'}
         autoCapitalize={'none'}
         keyboardType={keyboardType}
         secureTextEntry={secureTextEntry}
@@ -35,7 +33,6 @@ const Input = ({
 
 Input.propTypes = {
   title: PropTypes.string,
-  placeholder: PropTypes.string,
   value: PropTypes.string,
   onChangeText: PropTypes.func,
   keyboardType: PropTypes.oneOf(Object.values(keyboardTypes)),
@@ -49,12 +46,12 @@ const styles = StyleSheet.create({
   },
   title: {
     marginBottom: 5,
-    color: '#949089',
+    color: GRAY.FONT,
     paddingLeft: 5,
     fontSize: 14,
   },
   input: {
-    borderColor: '#e7e5e4',
+    borderColor: GRAY.DEFAULT,
     borderWidth: 1,
     borderRadius: 8,
     paddingHorizontal: 20,
