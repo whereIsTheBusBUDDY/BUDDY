@@ -5,14 +5,17 @@ import {
   Platform,
   StyleSheet,
   View,
+  Text,
+  TouchableOpacity,
 } from 'react-native';
-import { PRIMARY, WHITE } from '../../constant/color';
+import { PRIMARY, WHITE, GRAY } from '../../constant/color';
 import { useUserContext } from '../../context/UserContext';
 import { useFirstContext } from '../../context/FirstContent';
 import Input, { keyboardTypes } from '../../components/Input';
 import RegistButton, { ButtonType } from '../../components/RegistButton';
 import { useEffect, useState } from 'react';
 import { signIn } from '../../api/auth';
+import { useNavigation } from '@react-navigation/native';
 
 const LoginScreen = () => {
   const { setUser, setLoginUser } = useUserContext();
@@ -21,6 +24,7 @@ const LoginScreen = () => {
   const [password, setPassword] = useState('');
   const [disabled, setDisabled] = useState(true);
   const [loading, setLoading] = useState(false);
+  const navigation = useNavigation();
 
   useEffect(() => {
     setDisabled(!email || !password);
@@ -42,6 +46,7 @@ const LoginScreen = () => {
       }
     }
   };
+
   return (
     <KeyboardAvoidingView
       style={styles.avoid}
@@ -70,10 +75,26 @@ const LoginScreen = () => {
           buttonType={ButtonType.PRIMARY}
           disabled={disabled}
         />
+
+        <View style={styles.linkContainer}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('ResetPassword')}
+          >
+            <Text style={styles.linkText}>비밀번호 찾기</Text>
+          </TouchableOpacity>
+          <Text style={styles.linkDivider}></Text>
+          <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
+            <Text style={styles.linkText}>
+              아직 회원이 아니신가요?{' '}
+              <Text style={styles.highlightText}>회원가입 바로가기</Text>
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </KeyboardAvoidingView>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -89,6 +110,24 @@ const styles = StyleSheet.create({
   },
   avoid: {
     flex: 1,
+  },
+  linkContainer: {
+    // flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 10,
+  },
+  linkText: {
+    color: GRAY.DARK,
+    fontSize: 14,
+  },
+  linkDivider: {
+    marginHorizontal: 10,
+    color: GRAY.DARK,
+    fontSize: 14,
+  },
+  highlightText: {
+    color: PRIMARY.DEFAULT,
   },
 });
 
