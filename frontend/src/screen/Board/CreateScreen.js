@@ -1,19 +1,15 @@
 import React, { useState } from 'react';
-import {
-  View,
-  TextInput,
-  Button,
-  StyleSheet,
-  ScrollView,
-  Alert,
-} from 'react-native';
-import { WHITE, GRAY } from '../../constant/color';
+import { View, TextInput, StyleSheet, ScrollView, Alert } from 'react-native';
+import { WHITE, GRAY, SKYBLUE } from '../../constant/color'; // PRIMARY를 제거
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Button, { ButtonColors } from '../../components/Button';
+import { useNavigation } from '@react-navigation/native';
 
 export default function App({ route }) {
-  const [category, setcategory] = useState(route.params.selectedCategory);
+  const [category, setCategory] = useState(route.params.selectedCategory);
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+  const navigation = useNavigation();
 
   const handleSubmit = async () => {
     if (!title || !content) {
@@ -48,8 +44,7 @@ export default function App({ route }) {
       if (response.ok) {
         Alert.alert('성공', '게시글이 성공적으로 작성되었습니다!');
         // 입력 필드 초기화
-        setTitle('');
-        setContent('');
+        navigation.navigate('Board');
       } else {
         Alert.alert('오류', `게시글 작성 실패: ${response.statusText}`);
       }
@@ -60,10 +55,6 @@ export default function App({ route }) {
 
   return (
     <View style={styles.container}>
-      {/* 헤더 컴포넌트 수정 및 교체 */}
-      <View style={styles.header}>
-        <Button title="작성" onPress={handleSubmit} />
-      </View>
       <ScrollView style={styles.scrollContainer}>
         <View style={styles.titleContainer}>
           <TextInput
@@ -84,6 +75,12 @@ export default function App({ route }) {
           />
         </View>
       </ScrollView>
+      <Button
+        title="작성"
+        onPress={handleSubmit}
+        buttonColor={ButtonColors.SKYBLUE}
+        buttonStyle={styles.createBtn}
+      />
     </View>
   );
 }
@@ -118,5 +115,10 @@ const styles = StyleSheet.create({
   textInput: {
     textAlignVertical: 'top',
     fontSize: 16,
+  },
+  createBtn: {
+    marginTop: 10,
+    width: '100%',
+    color: WHITE,
   },
 });

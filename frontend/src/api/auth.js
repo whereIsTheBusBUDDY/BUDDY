@@ -1,11 +1,11 @@
 import axios from 'axios';
 import apiClient from './api';
-import { signIn_url, signUp_url, mm_url } from './url';
+import { mm_url } from './url';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const signIn = (email, password) => {
   return apiClient
-    .post(signIn_url, { email, password })
+    .post('/login', { email, password })
     .then(async (response) => {
       const { accessToken, role, refreshToken } = response.data;
 
@@ -35,7 +35,7 @@ export const signIn = (email, password) => {
 
 export const signUp = async (userData) => {
   try {
-    const response = await apiClient.post(signUp_url, userData);
+    const response = await apiClient.post('/sign-up', userData);
     return response.data;
   } catch (error) {
     if (error.response) {

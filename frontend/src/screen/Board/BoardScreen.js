@@ -1,11 +1,18 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { ScrollView, StyleSheet, View, Text } from 'react-native';
+import {
+  ScrollView,
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+} from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import BoardItem from '../../components/BoardItem';
 import TabButton from '../../components/BoardTabButton';
-import { WHITE, GRAY } from '../../constant/color';
+import { WHITE, GRAY, SKYBLUE, PRIMARY } from '../../constant/color';
 import apiClient from '../../api/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
 
 const BoardScreen = () => {
   const navigate = useNavigation();
@@ -56,34 +63,36 @@ const BoardScreen = () => {
     <View style={styles.container}>
       <View style={styles.bgContainer}>
         <View style={styles.tabContainer}>
-          <TabButton
-            title="공지사항"
-            isActive={selectedCategory === 'notice'}
-            onPress={() => setSelectedCategory('notice')}
-          />
-          <TabButton
-            title="자유게시판"
-            isActive={selectedCategory === 'free'}
-            onPress={() => setSelectedCategory('free')}
-          />
-          {selectedCategory === 'notice' && role === 'ADMIN' && (
+          <View style={styles.tabButtons}>
             <TabButton
-              title="글쓰기"
+              title="공지사항"
+              isActive={selectedCategory === 'notice'}
+              onPress={() => setSelectedCategory('notice')}
+            />
+            <TabButton
+              title="자유게시판"
+              isActive={selectedCategory === 'free'}
+              onPress={() => setSelectedCategory('free')}
+            />
+          </View>
+          {(selectedCategory === 'notice' && role === 'ADMIN') ||
+          selectedCategory === 'free' ? (
+            <TouchableOpacity
               onPress={() => {
                 navigate.navigate('Create', { selectedCategory });
                 console.log(selectedCategory);
               }}
-            />
-          )}
-          {selectedCategory === 'free' && (
-            <TabButton
-              title="글쓰기"
-              onPress={() => {
-                navigate.navigate('Create', { selectedCategory });
-                console.log(selectedCategory);
-              }}
-            />
-          )}
+              style={styles.writebtn}
+            >
+              <Text style={styles.writebtnText}>
+                <FontAwesome
+                  name="pencil-square-o"
+                  size={30}
+                  color={PRIMARY.DEFAULT}
+                />
+              </Text>
+            </TouchableOpacity>
+          ) : null}
         </View>
         <ScrollView>
           {boards.map((board, index) => (
@@ -112,11 +121,22 @@ const styles = StyleSheet.create({
   },
   tabContainer: {
     flexDirection: 'row',
-    justifyContent: 'flex-start',
+    justifyContent: 'space-between', // TabButton과 글쓰기 버튼 사이의 공간 배분
+    alignItems: 'center',
     paddingVertical: 10,
     paddingHorizontal: 10,
     borderBottomWidth: 1,
     borderBottomColor: WHITE,
+  },
+  tabButtons: {
+    flexDirection: 'row',
+    flex: 1, // TabButton이 가능한 한 많은 공간 차지
+  },
+  writebtn: {
+    alignSelf: 'flex-end',
+    backgroundColor: 'transparent', // 투명 배경
+    paddingHorizontal: 10,
+    marginBottom: 5,
   },
 });
 
