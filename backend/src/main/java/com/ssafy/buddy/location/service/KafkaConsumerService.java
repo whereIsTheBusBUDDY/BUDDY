@@ -2,6 +2,7 @@ package com.ssafy.buddy.location.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ssafy.buddy.common.exception.CustomJsonProcessingException;
 import com.ssafy.buddy.location.domain.*;
 import com.ssafy.buddy.location.domain.request.LocationRequest;
 import com.ssafy.buddy.location.repository.*;
@@ -131,7 +132,7 @@ public class KafkaConsumerService {
     }
     private void handleJsonProcessingException(JsonProcessingException e) {
         log.error("Failed to convert locationRequest to JSON", e);
-        throw new RuntimeException("JSON 변환 실패: " + e.getMessage(), e);
+        throw new CustomJsonProcessingException("JSON 변환 실패: " + e.getMessage(), e);
     }
 
     private void handleKafkaException(Exception e) {
