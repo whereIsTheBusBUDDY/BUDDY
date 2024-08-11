@@ -66,16 +66,7 @@ public class EtaService {
         return processData(response, busLine);
     }
 
-    public EtaResponse useGpuEta(BusDataRequest busDataRequest) {
-        String yoloUrl = fastApiUrl + "/eta";
-        return this.webClient.post()
-                .uri(yoloUrl) // FastAPI 엔드포인트
-                .body(Mono.just(busDataRequest), BusDataRequest.class)
-                .retrieve()
-                .bodyToMono(EtaResponse.class)
-                .block();
-    }
-
+    // 외부 api 이용 하기 경유지 데이터 전 처리
     private String createWaypoints(List<BusStopRequest> route) {
         StringBuilder sb = new StringBuilder();
         for (BusStopRequest stop : route) {
@@ -88,7 +79,8 @@ public class EtaService {
         }
         return sb.toString();
     }
-
+    
+    // 외부 api 요청 함수
     private String fetchEtaResponse(String start, String goal, String waypoints, String option, String path) {
         try {
             return webClient.get()
@@ -115,6 +107,7 @@ public class EtaService {
         }
     }
 
+    // api 요청 받아온 후 데이터 처리
     public EtaResponse processData(String response, int busLine) {
         ObjectMapper mapper = new ObjectMapper();
         EtaResponse etaResponse = new EtaResponse();
@@ -143,5 +136,26 @@ public class EtaService {
             etaResponse.setTime(-1); // json 파싱 오류 시 -1 설정
         }
         return etaResponse;
+    }
+
+    //GPU 서버 ETA 모델 활용
+    public EtaResponse useGpuEta(BusDataRequest busDataRequest) {
+        String yoloUrl = fastApiUrl + "/eta";
+
+        String responseBody = webClient.post()
+                .uri(yoloUrl)
+                .body(Mono.just(busDataRequest), BusDataRequest.class)
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+
+        ObjectMapper mapper = new ObjectMapper();
+        EtaResponse response = null;
+        try {
+            response = mapper.readValue(responseBody, EtaResponse.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("GPU 서버에서 JSON 파일이 안 넘어옴", e);
+        }
+        return response;
     }
 }
