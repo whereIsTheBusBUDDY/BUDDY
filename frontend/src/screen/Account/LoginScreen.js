@@ -83,7 +83,7 @@ const LoginScreen = () => {
             <Text style={styles.linkText}>비밀번호 찾기</Text>
           </TouchableOpacity>
           <Text style={styles.linkDivider}></Text>
-          <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
+          <TouchableOpacity onPress={() => navigation.navigate('IDScreen')}>
             <Text style={styles.linkText}>
               아직 회원이 아니신가요?{' '}
               <Text style={styles.highlightText}>회원가입 바로가기</Text>
