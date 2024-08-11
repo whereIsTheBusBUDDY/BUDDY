@@ -33,13 +33,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, ILLEGAL_ARGUMENT.getStatus());
     }
 
-    @ExceptionHandler(CustomJsonProcessingException.class)
-    public ResponseEntity<ErrorResponse> handleCustomJsonProcessingException(CustomJsonProcessingException exception) {
-        ErrorResponse response = new ErrorResponse(JSON_MAPPING_WRONG.getCode(), exception.getMessage());
-        log.error("CustomJsonProcessingException!!", exception);
-        return new ResponseEntity<>(response, JSON_MAPPING_WRONG.getStatus());
-    }
-
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleException(Exception exception) {
         ErrorResponse response = new ErrorResponse(ErrorCode.INTERNAL_SERVER_ERROR.getCode(), exception.getMessage());
