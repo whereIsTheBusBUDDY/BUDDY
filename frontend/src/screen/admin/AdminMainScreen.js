@@ -12,8 +12,6 @@ import StartTrackingButton from '../../components/admin/StartTrackingButton';
 import PeopleCountButton from '../../components/admin/PeopleCountButton';
 import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
 import EventSource from 'react-native-event-source'; // Import EventSource
-import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
-import EventSource from 'react-native-event-source'; // Import EventSource
 
 const AdminMainScreen = () => {
   const { loginUser, setLoginUser } = useUserContext();
