@@ -54,6 +54,11 @@ public class AuthService {
         throw new ExpiredRefreshTokenException();
     }
 
+    @Transactional
+    public void logout(String refreshToken) {
+        refreshTokenRepository.deleteByRefreshToken(refreshToken);
+    }
+
     private Member findById(Long memberId) {
         return memberRepository.findById(memberId)
                 .orElseThrow(() -> new EntityNotFoundException("회원(memberId: " + memberId + ")이 존재하지 않습니다."));
