@@ -3,6 +3,7 @@ package com.ssafy.buddy.eta.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.ssafy.buddy.eta.controller.request.BusDataRequest;
 import com.ssafy.buddy.eta.controller.request.BusStopRequest;
 import com.ssafy.buddy.eta.controller.response.EtaResponse;
@@ -150,6 +151,7 @@ public class EtaService {
                 .block();
 
         ObjectMapper mapper = new ObjectMapper();
+        mapper.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
         EtaResponse response = null;
         try {
             response = mapper.readValue(responseBody, EtaResponse.class);
