@@ -139,7 +139,7 @@ const NotificationScreen = () => {
     <ScrollView style={styles.container}>
       {notifications.map((item) => (
         <TouchableOpacity
-          key={item.id}
+          key={item.boardId}
           style={[
             styles.notificationItem,
             item.important && styles.importantNotification,
@@ -148,18 +148,25 @@ const NotificationScreen = () => {
             if (item.type === 'NOTICE') {
               handleNotificationPress(item.boardId);
             }
+            if (item.type === 'ARRIVE') {
+              navigation.navigate('Bus');
+            }
           }}
         >
           {item.type === 'NOTICE' && (
-            <Text style={styles.message}>공지사항에 글이 등록되었습니다.</Text>
+            <Text style={styles.message}>
+              📌 공지사항에 글이 등록되었습니다. {item.boardId}
+            </Text>
           )}
           {item.type === 'SUGGEST' && (
             <Text style={styles.message}>
-              {item.senderName}님이 채팅방에 {item.suggestion}를 작성하였습니다.
+              {item.senderName}님이 {item.suggestion}를 건의하였습니다.
             </Text>
           )}
           {item.type === 'ARRIVE' && (
-            <Text style={styles.message}>버스가 곧 정류장에 도착합니다.</Text>
+            <Text style={styles.message}>
+              🚌 버스가 곧 {item.stationName} 정류장에 도착합니다.
+            </Text>
           )}
 
           <Text style={styles.date}>{item.date}</Text>
