@@ -16,6 +16,7 @@ import * as Location from 'expo-location';
 import ModalDropdown from 'react-native-modal-dropdown';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { WHITE, PRIMARY, GRAY } from '../../constant/color';
+import RenderingScreen from '../common/RenderingScreen';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -278,9 +279,7 @@ const MapScreen = () => {
           />
         </MapView>
       ) : (
-        <View style={styles.loadingContainer}>
-          <Text style={styles.loadingText}>Loading...</Text>
-        </View>
+        <RenderingScreen />
       )}
 
       {/* 선택된 정류장이 있을 때만 표시 */}
