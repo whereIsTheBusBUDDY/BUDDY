@@ -1,5 +1,6 @@
 package com.ssafy.buddy.member.service;
 
+import com.ssafy.buddy.member.exception.EmailSendFailException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,8 +34,7 @@ public class EmailSender {
             javaMailSender.send(mimeMessage);
             log.info("이메일 전송 완료. 수신 이메일: {}, 임시비밀번호: {}, 보낸 시간: {}", email, temporaryPassword, LocalDateTime.now());
         } catch (Exception e) {
-            log.error("이메일 전송 실패. 실패 시간: {}", LocalDateTime.now(), e);
-//            throw new EmailSendFailException("이메일 전송 실패. email: " + email, e);
+            throw new EmailSendFailException("이메일 전송 실패: " + email, e);
         }
     }
 }

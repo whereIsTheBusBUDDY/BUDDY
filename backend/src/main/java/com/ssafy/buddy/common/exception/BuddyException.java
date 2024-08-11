@@ -10,11 +10,23 @@ public class BuddyException extends RuntimeException {
     private final HttpStatus status;
 
     public BuddyException(ErrorCode errorCode) {
-        this(errorCode.getCode(), errorCode.getMessage(), errorCode.getStatus());
+        this(errorCode, errorCode.getMessage());
     }
 
-    public BuddyException(String code, String message, HttpStatus status) {
-        super(message);
+    public BuddyException(ErrorCode errorCode, String message) {
+        this(null, errorCode, message);
+    }
+
+    public BuddyException(Throwable cause, ErrorCode errorCode) {
+        this(cause, errorCode.getCode(), errorCode.getMessage(), errorCode.getStatus());
+    }
+
+    public BuddyException(Throwable cause, ErrorCode errorCode, String message) {
+        this(cause, errorCode.getCode(), message, errorCode.getStatus());
+    }
+
+    public BuddyException(Throwable cause, String code, String message, HttpStatus status) {
+        super(message, cause);
         this.code = code;
         this.message = message;
         this.status = status;

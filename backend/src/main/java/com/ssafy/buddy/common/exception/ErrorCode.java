@@ -14,7 +14,9 @@ public enum ErrorCode {
     ENTITY_NOT_FOUND("4004", "엔티티 없음", HttpStatus.BAD_REQUEST),
     ILLEGAL_ARGUMENT("4005", "적절하지 않은 인자", HttpStatus.BAD_REQUEST),
     MISSING_TOKEN("4006", "토큰 없음", HttpStatus.UNAUTHORIZED),
-    JSON_MAPPING_WRONG("4007", "Json 파싱 실패", HttpStatus.BAD_REQUEST);
+    JSON_MAPPING_WRONG("4007", "Json 파싱 실패", HttpStatus.BAD_REQUEST),
+    INTERNAL_SERVER_ERROR("5000", "서버 에러", HttpStatus.INTERNAL_SERVER_ERROR),
+    EMAIL_SEND_FAIL("5001", "이메일 전송 실패", HttpStatus.INTERNAL_SERVER_ERROR);
 
     private final String code;
     private final String message;
