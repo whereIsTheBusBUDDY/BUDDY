@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
   View,
   Text,
@@ -13,11 +13,15 @@ import { useUserContext } from '../../context/UserContext';
 import apiClient from '../../api/api';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import EventSource from 'react-native-event-source'; // Import EventSource
 
 const ProfileScreen = () => {
   const [profileData, setProfileData] = useState({});
   const { setLoginUser } = useUserContext();
   const navigation = useNavigation();
+
+  // EventSource 인스턴스를 저장하기 위한 useRef 사용
+  const eventSourceRef = useRef(null);
 
   const fetchProfileData = async () => {
     try {
@@ -55,14 +59,27 @@ const ProfileScreen = () => {
       // }
 
       // 클라이언트에 저장된 Access 토큰과 Refresh 토큰 삭제
-      await AsyncStorage.removeItem('authToken');
-      await AsyncStorage.removeItem('refreshToken');
+      // await AsyncStorage.removeItem('accessToken');
+      // await AsyncStorage.removeItem('refreshToken');
+      // await AsyncStorage.setItem('accessToken', '');
+      // await AsyncStorage.setItem('refreshToken', '');
+      // await AsyncStorage.clear();
+
+      // SSE 연결 해제
+      eventSourceRef.current.close();
+      eventSourceRef.current = null;
+      console.log('SSE connection closed on logout');
+
+      // await AsyncStorage.removeItem(accessToken);
+
+      // const token1 = await AsyncStorage.getItem('accessToken');
+      // console.log('액세스 토큰', token1);
 
       // 사용자 상태 초기화
       setLoginUser(null);
 
       // 로그인 화면으로 이동
-      // navigation.navigate('');
+      // navigation.navigate('LoginScreen'); // 로그인 화면의 네비게이션 이름에 맞게 수정
     } catch (error) {
       console.error('로그아웃 중 오류 발생:', error);
     }

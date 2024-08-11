@@ -19,7 +19,7 @@ import busRoutes from '../data/busRoutes';
 import { BLACK, WHITE, SKYBLUE, GRAY } from '../constant/color';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import apiClient from '../api/api';
-import { useWebSocket } from '../context/WebSocketContext';
+import EventSource from 'react-native-event-source';
 
 const MainScreen = () => {
   const width = useWindowDimensions().width - 40;
@@ -30,41 +30,99 @@ const MainScreen = () => {
   const [passengerData, setPassengerData] = useState({});
   const items = ['1호차', '2호차', '3호차', '4호차', '5호차', '6호차'];
 
+  const [connectMessage, setConnectMessage] = useState('');
+  const [noticeMessage, setNoticeMessage] = useState('');
+  const [suggestMessage, setSuggestMessage] = useState('');
+  const [arriveMessage, setArriveMessage] = useState('');
+
   useEffect(() => {
-    registerForPushNotificationsAsync();
     fetchPassengerData();
+    initializeSSE(); // Initialize SSE when the component mounts
+    requestNotificationPermissions(); // Request notification permissions
+    sendNotification();
   }, []);
 
-  const registerForPushNotificationsAsync = async () => {
+  const requestNotificationPermissions = async () => {
+    const { status } = await Notifications.requestPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert('알림 권한이 거부되었습니다!');
+    }
+  };
+
+  // Set up notification handler
+  Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldShowAlert: true,
+      shouldPlaySound: false,
+      shouldSetBadge: false,
+    }),
+  });
+
+  // ✅ 알림 전송
+  const sendNotification = async (title, content) => {
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: title,
+        body: content,
+      },
+      trigger: null, // 즉시 보내려면 'trigger'에 'null'을 설정
+    });
+  };
+
+  const initializeSSE = async () => {
     try {
-      const { status: existingStatus } =
-        await Notifications.getPermissionsAsync();
-      let finalStatus = existingStatus.status;
-
-      if (existingStatus.status !== 'granted') {
-        const { status } = await Notifications.requestPermissionsAsync();
-        finalStatus = status;
-      }
-
-      if (finalStatus !== 'granted') {
-        alert('푸시 알림 권한이 필요합니다!');
+      const token = await AsyncStorage.getItem('accessToken');
+      if (!token) {
+        console.error('No token found in AsyncStorage');
         return;
       }
 
-      const token = (await Notifications.getExpoPushTokenAsync()).data;
-      console.log('Expo Push Token:', token);
+      // console.log('Access Token:', token);
 
-      // 토큰을 AsyncStorage에 저장
-      await AsyncStorage.setItem('expoPushToken', token);
+      const sseUrl = 'http://i11b109.p.ssafy.io:8080/subscribe';
 
-      // 저장된 토큰을 가져오기
-      const storedToken = await AsyncStorage.getItem('expoPushToken');
-      console.log('Stored Expo Push Token:', storedToken);
+      const headers = {
+        Authorization: `Bearer ${token}`,
+      };
 
-      // 서버에 토큰 저장 로직 추가 가능
-      // 예: await saveTokenToServer(token);
+      const eventSource = new EventSource(sseUrl, {
+        headers: headers,
+      });
+
+      eventSource.onopen = () => {
+        console.log('SSE connection opened');
+      };
+
+      eventSource.addEventListener('CONNECT', (e) => {
+        console.log('client CONNECT event: ', e.data);
+        console.log('액세스 토큰 ::::', AsyncStorage.getItem('accessToken'));
+        console.log('액세스 토큰 ::::::222222222', token);
+        setConnectMessage((prev) => prev + e.data);
+        // sendNotification('BUDDY', '공지사항이 등록되었습니다.');
+      });
+
+      eventSource.addEventListener('NOTICE', (e) => {
+        console.log('NOTICE event: ', e.data);
+        setNoticeMessage((prev) => prev + e.data);
+        sendNotification('BUDDY', '📌 공지사항이 등록되었습니다.');
+      });
+
+      eventSource.addEventListener('ARRIVE', (e) => {
+        console.log('ARRIVE event: ', e.data);
+        setArriveMessage((prev) => prev + e.data);
+        sendNotification('BUDDY', '');
+      });
+
+      eventSource.onerror = (e) => {
+        console.error('SSE error: ', e);
+      };
+
+      return () => {
+        eventSource.close();
+        console.log('SSE connection closed');
+      };
     } catch (error) {
-      console.error('푸시 알림 등록 실패:', error);
+      console.error('Failed to initialize SSE:', error);
     }
   };
 
@@ -120,40 +178,8 @@ const MainScreen = () => {
   const adjustFrame = (style) => {
     return {
       ...style,
-      left: style.left - 20, // 조정할 값
+      left: style.left - 20,
     };
-  };
-  const checkBusStatus = async () => {
-    try {
-      const response = await apiClient.get('/start/check');
-      return response.data;
-    } catch (error) {
-      console.error('운행 상태 확인 중 오류 발생:', error);
-      return false;
-    }
-  };
-
-  const handleBusLocationPress = async () => {
-    const isBusRunning = await checkBusStatus();
-    console.log(isBusRunning);
-    if (isBusRunning) {
-      navigation.navigate('Bus');
-    } else {
-      Alert.alert('알림', '운행중인 버스가 없습니다.');
-    }
-  };
-
-  const GoMessage = async () => {
-    try {
-      const busNumber = await AsyncStorage.getItem('busNumber');
-      if (busNumber) {
-        navigation.navigate('Message');
-      } else {
-        Alert.alert('알림', 'QR 스캔 후 이용 가능합니다.');
-      }
-    } catch (error) {
-      console.error('오류 발생', error);
-    }
   };
 
   const GoChatRoom = async () => {
@@ -307,7 +333,7 @@ const MainScreen = () => {
               textStyle={styles.dropdownText}
               dropdownStyle={styles.dropdownBox}
               dropdownTextStyle={styles.dropdownBoxText}
-              adjustFrame={adjustFrame} // 위치 조정 함수 추가
+              adjustFrame={adjustFrame}
             />
             <Text style={styles.bottomContainerText}>운행시간표</Text>
           </View>

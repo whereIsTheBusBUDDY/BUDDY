@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, Alert } from 'react-native';
 import MsgButton from '../../components/MsgButton';
 import CustomPopup from '../../components/MsgPopup';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const MessageScreen = () => {
   const [popupVisible, setPopupVisible] = useState(false);
@@ -22,6 +23,42 @@ const MessageScreen = () => {
     setPopupSecondLine('');
     setPopupThirdLine('');
   };
+
+  const handleSubmit = async (value) => {
+    try {
+      // AsyncStorage에서 액세스 토큰 불러오기
+      const accessToken = await AsyncStorage.getItem('accessToken');
+
+      if (!accessToken) {
+        console.error('Access token is missing');
+        return;
+      }
+
+      const response = await fetch(
+        `http://i11b109.p.ssafy.io:8080/suggestions?type=${value}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`, // 액세스 토큰을 Authorization 헤더에 추가
+          },
+          body: JSON.stringify({
+            title: value, // title을 value로 사용
+            content: `${value} 요청이 전송되었습니다.`, // content에 대한 설명
+          }),
+        }
+      );
+
+      if (response.ok) {
+        showPopup(value);
+      } else {
+        Alert.alert('오류', `오류: ${response.statusText}`);
+      }
+    } catch (error) {
+      Alert.alert('오류', `에러가 발생했습니다: ${error.message}`);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.origintxt}>
@@ -35,17 +72,17 @@ const MessageScreen = () => {
         <MsgButton
           title={'멈춰주세요'}
           buttonType={'PRIMARY'}
-          onPress={() => showPopup('"멈춰주세요"')}
+          onPress={() => handleSubmit('멈춰주세요')}
         />
         <MsgButton
           title={'더워요'}
           buttonType={'GRAY'}
-          onPress={() => showPopup('"더워요"')}
+          onPress={() => handleSubmit('더워요')}
         />
         <MsgButton
           title={'추워요'}
           buttonType={'GRAY'}
-          onPress={() => showPopup('"추워요"')}
+          onPress={() => handleSubmit('추워요')}
         />
       </View>
       <CustomPopup
