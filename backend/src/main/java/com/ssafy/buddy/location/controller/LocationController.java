@@ -17,12 +17,8 @@ public class LocationController {
     private final LocationService locationService;
     @PostMapping("/start/{busId}")
     public ResponseEntity<?> start(@PathVariable int busId, @RequestBody String location) {
-        try{
-            producerService.sendMessage(busId, location);
-            return ResponseEntity.ok("위치 저장 성공");
-        }catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("위치 저장 실패");
-        }
+        producerService.sendMessage(busId, location);
+        return ResponseEntity.ok("위치 저장 성공");
     }
     @GetMapping("/stop/{busId}")
     public ResponseEntity<?> stop(@PathVariable int busId) {

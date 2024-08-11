@@ -1,6 +1,7 @@
 package com.ssafy.buddy.common.exception;
 
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -27,4 +28,11 @@ public class GlobalExceptionHandler {
         ErrorResponse response = new ErrorResponse(ILLEGAL_ARGUMENT.getCode(), exception.getMessage());
         return new ResponseEntity<>(response, ILLEGAL_ARGUMENT.getStatus());
     }
+
+    @ExceptionHandler(CustomJsonProcessingException.class)
+    public ResponseEntity<ErrorResponse> handleCustomJsonProcessingException(CustomJsonProcessingException exception) {
+        ErrorResponse response = new ErrorResponse(JSON_MAPPING_WRONG.getCode(), exception.getMessage());
+        return new ResponseEntity<>(response, JSON_MAPPING_WRONG.getStatus());
+    }
+
 }
