@@ -60,7 +60,7 @@ export const AdminProvider = ({ children }) => {
 
           const checkTime = () => {
             const currentTime = new Date().getHours();
-            if (currentTime < 12) {
+            if (currentTime <= 12) {
               setTime(1);
             } else {
               setTime(2);

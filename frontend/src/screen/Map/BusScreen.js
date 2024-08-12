@@ -323,14 +323,16 @@ const BusScreen = () => {
     try {
       const responseData = await postBusData(data);
       console.log('Response data:', responseData); // 서버 응답 확인
-      console.log('Response time:', responseData.time); // 서버 응답 확인
+      let time = responseData.predicted_time;
+      console.log('Response time:', time); // 서버 응답 확인
 
       // 서버로부터 받은 도착 시간 정보를 상태로 저장
-      if (responseData.time >= 0) {
-        console.log('Setting arrival time:', responseData.time);
-        setArrivalTime(responseData.time);
-      } else if (responseData.time == -1) {
-        console.log(responseData.time);
+      if (time >= 0) {
+        console.log('Setting arrival time:', time);
+        setArrivalTime(time);
+        // let re
+      } else if (time == -1) {
+        console.log(time);
       } else {
         console.warn('Arrival time not found in response');
       }
@@ -338,6 +340,7 @@ const BusScreen = () => {
     } catch (error) {
       console.error('Error fetching arrival time:', error);
     }
+    console.log(arrivalTime);
   };
 
   return (
