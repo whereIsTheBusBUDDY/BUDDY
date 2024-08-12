@@ -28,7 +28,8 @@ public class KafkaConsumerService {
     private final FifthBusRepository fifthBusRepository;
     private final SixthBusRepository sixthBusRepository;
 
-    @KafkaListener(topics = "bus-1-location", groupId = "bus-1-group")
+    @KafkaListener(topics = "bus-1-location", groupId = "bus-location",
+    containerFactory = "kafkaListenerContainerFactory")
     public void consumeBus1(ConsumerRecord<String, String> record, Acknowledgment ack) {
         log.info("Consuming message from bus-1-location: {}", record.value());
         String location = record.value();
@@ -44,8 +45,8 @@ public class KafkaConsumerService {
             handleKafkaException(e);
         }
     }
-
-    @KafkaListener(topics = "bus-2-location", groupId = "bus-2-group")
+    @KafkaListener(topics = "bus-2-location", groupId = "bus-location",
+            containerFactory = "kafkaListenerContainerFactory")
     public void consumeBus2(ConsumerRecord<String, String> record, Acknowledgment ack) {
         log.info("Consuming message from bus-2-location: {}", record.value());
         String location = record.value();
@@ -61,8 +62,8 @@ public class KafkaConsumerService {
             handleKafkaException(e);
         }
     }
-
-    @KafkaListener(topics = "bus-3-location", groupId = "bus-3-group")
+    @KafkaListener(topics = "bus-3-location", groupId = "bus-location",
+            containerFactory = "kafkaListenerContainerFactory")
     public void consumeBus3(ConsumerRecord<String, String> record, Acknowledgment ack) {
         log.info("Consuming message from bus-3-location: {}", record.value());
         String location = record.value();
@@ -78,8 +79,8 @@ public class KafkaConsumerService {
             handleKafkaException(e);
         }
     }
-
-    @KafkaListener(topics = "bus-4-location", groupId = "bus-4-group")
+    @KafkaListener(topics = "bus-4-location", groupId = "bus-location",
+            containerFactory = "kafkaListenerContainerFactory")
     public void consumeBus4(ConsumerRecord<String, String> record, Acknowledgment ack) {
         log.info("Consuming message from bus-4-location: {}", record.value());
         String location = record.value();
@@ -95,8 +96,8 @@ public class KafkaConsumerService {
             handleKafkaException(e);
         }
     }
-
-    @KafkaListener(topics = "bus-5-location", groupId = "bus-5-group")
+    @KafkaListener(topics = "bus-5-location", groupId = "bus-location",
+            containerFactory = "kafkaListenerContainerFactory")
     public void consumeBus5(ConsumerRecord<String, String> record, Acknowledgment ack) {
         log.info("Consuming message from bus-5-location: {}", record.value());
         String location = record.value();
@@ -113,8 +114,8 @@ public class KafkaConsumerService {
             handleKafkaException(e);
         }
     }
-
-    @KafkaListener(topics = "bus-6-location", groupId = "bus-6-group")
+    @KafkaListener(topics = "bus-6-location", groupId = "bus-location",
+            containerFactory = "kafkaListenerContainerFactory")
     public void consumeBus6(ConsumerRecord<String, String> record, Acknowledgment ack) {
         log.info("Consuming message from bus-6-location: {}", record.value());
         String location = record.value();
