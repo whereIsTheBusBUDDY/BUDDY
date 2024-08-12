@@ -64,24 +64,6 @@ const AdminMapScreen = () => {
     navigate.navigate('AdminMain');
   };
 
-  // const ask = async () => {
-  //   let {
-  //     coords: { latitude, longitude },
-  //   } = await Location.getCurrentPositionAsync({
-  //     accuracy: Location.Accuracy.BestForNavigation,
-  //   });
-  //   setLocationMap({
-  //     latitude,
-  //     longitude,
-  //     latitudeDelta: 0.005,
-  //     longitudeDelta: 0.005,
-  //   });
-  //   console.log('초기 위치', { latitude, longitude });
-  //   console.log('초기 위치 location', locationMap);
-  // };
-  // useEffect(() => {
-  //   ask();
-  // }, []);
   useEffect(() => {
     if (location) {
       setLocationMap({

@@ -36,7 +36,7 @@ const StartTrackingButton = ({
           <View style={styles.title_contianer}>
             <Text style={[styles.title, { color: textColor }]}>{title}</Text>
             <Text style={[styles.title, { color: textColor }]}>
-              {'운행시작'}
+              {isTracking ? '운행종료' : '운행시작'}
             </Text>
           </View>
         </View>

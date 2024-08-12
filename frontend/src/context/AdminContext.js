@@ -6,7 +6,9 @@ import {
   getBusStations,
   busVisited,
   sendStop,
+  sendAlarm,
 } from '../api/busAdmin';
+import { Alert } from 'react-native';
 
 const AdminContext = createContext();
 
@@ -18,7 +20,7 @@ export const AdminProvider = ({ children }) => {
   const intervalRef = useRef(null);
   const isSendingRef = useRef(false);
   const [time, setTime] = useState(0);
-  // const [pendingAlarm, setPendingAlarm] = useState(null); // 펜딩 알람 상태 추가
+  const [pendingAlarm, setPendingAlarm] = useState(null); // 펜딩 알람 상태 추가
 
   const calculateDistance = (lat1, lon1, lat2, lon2) => {
     const R = 6371e3; // 지구 반지름(미터)
@@ -48,6 +50,9 @@ export const AdminProvider = ({ children }) => {
         isSendingRef.current = true; // 전송 상태 설정
 
         try {
+          // 1호 2번째 정류장
+          // const latitude = 36.3581;
+          // const longitude = 127.3947;
           const { coords } = await Location.getCurrentPositionAsync({
             accuracy: Location.Accuracy.BestForNavigation,
           });
@@ -61,8 +66,8 @@ export const AdminProvider = ({ children }) => {
 
           const checkTime = () => {
             const currentTime = new Date().getHours();
-            const ampmTime = currentTime < 12 ? 1 : 2;
-            setTime(ampmTime);
+            const newTime = currentTime < 12 ? 1 : 2;
+            setTime(newTime);
             console.log('현재시간(시기준)', currentTime);
           };
 
@@ -81,8 +86,11 @@ export const AdminProvider = ({ children }) => {
               if (stopDistance <= 100 && !stop.visited) {
                 console.log(`${stop.stationName} 정류장 방문 기록`);
                 busVisited(stop.id, true);
-                console.log('checktime', time);
+                Alert.alert(`${stop.stationName} 정류장에 도착하였습니다.`);
                 sendAlarm(stop.id, time);
+                console.log('북마크 api 전달', stop.id, time);
+                // 펜딩 알람 상태에 스톱 ID 설정
+                // setPendingAlarm(stop.id);
                 return { ...stop, visited: true };
               }
               return stop;
@@ -137,6 +145,7 @@ export const AdminProvider = ({ children }) => {
   //   // 펜딩된 알람이 있는 경우 알람을 보냅니다.
   //   if (pendingAlarm !== null) {
   //     sendAlarm(pendingAlarm, time);
+  //     console.log(pendingAlarm, time);
   //     setPendingAlarm(null); // 알람 전송 후 펜딩 상태 초기화
   //   }
   // }, [time]);
