@@ -7,12 +7,14 @@ import com.ssafy.buddy.member.controller.request.UpdateRequest;
 import com.ssafy.buddy.member.controller.response.IdcardCheckResponse;
 import com.ssafy.buddy.member.controller.response.MemberResponse;
 import com.ssafy.buddy.member.service.MemberService;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.net.URI;
 
 @RestController
@@ -57,9 +59,16 @@ public class MemberController {
         return memberService.checkPassword(memberId, request.getPassword());
     }
 
+    @PostMapping("/send-email")
+    public void sendPasswordEmail(@RequestParam("email") String email) {
+        memberService.sendPasswordEmail(email);
+    }
+
     @PostMapping("/reset-password")
-    public void resetPassword(@RequestParam("email") String email) {
-        memberService.resetPassword(email);
+    public void resetPassword(@RequestParam("email") String email, @RequestParam("tempPassword") String tempPassword,
+                              HttpServletResponse response) throws IOException {
+        memberService.resetPassword(email, tempPassword);
+        response.sendRedirect("/reset-password-success");
     }
 
     @PutMapping("/update-password")

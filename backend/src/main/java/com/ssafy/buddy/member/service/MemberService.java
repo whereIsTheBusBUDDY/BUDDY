@@ -87,25 +87,24 @@ public class MemberService {
     }
 
     @Transactional
-    public void resetPassword(String email) {
+    public void sendPasswordEmail(String email) {
+        memberRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("등록된 이메일이 없습니다."));
+        String temporaryPassword = UUID.randomUUID().toString().substring(0, 6);
+        emailSender.sendTemporaryPassword(email, temporaryPassword);
+    }
+
+    @Transactional
+    public void resetPassword(String email, String temporaryPassword) {
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("등록된 이메일이 없습니다."));
-
-        String temporaryPassword = UUID.randomUUID().toString().substring(0, 6);
         member.updatePassword(passwordEncoder.encode(temporaryPassword));
-
-        emailSender.sendTemporaryPassword(email, temporaryPassword);
     }
 
     @Transactional
     public void updatePassword(Long memberId, String password) {
         Member member = findById(memberId);
         member.updatePassword(passwordEncoder.encode(password));
-    }
-
-    private Member findById(Long memberId) {
-        return memberRepository.findById(memberId)
-                .orElseThrow(() -> new EntityNotFoundException("회원(memberId: " + memberId + ")이 존재하지 않습니다."));
     }
 
     //fastAPI yolo 요청
@@ -134,5 +133,10 @@ public class MemberService {
 
         // ResponseEntity로 IdcardCheckResponse 객체를 반환
         return ResponseEntity.ok(response);
+    }
+
+    private Member findById(Long memberId) {
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new EntityNotFoundException("회원(memberId: " + memberId + ")이 존재하지 않습니다."));
     }
 }
