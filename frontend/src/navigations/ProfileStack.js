@@ -2,6 +2,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import ProfileScreen from '../screen/Account/ProfileScreen';
 import EditProfileScreen from '../screen/Account/EditProfileScreen';
 import ChangePassword from '../screen/Account/ChangePassword';
+import LoginScreen from '../screen/Account/LoginScreen';
 
 const Stack = createStackNavigator();
 
@@ -30,6 +31,13 @@ const ProfileStack = () => {
         options={{
           headerTitle: '비밀번호 변경하기',
           headerShadowVisible: false,
+        }}
+      />
+      <Stack.Screen
+        name="Login"
+        component={LoginScreen}
+        options={{
+          headerShown: false,
         }}
       />
     </Stack.Navigator>

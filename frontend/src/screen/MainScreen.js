@@ -28,6 +28,8 @@ const MainScreen = () => {
   const [selectedBus, setSelectedBus] = useState('1호차');
   const [refreshing, setRefreshing] = useState(false);
   const [passengerData, setPassengerData] = useState({});
+  const [lastNotice, setLastNotice] = useState('');
+  const [lastNoticeCreateAt, setLastNoticeCreateAt] = useState('');
   const items = ['1호차', '2호차', '3호차', '4호차', '5호차', '6호차'];
 
   const [connectMessage, setConnectMessage] = useState('');
@@ -39,7 +41,8 @@ const MainScreen = () => {
     fetchPassengerData();
     initializeSSE(); // Initialize SSE when the component mounts
     requestNotificationPermissions(); // Request notification permissions
-    // sendNotification();
+    sendNotification();
+    fetchLastNotice();
   }, []);
 
   const requestNotificationPermissions = async () => {
@@ -76,8 +79,6 @@ const MainScreen = () => {
         console.error('No token found in AsyncStorage');
         return;
       }
-
-      // console.log('Access Token:', token);
 
       const sseUrl = 'http://i11b109.p.ssafy.io:8080/subscribe';
 
@@ -134,6 +135,17 @@ const MainScreen = () => {
       console.log(response.data);
     } catch (error) {
       console.error('프로필 정보를 가져오는 중 오류 발생:', error);
+    }
+  };
+
+  const fetchLastNotice = async () => {
+    try {
+      const response = await apiClient.get('/board/notice/last');
+      setLastNoticeCreateAt(response.data.createdAt);
+      setLastNotice(response.data.title || '공지사항이 없습니다');
+    } catch (error) {
+      console.error('마지막 공지사항을 가져오는 중 오류 발생:', error);
+      setLastNotice('공지사항을 불러오지 못했습니다.');
     }
   };
 
@@ -238,26 +250,26 @@ const MainScreen = () => {
           <Text style={styles.notice}>공지사항 {'>'}</Text>
 
           <ImageButton
-            title={'07:00 | 1호차, 6호차는 유성온천역부터 운행합니다.'}
+            title={`${lastNoticeCreateAt} | ${lastNotice}`}
             onPress={() => {
               navigation.navigate('Board');
             }}
             buttonColor={ButtonColors.ORANGE}
             width={width}
             height={40}
-            titleFontSize={12}
+            titleFontSize={15}
           />
           <ImageButton
             title={
               <>
-                <Text style={{ fontSize: 18, fontWeight: 'bold' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold' }}>
                   {profileData.이름}
                 </Text>
-                <Text style={{ fontSize: 18 }}>{'님,'}</Text>
-                <Text style={{ color: SKYBLUE.FONT }}>
+                <Text style={{ fontSize: 20 }}>{'님,'}</Text>
+                <Text style={{ color: SKYBLUE.FONT, fontSize: 16 }}>
                   {'\n실시간 셔틀버스 위치'}
                 </Text>
-                <Text>{'를 확인해보세요!'}</Text>
+                <Text style={{ fontSize: 16 }}>{'를 확인해보세요!'}</Text>
               </>
             }
             onPress={handleBusLocationPress}
@@ -283,7 +295,7 @@ const MainScreen = () => {
               width={width / 2 - 10}
               height={100}
               imageSource={require('../../assets/qr.png')}
-              titleFontSize={13}
+              titleFontSize={14}
             />
           </View>
           <View style={styles.upperRightPad}>
@@ -295,7 +307,7 @@ const MainScreen = () => {
               imageSource={require('../../assets/driver.png')}
               imageWidth={30}
               imageHeight={30}
-              titleFontSize={12}
+              titleFontSize={14}
             />
             <ImageButton
               title="채팅방 입장하기"
@@ -305,6 +317,7 @@ const MainScreen = () => {
               imageSource={require('../../assets/chat.png')}
               imageWidth={30}
               imageHeight={30}
+              titleFontSize={14}
             />
           </View>
         </View>
@@ -321,7 +334,7 @@ const MainScreen = () => {
               imageSource={require('../../assets/map.png')}
               imageWidth={60}
               imageHeight={60}
-              titleFontSize={13}
+              titleFontSize={14}
             />
             <ImageButton
               title={'즐겨찾는\n 목적지'}
@@ -333,7 +346,7 @@ const MainScreen = () => {
               imageSource={require('../../assets/favorite.png')}
               imageWidth={65}
               imageHeight={50}
-              titleFontSize={13}
+              titleFontSize={14}
             />
           </View>
           <View style={styles.middleRightPad}>
@@ -419,6 +432,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-evenly',
   },
   numOfPeopleText: {
+    fontWeight: 'bold',
     fontSize: 14,
     textAlign: 'center',
   },

@@ -53,16 +53,16 @@ const ProfileScreen = () => {
   const logOut = async () => {
     try {
       const refreshToken = await AsyncStorage.getItem('refreshToken');
-      console.log('리프레시 토큰 잘 있고');
+      console.log(refreshToken);
       if (refreshToken) {
         await apiClient.post(`/out?refreshToken=${refreshToken}`);
+        console.log('로그아웃 요청 보냈음');
       }
-      console.log('로그아웃 요청 보냈음');
-
-      // 클라이언트에 저장된 Access 토큰과 Refresh 토큰 삭제
       await AsyncStorage.removeItem('accessToken');
       await AsyncStorage.removeItem('refreshToken');
       await AsyncStorage.clear();
+
+      setLoginUser(null);
 
       // SSE 연결 해제
       // eventSourceRef.current.close();
@@ -75,12 +75,10 @@ const ProfileScreen = () => {
       // console.log('액세스 토큰', token1);
 
       // 사용자 상태 초기화
-      setLoginUser(null);
 
       // 로그인 화면으로 이동
-      // navigation.navigate('LoginScreen'); // 로그인 화면의 네비게이션 이름에 맞게 수정
     } catch (error) {
-      console.error('로그아웃 중 오류 발생:', error);
+      console.error('로그아웃 중 오류 발생:', error.message, error.response);
     }
   };
 
@@ -134,9 +132,9 @@ const styles = StyleSheet.create({
   },
   profileImage: {
     marginTop: 10,
-    marginBottom: 30,
+    marginBottom: 10,
     width: '100%',
-    height: 190,
+    height: 210,
   },
   infoContainer: {
     width: '100%',
