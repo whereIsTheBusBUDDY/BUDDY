@@ -3,6 +3,8 @@ spring:
     name: buddy
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://rds-test.cfsok8siyava.ap-northeast-2.rds.amazonaws.com:3306/rdstest?serverTimezone=Asia/Seoul
+
   jpa:
     hibernate:
       ddl-auto: none
@@ -58,7 +60,7 @@ spring:
     activate:
       on-profile: local
   datasource:
-    url: jdbc:mysql://localhost:3306/buddy?serverTimezone=UTC&characterEncoding=UTF-8
+    url: jdbc:mysql://localhost:3306/buddy?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     username: ${DB_NAME}
     password: ${DB_PASSWORD}
 
