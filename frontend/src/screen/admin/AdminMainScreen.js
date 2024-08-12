@@ -149,7 +149,12 @@ const AdminMainScreen = () => {
   const stopBus = () => {
     setIsTracking(false);
     console.log('stopBus 실행');
+    // if (!isTracking) {
+    //   handleStopTracking();
+    // }
     handleStopTracking();
+    Alert.alert('운행을 종료합니다.');
+    navigate.navigate('AdminMain');
   };
 
   const startBus = () => {
@@ -166,7 +171,7 @@ const AdminMainScreen = () => {
       <Text>실시간 셔틀버스 위치가 공유됩니다.</Text>
       <StartTrackingButton
         title={`${busNumber}호차`}
-        onPress={startBus}
+        onPress={isTracking ? stopBus : startBus}
         disabled={false}
         buttonType={ButtonType.PRIMARY}
         height={150}
