@@ -3,6 +3,7 @@ package com.ssafy.buddy.board.controller;
 import com.ssafy.buddy.auth.supports.LoginMember;
 import com.ssafy.buddy.board.domain.request.BoardRequest;
 import com.ssafy.buddy.board.domain.response.BoardResponse;
+import com.ssafy.buddy.board.domain.response.LastNoticeResponse;
 import com.ssafy.buddy.board.service.BoardService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -52,5 +53,10 @@ public class BoardController {
     public ResponseEntity<Void> deleteBoard(@LoginMember Long memberId, @PathVariable Long boardId) {
         boardService.deleteBoard(memberId, boardId);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/notice/last")
+    public LastNoticeResponse getLastNotice() {
+        return boardService.getLastNotice();
     }
 }
