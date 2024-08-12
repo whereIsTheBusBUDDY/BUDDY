@@ -6,9 +6,9 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from 'react-native';
-import ModalDropdown from 'react-native-modal-dropdown';
 import { BLACK, GRAY, PRIMARY, WHITE } from '../../constant/color';
 import apiClient from '../../api/api';
+import DropdownBus from '../../components/Dropdown/DropdownBus';
 
 const TabButton = ({ title, isActive, onPress }) => (
   <TouchableOpacity
@@ -97,13 +97,11 @@ const RegisterFavorites = () => {
   const [selectedBus, setSelectedBus] = useState('1호차'); // 기본값을 1호차로 설정
   const [busStops, setBusStops] = useState([]);
 
-  const items = ['1호차', '2호차', '3호차', '4호차', '5호차', '6호차'];
-
-  const handleSelect = async (index, value) => {
+  const handleSelect = async (value) => {
     setSelectedBus(value);
+    const busId = parseInt(value.replace('호차', ''), 10); // '1호차' -> 1로 변환
 
     try {
-      const busId = index + 1;
       const response = await apiClient.get(`/routes?busId=${busId}`);
       setBusStops(response.data);
     } catch (error) {
@@ -139,14 +137,11 @@ const RegisterFavorites = () => {
 
   return (
     <ScrollView style={styles.listContainer}>
-      <ModalDropdown
-        options={items}
-        onSelect={handleSelect}
-        defaultValue={selectedBus} // 기본값을 1호차로 설정
-        style={styles.dropdown}
-        textStyle={styles.dropdownText}
-        dropdownStyle={styles.dropdownBox}
-        dropdownTextStyle={styles.dropdownBoxText}
+      <DropdownBus
+        selectedValue={selectedBus}
+        onChangeValue={handleSelect}
+        backgroundColor="#A9A9A9"
+        style={styles.fullWidthDropdown}
       />
       {busStops.length > 0 ? (
         busStops.map((stop, index) => (
@@ -296,6 +291,9 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 5,
     color: GRAY.FONT,
+  },
+  fullWidthDropdown: {
+    width: '100%', // 드롭다운이 가로로 꽉 차도록 설정
   },
 });
 
