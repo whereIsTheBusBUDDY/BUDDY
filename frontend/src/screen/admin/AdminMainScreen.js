@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View, Alert } from 'react-native'; // Alert를 추가로 import
 import { useUserContext } from '../../context/UserContext';
 import { useAdminContext } from '../../context/AdminContext';
 import AdminMainButton from '../../components/admin/AdminMainButton';
@@ -10,12 +10,13 @@ import { boardingCount } from '../../api/busAdmin';
 import { useNavigation } from '@react-navigation/native';
 import StartTrackingButton from '../../components/admin/StartTrackingButton';
 import PeopleCountButton from '../../components/admin/PeopleCountButton';
-import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
-import EventSource from 'react-native-event-source'; // Import EventSource
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import EventSource from 'react-native-event-source';
+import * as Speech from 'expo-speech'; // Speech 모듈을 추가로 import
 
 const AdminMainScreen = () => {
   const { loginUser, setLoginUser } = useUserContext();
-  const [boardingNumber, setBoardingNumber] = useState(null); // 상태 선언 수정
+  const [boardingNumber, setBoardingNumber] = useState(null);
   const {
     busNumber,
     setIsTracking,
@@ -34,141 +35,21 @@ const AdminMainScreen = () => {
 
   // API 호출 및 데이터 로딩
   useEffect(() => {
-    requestNotificationPermissions(); // Request notification permissions
-    sendNotification();
-
-    const initializeSSE = async () => {
+    const fetchBoardingCount = async () => {
       try {
-        // AsyncStorage에서 토큰 가져오기
-        const token = await AsyncStorage.getItem('accessToken');
-        if (!token) {
-          console.error('No token found in AsyncStorage');
-          return;
-        }
-
-        console.log('Access Token:', token); // 토큰 확인 로그
-
-        // SSE 서버 연결 설정
-        const sseUrl = 'http://i11b109.p.ssafy.io:8080/subscribe'; // 실제 서버 주소 사용
-
-        const headers = {
-          Authorization: `Bearer ${token}`, // AsyncStorage에서 가져온 토큰 사용
-        };
-
-        // EventSource 생성
-        const eventSource = new EventSource(sseUrl, {
-          headers: headers,
-        });
-
-        eventSource.onopen = () => {
-          console.log('SSE connection opened');
-        };
-
-        // 서버에서 CONNECT, NOTICE, SUGGEST, ARRIVE 이벤트 수신
-        eventSource.addEventListener('CONNECT', (e) => {
-          console.log('admin CONNECT event: ', e.data);
-          setConnectMessage((prev) => prev + e.data);
-        });
-
-        eventSource.addEventListener('NOTICE', (e) => {
-          console.log('NOTICE event: ', e.data);
-          setNoticeMessage((prev) => prev + e.data);
-        });
-
-        eventSource.addEventListener('SUGGEST', (e) => {
-          console.log('SUGGEST event: ', e.data);
-          setSuggestMessage((prev) => prev + e.data);
-          sendNotification('BUDDY', `"${e.data}" 건의사항이 도착했습니다.`);
-        });
-
-        eventSource.onerror = (e) => {
-          console.error('SSE error: ', e);
-        };
-
-        // 컴포넌트가 언마운트될 때 SSE 연결 해제
-        return () => {
-          eventSource.close();
-          console.log('SSE connection closed');
-        };
+        const result = await boardingCount(busNumber);
+        setBoardingNumber(result);
+        console.log(result);
       } catch (error) {
-        console.error('Failed to initialize SSE:', error);
+        console.error('탑승인원 불러오기 실패', error);
       }
     };
-
-    //  fetchBoardingCount(); // useEffect 내에서 API 호출
-  }, [busNumber]); // busNumber가 변경될 때마다 호출
-
-  useEffect(() => {
-    requestNotificationPermissions(); // Request notification permissions
-    sendNotification();
-
-    const initializeSSE = async () => {
-      try {
-        // AsyncStorage에서 토큰 가져오기
-        const token = await AsyncStorage.getItem('accessToken');
-        if (!token) {
-          console.error('No token found in AsyncStorage');
-          return;
-        }
-
-        console.log('Access Token:', token); // 토큰 확인 로그
-
-        // SSE 서버 연결 설정
-        const sseUrl = 'http://i11b109.p.ssafy.io:8080/subscribe'; // 실제 서버 주소 사용
-
-        const headers = {
-          Authorization: `Bearer ${token}`, // AsyncStorage에서 가져온 토큰 사용
-        };
-
-        // EventSource 생성
-        const eventSource = new EventSource(sseUrl, {
-          headers: headers,
-        });
-
-        eventSource.onopen = () => {
-          console.log('SSE connection opened');
-        };
-
-        // 서버에서 CONNECT, NOTICE, SUGGEST, ARRIVE 이벤트 수신
-        eventSource.addEventListener('CONNECT', (e) => {
-          console.log('admin CONNECT event: ', e.data);
-          setConnectMessage((prev) => prev + e.data);
-        });
-
-        eventSource.addEventListener('NOTICE', (e) => {
-          console.log('NOTICE event: ', e.data);
-          setNoticeMessage((prev) => prev + e.data);
-        });
-
-        eventSource.addEventListener('SUGGEST', (e) => {
-          console.log('SUGGEST event: ', e.data);
-          setSuggestMessage((prev) => prev + e.data);
-          sendNotification('BUDDY', `"${e.data}" 건의사항이 도착했습니다.`);
-        });
-
-        eventSource.onerror = (e) => {
-          console.error('SSE error: ', e);
-        };
-
-        // 컴포넌트가 언마운트될 때 SSE 연결 해제
-        return () => {
-          eventSource.close();
-          console.log('SSE connection closed');
-        };
-      } catch (error) {
-        console.error('Failed to initialize SSE:', error);
-      }
-    };
-
-    initializeSSE(); // Initialize SSE when the component mounts
-  }, []); // 빈 배열을 사용하여 컴포넌트가 마운트될 때 한 번만 실행
+    fetchBoardingCount();
+  }, [busNumber]);
 
   useEffect(() => {
-    let num = boardingCount(busNumber);
-    num.then((resolvedNum) => {
-      setBoardingNumber(resolvedNum);
-    });
-    setBoardingNumber(num);
+    requestNotificationPermissions(); // 알림 권한 요청
+    initializeSSE();
   }, []);
 
   const requestNotificationPermissions = async () => {
@@ -178,7 +59,69 @@ const AdminMainScreen = () => {
     }
   };
 
-  // Set up notification handler
+  const initializeSSE = async () => {
+    try {
+      const token = await AsyncStorage.getItem('accessToken');
+      if (!token) {
+        console.error('No token found in AsyncStorage');
+        return;
+      }
+
+      console.log('Access Token:', token);
+
+      const sseUrl = 'http://i11b109.p.ssafy.io:8080/subscribe';
+
+      const headers = {
+        Authorization: `Bearer ${token}`,
+      };
+
+      const eventSource = new EventSource(sseUrl, {
+        headers: headers,
+      });
+
+      eventSource.onopen = () => {
+        console.log('SSE connection opened');
+      };
+
+      // 서버에서 CONNECT, NOTICE, SUGGEST, ARRIVE 이벤트 수신
+      eventSource.addEventListener('CONNECT', (e) => {
+        console.log('admin CONNECT event: ', e.data);
+        setConnectMessage((prev) => prev + e.data);
+      });
+
+      eventSource.addEventListener('NOTICE', (e) => {
+        console.log('NOTICE event: ', e.data);
+        setNoticeMessage((prev) => prev + e.data);
+      });
+
+      eventSource.addEventListener('SUGGEST', (e) => {
+        console.log('SUGGEST event: ', e.data);
+        setSuggestMessage((prev) => prev + e.data);
+        const notificationText = `"${e.data}" 건의사항이 도착했습니다.`;
+        sendNotification('BUDDY', notificationText);
+
+        // TTS를 사용하여 알림 내용 읽기
+        Speech.speak(notificationText, {
+          language: 'ko', // 한국어로 설정
+          pitch: 1.0,
+          rate: 1.0,
+        });
+      });
+
+      eventSource.onerror = (e) => {
+        console.error('SSE error: ', e);
+      };
+
+      return () => {
+        eventSource.close();
+        console.log('SSE connection closed');
+      };
+    } catch (error) {
+      console.error('Failed to initialize SSE:', error);
+    }
+  };
+
+  // 알림 핸들러 설정
   Notifications.setNotificationHandler({
     handleNotification: async () => ({
       shouldShowAlert: true,
@@ -187,14 +130,14 @@ const AdminMainScreen = () => {
     }),
   });
 
-  // ✅ 알림 전송
+  // 알림 전송
   const sendNotification = async (title, content) => {
     await Notifications.scheduleNotificationAsync({
       content: {
         title: title,
         body: content,
       },
-      trigger: null, // 즉시 보내려면 'trigger'에 'null'을 설정
+      trigger: null,
     });
   };
 
@@ -234,7 +177,7 @@ const AdminMainScreen = () => {
         disabled={false}
         buttonType={ButtonType.GRAY}
         height={150}
-        value={boardingNumber} // 상태에서 값 가져오기
+        value={boardingNumber}
       />
       <AdminMainButton
         title={'건의함 보기'}
@@ -260,13 +203,6 @@ const styles = StyleSheet.create({
     backgroundColor: WHITE,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  sseContainer: {
-    marginTop: 20,
-  },
-  message: {
-    marginTop: 5,
-    color: '#333',
   },
   sseContainer: {
     marginTop: 20,
