@@ -17,12 +17,23 @@ import { FontAwesome } from '@expo/vector-icons'; // 아이콘을 사용하기 �
 import StopTrackingButton from '../../components/admin/StopTrackingButton';
 import { ButtonType } from '../../components/AdminSelectButton';
 import { useNavigation } from '@react-navigation/native';
+import RenderingScreen from '../common/RenderingScreen';
+import { WHITE } from '../../constant/color';
+import { boardingCount } from '../../api/busAdmin';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const AdminMapScreen = () => {
   const { busNumber } = useAdminContext();
   const [locationMap, setLocationMap] = useState(null);
+  const [boardingNumber, setBoardingNumber] = useState(null);
   const mapRef = useRef(null);
+  useEffect(() => {
+    let num = boardingCount(busNumber);
+    num.then((resolvedNum) => {
+      setBoardingNumber(resolvedNum);
+    });
+    setBoardingNumber(num);
+  }, []);
   const {
     handleStartTracking,
     handleStopTracking,
@@ -80,12 +91,28 @@ const AdminMapScreen = () => {
         longitudeDelta: 0.005,
       });
       // console.log('location update', location);
+      if (mapRef.current) {
+        mapRef.current.animateToRegion(
+          {
+            latitude: location.latitude,
+            longitude: location.longitude,
+            latitudeDelta: 0.005,
+            longitudeDelta: 0.005,
+          },
+          500
+        ); // 500ms 애니메이션 지속 시간
+      }
     }
   }, [location]);
   return (
     <View style={styles.container}>
       {locationMap ? (
-        <MapView ref={mapRef} style={styles.map} initialRegion={locationMap}>
+        <MapView
+          ref={mapRef}
+          style={styles.map}
+          initialRegion={locationMap}
+          onMapReady={moveToMarker}
+        >
           <Marker coordinate={locationMap} title={`${busNumber}호차`}>
             <Image
               source={require('../../../assets/bus_maker.png')} // 이미지 경로를 실제 경로로 변경하세요
@@ -95,10 +122,14 @@ const AdminMapScreen = () => {
           </Marker>
         </MapView>
       ) : (
-        <View style={styles.container}>
-          <Text style={styles.cityName}>Loading...</Text>
-        </View>
+        <RenderingScreen />
       )}
+      <TouchableOpacity
+        style={styles.boardingPeopleButton}
+        onPress={moveToMarker}
+      >
+        <Text style={{ color: 'white' }}>{boardingNumber}명</Text>
+      </TouchableOpacity>
       <View style={styles.closebus}>
         <StopTrackingButton
           title={`${busNumber}호차`}
@@ -167,6 +198,18 @@ const styles = StyleSheet.create({
     height: 60,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  boardingPeopleButton: {
+    position: 'absolute',
+    top: 50,
+    right: 20,
+    backgroundColor: '#f97316',
+    borderRadius: 8,
+    width: 60,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    color: '#ffffff',
   },
 });
 

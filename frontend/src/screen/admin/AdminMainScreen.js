@@ -95,7 +95,7 @@ const AdminMainScreen = () => {
       }
     };
 
-    fetchBoardingCount(); // useEffect 내에서 API 호출
+    //  fetchBoardingCount(); // useEffect 내에서 API 호출
   }, [busNumber]); // busNumber가 변경될 때마다 호출
 
   useEffect(() => {
@@ -162,6 +162,14 @@ const AdminMainScreen = () => {
 
     initializeSSE(); // Initialize SSE when the component mounts
   }, []); // 빈 배열을 사용하여 컴포넌트가 마운트될 때 한 번만 실행
+
+  useEffect(() => {
+    let num = boardingCount(busNumber);
+    num.then((resolvedNum) => {
+      setBoardingNumber(resolvedNum);
+    });
+    setBoardingNumber(num);
+  }, []);
 
   const requestNotificationPermissions = async () => {
     const { status } = await Notifications.requestPermissionsAsync();
@@ -242,22 +250,6 @@ const AdminMainScreen = () => {
         buttonType={ButtonType.GRAY}
         height={50}
       />
-
-      {/* SSE 이벤트 상태 표시 */}
-      <View style={styles.sseContainer}>
-        <Text style={styles.message}>Connect: {connectMessage}</Text>
-        <Text style={styles.message}>Notice: {noticeMessage}</Text>
-        <Text style={styles.message}>Suggest: {suggestMessage}</Text>
-        <Text style={styles.message}>Arrive: {arriveMessage}</Text>
-      </View>
-
-      {/* SSE 이벤트 상태 표시 */}
-      <View style={styles.sseContainer}>
-        <Text style={styles.message}>Connect: {connectMessage}</Text>
-        <Text style={styles.message}>Notice: {noticeMessage}</Text>
-        <Text style={styles.message}>Suggest: {suggestMessage}</Text>
-        <Text style={styles.message}>Arrive: {arriveMessage}</Text>
-      </View>
     </View>
   );
 };
