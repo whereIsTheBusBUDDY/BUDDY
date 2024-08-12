@@ -132,9 +132,9 @@ const styles = StyleSheet.create({
   },
   profileImage: {
     marginTop: 10,
-    marginBottom: 30,
+    marginBottom: 10,
     width: '100%',
-    height: 190,
+    height: 210,
   },
   infoContainer: {
     width: '100%',

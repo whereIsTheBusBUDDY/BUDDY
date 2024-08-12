@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import {
+  View,
+  ScrollView,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+} from 'react-native';
 import ModalDropdown from 'react-native-modal-dropdown';
 import { BLACK, GRAY, PRIMARY, WHITE } from '../../constant/color';
 import apiClient from '../../api/api';
@@ -88,7 +94,7 @@ const MyFavorites = () => {
 };
 
 const RegisterFavorites = () => {
-  const [selectedBus, setSelectedBus] = useState(null);
+  const [selectedBus, setSelectedBus] = useState('1호차'); // 기본값을 1호차로 설정
   const [busStops, setBusStops] = useState([]);
 
   const items = ['1호차', '2호차', '3호차', '4호차', '5호차', '6호차'];
@@ -104,6 +110,11 @@ const RegisterFavorites = () => {
       console.error('호차별 노선 조회 실패:', error);
     }
   };
+
+  useEffect(() => {
+    // 페이지가 로드될 때 1호차의 데이터를 가져옴
+    handleSelect(0, '1호차');
+  }, []);
 
   const toggleBookmark = async (stationId, isBookmarked) => {
     try {
@@ -127,53 +138,46 @@ const RegisterFavorites = () => {
   };
 
   return (
-    <View style={[styles.listContainer, { flexDirection: 'row' }]}>
-      <View style={styles.leftPad}>
-        <ModalDropdown
-          options={items}
-          onSelect={handleSelect}
-          defaultValue="선택"
-          style={styles.dropdown}
-          textStyle={styles.dropdownText}
-          dropdownStyle={styles.dropdownBox}
-          dropdownTextStyle={styles.dropdownBoxText}
-        />
-      </View>
-      <View style={styles.rightPad}>
-        {busStops.length > 0 ? (
-          busStops.map((stop, index) => (
-            <View
-              key={index}
-              style={[
-                styles.item,
-                { flexDirection: 'row', justifyContent: 'space-between' },
-              ]}
+    <ScrollView style={styles.listContainer}>
+      <ModalDropdown
+        options={items}
+        onSelect={handleSelect}
+        defaultValue={selectedBus} // 기본값을 1호차로 설정
+        style={styles.dropdown}
+        textStyle={styles.dropdownText}
+        dropdownStyle={styles.dropdownBox}
+        dropdownTextStyle={styles.dropdownBoxText}
+      />
+      {busStops.length > 0 ? (
+        busStops.map((stop, index) => (
+          <View
+            key={index}
+            style={[
+              styles.item,
+              { flexDirection: 'row', justifyContent: 'space-between' },
+            ]}
+          >
+            <Text style={styles.title}>{stop.stationName}</Text>
+            <TouchableOpacity
+              onPress={() => toggleBookmark(stop.stationId, stop.bookmarked)}
             >
-              <Text style={styles.title}>{stop.stationName}</Text>
-              <TouchableOpacity
-                onPress={() => toggleBookmark(stop.stationId, stop.bookmarked)}
-              >
-                {/* <Text style={styles.star}>{stop.bookmarked ? '★' : '☆'}</Text> */}
-                <Text
-                  style={stop.bookmarked ? styles.starSelected : styles.star}
-                >
-                  ★
-                </Text>
-              </TouchableOpacity>
-            </View>
-          ))
-        ) : (
-          <Text style={styles.item}>정류장을 선택하세요</Text>
-        )}
-      </View>
-    </View>
+              <Text style={stop.bookmarked ? styles.starSelected : styles.star}>
+                ★
+              </Text>
+            </TouchableOpacity>
+          </View>
+        ))
+      ) : (
+        <Text style={styles.item}>정류장을 선택하세요</Text>
+      )}
+    </ScrollView>
   );
 };
 
 const FavoriteScreen = () => {
   const [activeTab, setActiveTab] = useState('MyFavorites');
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <View style={styles.tabContainer}>
         <TabButton
           title="나의 즐겨찾기"
@@ -187,7 +191,7 @@ const FavoriteScreen = () => {
         />
       </View>
       {activeTab === 'MyFavorites' ? <MyFavorites /> : <RegisterFavorites />}
-    </View>
+    </ScrollView>
   );
 };
 
@@ -231,6 +235,7 @@ const styles = StyleSheet.create({
   },
   item: {
     fontSize: 16,
+    alignItems: 'center',
     paddingVertical: 8,
     paddingHorizontal: 5,
     backgroundColor: WHITE,
@@ -242,12 +247,13 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
     alignItems: 'center',
+    marginBottom: 20,
   },
   dropdownText: {
     fontSize: 16,
   },
   dropdownBox: {
-    width: '20%',
+    width: '100%',
   },
   dropdownBoxText: {
     fontSize: 16,
@@ -276,15 +282,14 @@ const styles = StyleSheet.create({
   star: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#ccc', // 초기 별 색상은 회색
-    marginLeft: 10,
-    marginrRight: 20,
+    color: GRAY.BACKGROUND,
+    marginRight: 10,
   },
   starSelected: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#f97316', // 선택 시 별 색상은 주황색
-    marginLeft: 10,
+    color: PRIMARY.DEFAULT,
+    marginRight: 10,
   },
   noItems: {
     fontSize: 16,

@@ -498,13 +498,13 @@ const styles = StyleSheet.create({
     paddingLeft: 5,
   },
   star: {
-    fontSize: 20,
+    fontSize: 30,
     fontWeight: 'bold',
     color: GRAY.DEFAULT, // 초기 별 색상은 회색
     marginLeft: 10,
   },
   starSelected: {
-    fontSize: 20,
+    fontSize: 30,
     fontWeight: 'bold',
     color: PRIMARY.DEFAULT, // 선택 시 별 색상은 주황색
     marginLeft: 10,
