@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Alert } from 'react-native';
+import { StyleSheet, Text, View, Alert, Dimensions } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -46,18 +46,28 @@ export default function QrScanner() {
     } catch (error) {
       console.error('', error);
       Alert.alert('', '다시 시도해주세요.', [
-        { text: '확인', onPress: () => navigation.goBack },
+        { text: '확인', onPress: () => navigation.goBack() },
       ]);
     }
   };
 
   const renderCamera = () => {
+    const screenWidth = Dimensions.get('window').width;
+    const cameraSize = screenWidth * 0.6;
+
     return (
-      <View style={styles.cameraContainer}>
-        <BarCodeScanner
-          onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
-          style={StyleSheet.absoluteFillObject}
-        />
+      <View
+        style={[
+          styles.cameraContainer,
+          { width: cameraSize, height: cameraSize },
+        ]}
+      >
+        <View style={{ width: '100%', height: '133%' }}>
+          <BarCodeScanner
+            onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+            style={StyleSheet.absoluteFillObject}
+          />
+        </View>
         <View style={styles.overlay}>
           <View style={styles.borderTopLeft} />
           <View style={styles.borderTopRight} />
@@ -82,9 +92,11 @@ export default function QrScanner() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.paragraph}>승차시 QR코드를 찍어주세요!</Text>
+      <Text style={styles.paragraph}>
+        승차시 <Text style={{ color: PRIMARY.DEFAULT }}>QR코드</Text>를
+        찍어주세요!
+      </Text>
       {renderCamera()}
-      {busNumber && <Text>스캔된 버스 번호: {busNumber}</Text>}
     </View>
   );
 }
@@ -105,15 +117,10 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   cameraContainer: {
-    width: '60%',
-    aspectRatio: 1,
     overflow: 'hidden',
     borderRadius: 10,
     marginBottom: 40,
     position: 'relative',
-  },
-  camera: {
-    flex: 1,
   },
   overlay: {
     position: 'absolute',
