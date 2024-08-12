@@ -45,8 +45,8 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/sign-up", "/admin", "/login", "/refresh", "/check-studentId", 
-                                "/reset-password", "/ws/**", "/upload", "/check-nickname").permitAll()
+                        .requestMatchers("/sign-up", "/admin", "/login", "/refresh", "/check-studentId", "/check-nickname",
+                                "/reset-password", "/ws/**", "/upload", "/send-email", "/reset-password-success").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )

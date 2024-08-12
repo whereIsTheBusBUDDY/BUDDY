@@ -24,6 +24,7 @@ public class EmailSender {
 
         Context context = new Context();
         context.setVariable("temporaryPassword", temporaryPassword);
+        context.setVariable("email", email);
         String emailContent = templateEngine.process("reset-password", context);
 
         try {
