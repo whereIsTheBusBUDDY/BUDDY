@@ -21,7 +21,7 @@ import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import apiClient from '../api/api';
 import EventSource from 'react-native-event-source';
 import { NotificationContext } from '../context/NotificationContext'; // Context import
-
+import DropdownBus from '../components/Dropdown/DropdownBus';
 const MainScreen = () => {
   const { setHasUnreadNotifications } = useContext(NotificationContext); // 상태 업데이트 함수 가져오기
 
@@ -371,16 +371,11 @@ const MainScreen = () => {
 
         <View style={styles.bottomContainer}>
           <View style={styles.dropdownContainer}>
-            <ModalDropdown
-              options={items}
-              onSelect={handleSelect}
-              defaultValue={selectedBus}
-              style={styles.dropdown}
-              textStyle={styles.dropdownText}
-              dropdownStyle={styles.dropdownBox}
-              dropdownTextStyle={styles.dropdownBoxText}
-              adjustFrame={adjustFrame}
-            />
+            <DropdownBus
+              selectedValue={selectedBus}
+              onChangeValue={setSelectedBus}
+              backgroundColor="#93c5fd"
+            ></DropdownBus>
             <Text style={styles.bottomContainerText}>운행시간표</Text>
           </View>
           <View style={{ width: '100%' }}>
@@ -498,6 +493,7 @@ const styles = StyleSheet.create({
   bottomContainerText: {
     fontSize: 16,
     fontWeight: 'bold',
+    marginLeft: 10,
   },
 });
 
