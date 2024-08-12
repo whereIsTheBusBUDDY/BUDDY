@@ -293,20 +293,6 @@ const MapScreen = () => {
               </Text>
             </TouchableOpacity>
           </View>
-
-          <View style={styles.partline} />
-          <View style={styles.line}>
-            <Text style={styles.textStyle}>1호차</Text>
-            <Text style={styles.point}>4분 후 도착</Text>
-          </View>
-          <View style={styles.line}>
-            <Text style={styles.textStyle}>3호차</Text>
-            <Text style={styles.point}>7분 후 도착</Text>
-          </View>
-          <View style={styles.line}>
-            <Text style={styles.textStyle}>5호차</Text>
-            <Text style={styles.point}>11분 후 도착</Text>
-          </View>
         </View>
       )}
     </View>
@@ -364,15 +350,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
   },
-  textStyle: {
-    fontSize: 16,
-    marginBottom: 10,
-    marginRight: 20,
-    paddingLeft: 8,
-  },
-  line: {
-    flexDirection: 'row',
-  },
+
   title: {
     fontSize: 20,
     fontWeight: 'bold',
@@ -390,21 +368,14 @@ const styles = StyleSheet.create({
     color: PRIMARY.DEFAULT, // 선택 시 별 색상은 주황색
     marginLeft: 10,
   },
-  partline: {
-    height: 1,
-    backgroundColor: '#ccc',
-    width: '100%',
-    marginVertical: 20,
-  },
+
   titlecontainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingRight: 20,
     marginTop: 10,
   },
-  point: {
-    color: '#f97316',
-  },
+
   stationMarker: {
     width: 50,
     height: 50,

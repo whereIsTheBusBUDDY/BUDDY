@@ -14,10 +14,11 @@ export const AdminProvider = ({ children }) => {
   const [busNumber, setBusNumber] = useState('');
   const [isTracking, setIsTracking] = useState(false);
   const [location, setLocation] = useState();
-  const [routeStops, setRouteStops] = useState([]); // routeStops 상태 추가
-  const intervalRef = useRef(null); // intervalRef로 변경하여 setInterval 관리
-  const isSendingRef = useRef(false); // 비동기 작업 상태 관리
-  const [time, setTime] = useState(null);
+  const [routeStops, setRouteStops] = useState([]);
+  const intervalRef = useRef(null);
+  const isSendingRef = useRef(false);
+  const [time, setTime] = useState(0);
+  // const [pendingAlarm, setPendingAlarm] = useState(null); // 펜딩 알람 상태 추가
 
   const calculateDistance = (lat1, lon1, lat2, lon2) => {
     const R = 6371e3; // 지구 반지름(미터)
@@ -60,13 +61,9 @@ export const AdminProvider = ({ children }) => {
 
           const checkTime = () => {
             const currentTime = new Date().getHours();
-            if (currentTime <= 12) {
-              setTime(1);
-            } else {
-              setTime(2);
-            }
+            const ampmTime = currentTime < 12 ? 1 : 2;
+            setTime(ampmTime);
             console.log('현재시간(시기준)', currentTime);
-            console.log('오전오후시간', time);
           };
 
           checkTime();
@@ -84,6 +81,7 @@ export const AdminProvider = ({ children }) => {
               if (stopDistance <= 100 && !stop.visited) {
                 console.log(`${stop.stationName} 정류장 방문 기록`);
                 busVisited(stop.id, true);
+                console.log('checktime', time);
                 sendAlarm(stop.id, time);
                 return { ...stop, visited: true };
               }
@@ -132,6 +130,17 @@ export const AdminProvider = ({ children }) => {
     }
   }, [busNumber]);
 
+  // // time이 변경될 때마다 실행
+  // useEffect(() => {
+  //   console.log('오전오후시간', time);
+
+  //   // 펜딩된 알람이 있는 경우 알람을 보냅니다.
+  //   if (pendingAlarm !== null) {
+  //     sendAlarm(pendingAlarm, time);
+  //     setPendingAlarm(null); // 알람 전송 후 펜딩 상태 초기화
+  //   }
+  // }, [time]);
+
   const handleStartTracking = () => {
     if (!isTracking) {
       setIsTracking(true);
@@ -140,15 +149,11 @@ export const AdminProvider = ({ children }) => {
 
   const handleStopTracking = async () => {
     setIsTracking(false);
-    console.log('check');
-    if (intervalRef.current) {
-      console.log('check');
-      clearInterval(intervalRef.current);
-      console.log('check');
-      intervalRef.current = null;
-      console.log('check');
-    }
     console.log('운행이 종료되었습니다.');
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
     try {
       await sendStop(busNumber);
     } catch (error) {
@@ -171,7 +176,7 @@ export const AdminProvider = ({ children }) => {
         setLocation,
         handleStartTracking,
         handleStopTracking,
-        routeStops, // 추가된 상태 반환
+        routeStops,
       }}
     >
       {children}
