@@ -3,8 +3,15 @@ import MainScreen from '../screen/MainScreen';
 import ChatScreen from '../screen/CheckIn/ChatScreen';
 import BoardScreen from '../screen/Board/BoardScreen';
 import MessageScreen from '../screen/CheckIn/MessageScreen';
-import { Image, TouchableOpacity, requireNativeComponent } from 'react-native';
+import {
+  Image,
+  TouchableOpacity,
+  requireNativeComponent,
+  View,
+  StyleSheet,
+} from 'react-native';
 import { Fontisto } from '@expo/vector-icons';
+import Entypo from '@expo/vector-icons/Entypo';
 import NotificationScreen from '../screen/Notification/NotificationScreen';
 import MapScreen from '../screen/Map/MapScreen';
 import QrScreen from '../screen/CheckIn/QrScreen';
@@ -31,7 +38,12 @@ const MainStack = () => {
             <TouchableOpacity
               onPress={() => navigation.navigate('Notification')}
             >
-              <Fontisto name="bell" size={24} color="black" />
+              <View style={styles.noti}>
+                <Fontisto name="bell" size={24} color="black" />
+                <View style={styles.dot}>
+                  <Entypo name="dot-single" size={28} color="#f97316" />
+                </View>
+              </View>
             </TouchableOpacity>
           ),
           headerStyle: {
@@ -129,4 +141,17 @@ const MainStack = () => {
     </Stack.Navigator>
   );
 };
+
+const styles = StyleSheet.create({
+  noti: {
+    position: 'relative',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  dot: {
+    position: 'absolute',
+    top: -12,
+    right: -8,
+  },
+});
 export default MainStack;
