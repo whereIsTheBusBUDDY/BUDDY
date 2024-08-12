@@ -11,21 +11,24 @@ import { useEffect, useState } from 'react';
 import EventSource from 'react-native-event-source';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { WebSocketProvider } from './context/WebSocketContext';
+import { NotificationProvider } from './context/NotificationContext';
 
 export default function App() {
   return (
-    <WebSocketProvider>
-      <FirstProvider>
-        <UserProvider>
-          <AdminProvider>
-            <NavigationContainer style={styles.container}>
-              <StatusBar style="auto" />
-              <Navigation />
-            </NavigationContainer>
-          </AdminProvider>
-        </UserProvider>
-      </FirstProvider>
-    </WebSocketProvider>
+    <NotificationProvider>
+      <WebSocketProvider>
+        <FirstProvider>
+          <UserProvider>
+            <AdminProvider>
+              <NavigationContainer style={styles.container}>
+                <StatusBar style="auto" />
+                <Navigation />
+              </NavigationContainer>
+            </AdminProvider>
+          </UserProvider>
+        </FirstProvider>
+      </WebSocketProvider>
+    </NotificationProvider>
   );
 }
 

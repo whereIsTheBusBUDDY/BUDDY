@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useContext } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import {
   useWindowDimensions,
@@ -20,8 +20,11 @@ import { BLACK, WHITE, SKYBLUE, GRAY } from '../constant/color';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import apiClient from '../api/api';
 import EventSource from 'react-native-event-source';
+import { NotificationContext } from '../context/NotificationContext'; // Context import
 
 const MainScreen = () => {
+  const { setHasUnreadNotifications } = useContext(NotificationContext); // 상태 업데이트 함수 가져오기
+
   const width = useWindowDimensions().width - 40;
   const navigation = useNavigation();
   const [profileData, setProfileData] = useState({});
@@ -41,7 +44,6 @@ const MainScreen = () => {
     fetchPassengerData();
     initializeSSE(); // Initialize SSE when the component mounts
     requestNotificationPermissions(); // Request notification permissions
-    sendNotification();
     fetchLastNotice();
   }, []);
 
@@ -63,6 +65,7 @@ const MainScreen = () => {
 
   // ✅ 알림 전송
   const sendNotification = async (title, content) => {
+    setHasUnreadNotifications(true); // 알림 전송 시 dot-single 표시
     await Notifications.scheduleNotificationAsync({
       content: {
         title: title,

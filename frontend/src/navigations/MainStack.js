@@ -3,6 +3,7 @@ import MainScreen from '../screen/MainScreen';
 import ChatScreen from '../screen/CheckIn/ChatScreen';
 import BoardScreen from '../screen/Board/BoardScreen';
 import MessageScreen from '../screen/CheckIn/MessageScreen';
+import React, { useContext } from 'react';
 import {
   Image,
   TouchableOpacity,
@@ -19,9 +20,15 @@ import BusScreen from '../screen/Map/BusScreen';
 import CreateScreen from '../screen/Board/CreateScreen';
 import FavoriteScreen from '../screen/Favorite/FavoriteScreen';
 import DetailScreen from '../screen/Board/DetailScreen';
+import { NotificationContext } from '../context/NotificationContext';
 
 const Stack = createNativeStackNavigator();
+
 const MainStack = () => {
+  // Context에서 상태 가져오기
+  const { hasUnreadNotifications, setHasUnreadNotifications } =
+    useContext(NotificationContext);
+
   return (
     <Stack.Navigator>
       <Stack.Screen
@@ -36,13 +43,18 @@ const MainStack = () => {
           ),
           headerRight: () => (
             <TouchableOpacity
-              onPress={() => navigation.navigate('Notification')}
+              onPress={() => {
+                navigation.navigate('Notification');
+                setHasUnreadNotifications(false); // 아이콘 클릭 시 dot-single 숨김
+              }}
             >
               <View style={styles.noti}>
                 <Fontisto name="bell" size={24} color="black" />
-                <View style={styles.dot}>
-                  <Entypo name="dot-single" size={28} color="#ea580c" />
-                </View>
+                {hasUnreadNotifications && (
+                  <View style={styles.dot}>
+                    <Entypo name="dot-single" size={28} color="#ea580c" />
+                  </View>
+                )}
               </View>
             </TouchableOpacity>
           ),
