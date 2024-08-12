@@ -13,7 +13,12 @@ import { BLACK, WHITE, SKYBLUE, GRAY, PRIMARY } from '../../constant/color';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import SendInput from '../../components/SendInput';
-import apiClient from '../../api/api';
+import {
+  deleteBoard,
+  createComment,
+  deleteComment,
+  getNickname,
+} from '../../api/board';
 import Button, { ButtonColors } from '../../components/smallButton';
 
 const DetailScreen = ({ route }) => {
@@ -26,8 +31,7 @@ const DetailScreen = ({ route }) => {
   useEffect(() => {
     const fetchNickname = async () => {
       try {
-        const response = await apiClient.get('/members/me');
-        const { nickname } = response.data;
+        const nickname = await getNickname();
         setNickname(nickname);
       } catch (error) {
         console.error('닉네임 가져오기 실패:', error);
@@ -56,27 +60,13 @@ const DetailScreen = ({ route }) => {
         return;
       }
 
-      const response = await fetch(
-        `http://i11b109.p.ssafy.io:8080/board/${board.boardId}`,
-        {
-          method: 'DELETE',
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      );
-
-      if (response.ok) {
-        Alert.alert('성공', '게시글이 성공적으로 삭제되었습니다!', [
-          { text: '확인', onPress: () => navigation.goBack() },
-        ]);
-      } else {
-        const errorText = await response.text();
-        Alert.alert('오류', `게시글 삭제 실패: ${errorText}`);
-      }
+      await deleteBoard(board.boardId, accessToken);
+      Alert.alert('성공', '게시글이 성공적으로 삭제되었습니다!', [
+        { text: '확인', onPress: () => navigation.goBack() },
+      ]);
     } catch (error) {
       console.error('게시글 삭제 오류:', error);
-      Alert.alert('오류', `에러가 발생했습니다: ${error.message}`);
+      Alert.alert('오류', `게시글 삭제 실패: ${error.message}`);
     }
   };
 
@@ -94,36 +84,21 @@ const DetailScreen = ({ route }) => {
         return;
       }
 
-      const response = await fetch(
-        `http://i11b109.p.ssafy.io:8080/comments/${board.boardId}`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${accessToken}`,
-          },
-          body: JSON.stringify({
-            commentContent: comment,
-          }),
-        }
-      );
+      const response = await createComment(board.boardId, comment, accessToken);
 
-      if (response.ok) {
-        const newComment = {
-          commentId: new Date().getTime().toString(),
-          commentContent: comment,
-          createDate: new Date().toISOString(),
-          nickname: nickname || '익명',
-        };
-        setComments((prevComments) => [...prevComments, newComment]);
-        setComment('');
-      } else {
-        const errorText = await response.text();
-        Alert.alert('오류', `댓글 작성 실패: ${errorText}`);
-      }
+      // 새로운 댓글을 comments 상태에 추가
+      const newComment = {
+        commentId: response.commentId, // 서버에서 받은 고유 commentId 사용
+        commentContent: comment,
+        createDate: new Date().toISOString(),
+        nickname: nickname || '익명',
+      };
+
+      setComments((prevComments) => [...prevComments, newComment]);
+      setComment('');
     } catch (error) {
       console.error('댓글 작성 중 오류:', error);
-      Alert.alert('오류', `에러가 발생했습니다: ${error.message}`);
+      Alert.alert('오류', `댓글 작성 실패: ${error.message}`);
     }
   };
 
@@ -140,21 +115,15 @@ const DetailScreen = ({ route }) => {
           text: '삭제',
           onPress: async () => {
             try {
-              const response = await apiClient.delete(
-                `/comments/${deletedCommentId}`
+              await deleteComment(deletedCommentId);
+              setComments((prevComments) =>
+                prevComments.filter(
+                  (comment) => comment.commentId !== deletedCommentId
+                )
               );
-              if (response.status === 200) {
-                setComments((prevComments) =>
-                  prevComments.filter(
-                    (comment) => comment.commentId !== deletedCommentId
-                  )
-                );
-              } else {
-                Alert.alert('오류', `댓글 삭제 실패: ${response.statusText}`);
-              }
             } catch (error) {
               console.error('댓글 삭제 중 오류:', error);
-              Alert.alert('오류', `에러가 발생했습니다: ${error.message}`);
+              Alert.alert('오류', `댓글 삭제 실패: ${error.message}`);
             }
           },
           style: 'destructive',
@@ -212,8 +181,12 @@ const DetailScreen = ({ route }) => {
                 <Text style={styles.commentTitle}>댓글</Text>
                 <View style={styles.commentContainer}>
                   {comments.length > 0 ? (
-                    comments.map((comment) => (
-                      <View key={comment.commentId} style={styles.comment}>
+                    comments.map((comment, index) => (
+                      <View
+                        key={comment.commentId || `comment-${index}`}
+                        style={styles.comment}
+                      >
+                        {/* <View key={comment.commentId} style={styles.comment}> */}
                         <View style={styles.commentTextContainer}>
                           <Text style={styles.commentAuthor}>
                             {comment.nickname}

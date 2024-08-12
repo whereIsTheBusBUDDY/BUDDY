@@ -3,6 +3,7 @@ import { View, TextInput, StyleSheet, ScrollView, Alert } from 'react-native';
 import { WHITE, GRAY } from '../../constant/color';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Button, { ButtonColors } from '../../components/Button';
+import { updateBoard } from '../../api/board';
 
 const EditScreen = ({ route, navigation }) => {
   const { board } = route.params;
@@ -30,29 +31,11 @@ const EditScreen = ({ route, navigation }) => {
         return;
       }
 
-      const response = await fetch(
-        `http://i11b109.p.ssafy.io:8080/board/${board.boardId}`,
-        {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${accessToken}`,
-          },
-          body: JSON.stringify({
-            title: title,
-            content: boardContent,
-          }),
-        }
-      );
-
-      if (response.ok) {
-        Alert.alert('성공', '게시글이 성공적으로 수정되었습니다!');
-        navigation.navigate('Board');
-      } else {
-        Alert.alert('오류', `게시글 수정 실패: ${response.statusText}`);
-      }
+      await updateBoard(board.boardId, title, boardContent, accessToken);
+      Alert.alert('성공', '게시글이 성공적으로 수정되었습니다!');
+      navigation.navigate('Board');
     } catch (error) {
-      Alert.alert('오류', `에러가 발생했습니다: ${error.message}`);
+      Alert.alert('오류', `게시글 수정 실패: ${error.message}`);
     }
   };
 

@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { View, TextInput, StyleSheet, ScrollView, Alert } from 'react-native';
-import { WHITE, GRAY, SKYBLUE } from '../../constant/color'; // PRIMARY를 제거
+import { WHITE, GRAY } from '../../constant/color';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Button, { ButtonColors } from '../../components/Button';
 import { useNavigation } from '@react-navigation/native';
+import { createBoard } from '../../api/board';
 
 export default function App({ route }) {
   const [category, setCategory] = useState(route.params.selectedCategory);
@@ -26,30 +27,11 @@ export default function App({ route }) {
         return;
       }
 
-      const response = await fetch(
-        `http://i11b109.p.ssafy.io:8080/board/${category}`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${accessToken}`, // 액세스 토큰을 Authorization 헤더에 추가
-          },
-          body: JSON.stringify({
-            title: title,
-            content: content,
-          }),
-        }
-      );
-
-      if (response.ok) {
-        Alert.alert('성공', '게시글이 성공적으로 작성되었습니다!');
-        // 입력 필드 초기화
-        navigation.navigate('Board');
-      } else {
-        Alert.alert('오류', `게시글 작성 실패: ${response.statusText}`);
-      }
+      await createBoard(category, title, content, accessToken);
+      Alert.alert('성공', '게시글이 성공적으로 작성되었습니다!');
+      navigation.navigate('Board');
     } catch (error) {
-      Alert.alert('오류', `에러가 발생했습니다: ${error.message}`);
+      Alert.alert('오류', `게시글 작성 실패: ${error.message}`);
     }
   };
 

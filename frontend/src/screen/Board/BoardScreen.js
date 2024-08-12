@@ -1,3 +1,4 @@
+// BoardScreen.js
 import React, { useState, useCallback, useEffect } from 'react';
 import {
   ScrollView,
@@ -10,7 +11,7 @@ import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import BoardItem from '../../components/BoardItem';
 import TabButton from '../../components/BoardTabButton';
 import { WHITE, GRAY, SKYBLUE, PRIMARY } from '../../constant/color';
-import apiClient from '../../api/api';
+import { fetchBoards, fetchBoardDetail } from '../../api/board';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 
@@ -33,12 +34,10 @@ const BoardScreen = () => {
     fetchUserRole();
   }, []);
 
-  const fetchBoards = useCallback(async () => {
+  const loadBoards = useCallback(async () => {
     try {
-      const response = await apiClient.get(
-        `/board?category=${selectedCategory}`
-      );
-      setBoards(response.data.reverse()); // 게시물을 역순으로 저장하여 최신 게시물이 위로 오도록 설정
+      const boards = await fetchBoards(selectedCategory);
+      setBoards(boards);
     } catch (error) {
       console.error('게시판 조회 실패:', error);
     }
@@ -46,14 +45,14 @@ const BoardScreen = () => {
 
   useFocusEffect(
     useCallback(() => {
-      fetchBoards();
-    }, [fetchBoards])
+      loadBoards();
+    }, [loadBoards])
   );
 
   const handleBoardPress = async (boardId) => {
     try {
-      const response = await apiClient.get(`/board/${boardId}`);
-      navigate.navigate('Detail', { board: response.data });
+      const board = await fetchBoardDetail(boardId);
+      navigate.navigate('Detail', { board });
     } catch (error) {
       console.error('게시글 상세조회 실패:', error);
     }
