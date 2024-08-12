@@ -52,23 +52,22 @@ const ProfileScreen = () => {
 
   const logOut = async () => {
     try {
-      // Refresh 토큰을 서버로 보내 로그아웃 요청 - 로그아웃 api 생기나?
-      // const refreshToken = await AsyncStorage.getItem('refreshToken');
-      // if (refreshToken) {
-      //   await apiClient.post('/logout', { token: refreshToken });
-      // }
+      const refreshToken = await AsyncStorage.getItem('refreshToken');
+      console.log('리프레시 토큰 잘 있고');
+      if (refreshToken) {
+        await apiClient.post(`/out?refreshToken=${refreshToken}`);
+      }
+      console.log('로그아웃 요청 보냈음');
 
       // 클라이언트에 저장된 Access 토큰과 Refresh 토큰 삭제
-      // await AsyncStorage.removeItem('accessToken');
-      // await AsyncStorage.removeItem('refreshToken');
-      // await AsyncStorage.setItem('accessToken', '');
-      // await AsyncStorage.setItem('refreshToken', '');
-      // await AsyncStorage.clear();
+      await AsyncStorage.removeItem('accessToken');
+      await AsyncStorage.removeItem('refreshToken');
+      await AsyncStorage.clear();
 
       // SSE 연결 해제
-      eventSourceRef.current.close();
-      eventSourceRef.current = null;
-      console.log('SSE connection closed on logout');
+      // eventSourceRef.current.close();
+      // eventSourceRef.current = null;
+      // console.log('SSE connection closed on logout');
 
       // await AsyncStorage.removeItem(accessToken);
 

@@ -9,7 +9,8 @@ import {
 } from 'react-native';
 import { useWebSocket } from '../../context/WebSocketContext';
 import apiClient from '../../api/api';
-import { SKYBLUE } from '../../constant/color';
+import { GRAY, SKYBLUE, WHITE } from '../../constant/color';
+import SendInput from '../../components/SendInput';
 
 const ChatScreen = ({ route }) => {
   const { roomId } = route.params;
@@ -22,6 +23,7 @@ const ChatScreen = ({ route }) => {
   useEffect(() => {
     if (!connected) {
       connect(roomId);
+      console.log(roomId);
     }
 
     return () => {
@@ -56,13 +58,14 @@ const ChatScreen = ({ route }) => {
 
   const scrollToBottom = () => {
     if (flatListRef.current) {
-      flatListRef.current.scrollToEnd({ animated: false });
+      flatListRef.current.scrollToEnd({ animated: true });
     }
   };
 
   return (
-    <View style={{ flex: 1, padding: 16 }}>
+    <View style={styles.topContainer}>
       <FlatList
+        style={styles.listContainer}
         ref={flatListRef}
         data={messages}
         keyExtractor={(item, index) => index.toString()}
@@ -77,6 +80,7 @@ const ChatScreen = ({ route }) => {
                   : styles.otherMessageContainer,
               ]}
             >
+              <Text style={styles.senderText}>{item.sender}</Text>
               <View
                 style={[
                   styles.messageBubble,
@@ -87,21 +91,20 @@ const ChatScreen = ({ route }) => {
               >
                 <Text style={styles.messageText}>{item.message}</Text>
               </View>
-              <Text style={styles.senderText}>{item.sender}</Text>
             </View>
           );
         }}
-        onLayout={scrollToBottom} // 처음 렌더링 시 맨 아래로 스크롤
-        onContentSizeChange={scrollToBottom} // 내용이 변경될 때 맨 아래로 스크롤
+        onLayout={scrollToBottom}
+        onContentSizeChange={scrollToBottom}
       />
       <View style={styles.inputContainer}>
-        <TextInput
+        <SendInput
+          placeholder="메시지를 입력해주세요!"
+          buttonText="전송"
           value={text}
           onChangeText={setText}
-          placeholder="Type a message"
-          style={styles.input}
+          onPress={handleSend}
         />
-        <Button title="Send" onPress={handleSend} disabled={!connected} />
       </View>
     </View>
   );
@@ -125,20 +128,27 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   userMessageBubble: {
-    backgroundColor: SKYBLUE.FONT,
+    backgroundColor: SKYBLUE.BACKGROUND,
+    borderRadius: 30,
   },
   otherMessageBubble: {
-    backgroundColor: '#E5E5EA',
+    backgroundColor: WHITE,
+    borderWidth: 1,
+    borderRadius: 30,
+    borderColor: GRAY.BACKGROUND,
   },
   messageText: {
     fontSize: 16,
   },
   senderText: {
+    marginHorizontal: 5,
+    marginVertical: 3,
     fontSize: 12,
     color: '#555',
     marginTop: 2,
   },
   inputContainer: {
+    padding: 10,
     flexDirection: 'row',
     alignItems: 'center',
     borderTopWidth: 1,
@@ -154,6 +164,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     marginRight: 8,
   },
+  listContainer: {
+    backgroundColor: GRAY.BACKGROUND,
+    flex: 1,
+    borderRadius: 15,
+    padding: 20,
+    margin: 10,
+  },
+  topContainer: { backgroundColor: WHITE, flex: 1, padding: 16, padding: 5 },
 });
 
 export default ChatScreen;
