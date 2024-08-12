@@ -32,4 +32,9 @@ public class NotificationController {
     public List<NotificationResponse> findNotifications(@LoginMember Long memberId) {
         return notificationService.findNotifications(memberId);
     }
+
+    @PostMapping("/notifications/{notificationId}")
+    public void updateReadStatus(@LoginMember Long memberId, @PathVariable("notificationId") Long notificationId) {
+        notificationService.updateReadStatus(memberId, notificationId);
+    }
 }

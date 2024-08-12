@@ -7,9 +7,13 @@ import com.ssafy.buddy.boarding.repository.BoardingRepository;
 import com.ssafy.buddy.member.repository.MemberRepository;
 import com.ssafy.buddy.notification.controller.response.NotificationResponse;
 import com.ssafy.buddy.notification.domain.Notification;
+import com.ssafy.buddy.notification.domain.NotificationReadStatus;
 import com.ssafy.buddy.notification.domain.NotificationType;
+import com.ssafy.buddy.notification.repository.NotificationReadStatusRepository;
 import com.ssafy.buddy.notification.repository.NotificationRepository;
 import com.ssafy.buddy.notification.repository.SseEmitterRepository;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
@@ -29,6 +33,7 @@ public class NotificationService {
     private final SseEmitterRepository sseEmitterRepository;
     private final MemberRepository memberRepository;
     private final NotificationRepository notificationRepository;
+    private final NotificationReadStatusRepository notificationReadStatusRepository;
     private final BoardingRepository boardingRepository;
 
     public SseEmitter subscribe(Long memberId) {
@@ -70,7 +75,7 @@ public class NotificationService {
     }
 
     public void sendSuggestion(Long memberId, String suggestion) {
-        Member member = memberRepository.findById(memberId).orElseThrow();
+        Member member = findByMemberId(memberId);
         Boarding boarding = boardingRepository.findByMemberId(memberId).orElseThrow();
         List<Member> adminList = memberRepository.findAllByFavoriteLineAndRole(boarding.getBusNumber(), Role.ADMIN);
 
@@ -80,12 +85,30 @@ public class NotificationService {
         }
     }
 
+    @Transactional
+    public void updateReadStatus(Long memberId, Long notificationId) {
+        notificationRepository.findById(notificationId)
+                .orElseThrow(() -> new EntityNotFoundException("알림(notificationId: " + notificationId + ")이 존재하지 않습니다."));
+
+        if (!notificationReadStatusRepository.existsByNotificationIdAndMemberId(notificationId, memberId)) {
+            notificationReadStatusRepository.save(new NotificationReadStatus(notificationId, memberId));
+        }
+    }
+
     public List<NotificationResponse> findNotifications(Long memberId) {
         Sort sort = Sort.by(Sort.Direction.DESC, "timestamp");
         List<Notification> notifications = notificationRepository.findAllByReceiverIdOrReceiverIdIsNull(memberId, sort);
 
         return notifications.stream()
-                .map(NotificationResponse::from)
+                .map(notification -> {
+                    boolean isRead = notificationReadStatusRepository.existsByNotificationIdAndMemberId(notification.getId(), memberId);
+                    return NotificationResponse.from(notification, isRead);
+                })
                 .collect(Collectors.toList());
+    }
+
+    private Member findByMemberId(Long memberId) {
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new EntityNotFoundException("회원(memberId: " + memberId + ")이 존재하지 않습니다."));
     }
 }
