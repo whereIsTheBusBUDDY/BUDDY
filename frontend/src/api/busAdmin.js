@@ -51,6 +51,7 @@ export const busVisited = async (stationId, visited) => {
 
 // 즐겨찾기 전 정류장 알림
 export const sendAlarm = async (stationId, time) => {
+  console.log(stationId, time);
   try {
     const response = await apiClient.post(
       `/arrive?stationId=${stationId}=&time=${time}`
