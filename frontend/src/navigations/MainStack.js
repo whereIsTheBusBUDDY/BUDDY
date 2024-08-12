@@ -41,7 +41,7 @@ const MainStack = () => {
               <View style={styles.noti}>
                 <Fontisto name="bell" size={24} color="black" />
                 <View style={styles.dot}>
-                  <Entypo name="dot-single" size={28} color="#f97316" />
+                  <Entypo name="dot-single" size={28} color="#ea580c" />
                 </View>
               </View>
             </TouchableOpacity>

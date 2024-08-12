@@ -39,7 +39,7 @@ const MainScreen = () => {
     fetchPassengerData();
     initializeSSE(); // Initialize SSE when the component mounts
     requestNotificationPermissions(); // Request notification permissions
-    sendNotification();
+    // sendNotification();
   }, []);
 
   const requestNotificationPermissions = async () => {
@@ -95,10 +95,7 @@ const MainScreen = () => {
 
       eventSource.addEventListener('CONNECT', (e) => {
         console.log('client CONNECT event: ', e.data);
-        console.log('액세스 토큰 ::::', AsyncStorage.getItem('accessToken'));
-        console.log('액세스 토큰 ::::::222222222', token);
         setConnectMessage((prev) => prev + e.data);
-        // sendNotification('BUDDY', '공지사항이 등록되었습니다.');
       });
 
       eventSource.addEventListener('NOTICE', (e) => {
