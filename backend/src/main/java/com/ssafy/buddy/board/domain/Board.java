@@ -1,5 +1,6 @@
 package com.ssafy.buddy.board.domain;
 
+import com.ssafy.buddy.comment.domain.Comment;
 import com.ssafy.buddy.member.domain.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -9,6 +10,8 @@ import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -37,6 +40,9 @@ public class Board {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", updatable = false)
     private Member member;
+
+    @OneToMany(mappedBy = "board", cascade = {CascadeType.REMOVE})
+    private List<Comment> comments = new ArrayList<>();
 
     public Board(String content, String title, String category, Member member) {
         this.content = content;
