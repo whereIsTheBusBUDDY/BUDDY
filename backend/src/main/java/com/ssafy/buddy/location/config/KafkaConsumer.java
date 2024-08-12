@@ -24,9 +24,10 @@ public class KafkaConsumer {
         config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, KAFKA_SERVER_URL);
         config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-
-        config.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, 1);
+        config.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, 10);
         config.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
+        config.put(ConsumerConfig.GROUP_ID_CONFIG, "bus-location");
+        config.put(ConsumerConfig.FETCH_MAX_BYTES_CONFIG, 1);
         config.put(ConsumerConfig.FETCH_MAX_WAIT_MS_CONFIG, 1);
         config.put(ConsumerConfig.FETCH_MAX_BYTES_CONFIG, 524288); // 512KB로 설정
         config.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
