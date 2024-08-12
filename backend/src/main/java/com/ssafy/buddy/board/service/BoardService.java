@@ -3,6 +3,7 @@ package com.ssafy.buddy.board.service;
 import com.ssafy.buddy.board.domain.Board;
 import com.ssafy.buddy.board.domain.request.BoardRequest;
 import com.ssafy.buddy.board.domain.response.BoardResponse;
+import com.ssafy.buddy.board.domain.response.LastNoticeResponse;
 import com.ssafy.buddy.board.repository.BoardRepository;
 import com.ssafy.buddy.comment.domain.response.CommentResponse;
 import com.ssafy.buddy.comment.repository.CommentRepository;
@@ -108,5 +109,11 @@ public class BoardService {
             throw new IllegalArgumentException(UNAUTHORIZED_MESSAGE);
         }
         boardRepository.delete(board);
+    }
+
+    public LastNoticeResponse getLastNotice() {
+        return boardRepository.findFirstByCategoryOrderByCreateDateDesc("notice")
+                .map(LastNoticeResponse::from)
+                .orElseThrow(() -> new EntityNotFoundException("공지사항이 없습니다."));
     }
 }
