@@ -110,8 +110,8 @@ const RegisterFavorites = () => {
   };
 
   useEffect(() => {
-    // 페이지가 로드될 때 1호차의 데이터를 가져옴
-    handleSelect(0, '1호차');
+    // 페이지가 로드될 때 기본 노선의 데이터를 가져옴
+    handleSelect('1호차');
   }, []);
 
   const toggleBookmark = async (stationId, isBookmarked) => {
@@ -137,12 +137,13 @@ const RegisterFavorites = () => {
 
   return (
     <ScrollView style={styles.listContainer}>
-      <DropdownBus
-        selectedValue={selectedBus}
-        onChangeValue={handleSelect}
-        backgroundColor="#A9A9A9"
-        style={styles.fullWidthDropdown}
-      />
+      <View style={styles.centerAlign}>
+        <DropdownBus
+          selectedValue={selectedBus}
+          onChangeValue={handleSelect}
+          backgroundColor={PRIMARY.BTN}
+        />
+      </View>
       {busStops.length > 0 ? (
         busStops.map((stop, index) => (
           <View
@@ -261,6 +262,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 16,
     color: BLACK,
+    // paddingHorizontal: 5,
   },
   rightPad: {
     flex: 3,
@@ -292,8 +294,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
     color: GRAY.FONT,
   },
-  fullWidthDropdown: {
-    width: '100%', // 드롭다운이 가로로 꽉 차도록 설정
+  centerAlign: {
+    alignItems: 'center', // 가로 가운데 정렬
+    marginBottom: 20,
   },
 });
 

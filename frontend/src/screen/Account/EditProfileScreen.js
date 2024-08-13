@@ -12,7 +12,7 @@ import { BLACK, GRAY, PRIMARY, WHITE } from '../../constant/color';
 import Button, { ButtonColors } from '../../components/Button';
 import apiClient from '../../api/api';
 import { useNavigation } from '@react-navigation/native';
-import ModalDropdown from 'react-native-modal-dropdown';
+import DropdownBus from '../../components/Dropdown/DropdownBus'; // 적절한 경로로 수정하세요
 
 const EditProfileScreen = ({ route }) => {
   const { profileData } = route.params;
@@ -37,13 +37,6 @@ const EditProfileScreen = ({ route }) => {
     } catch (error) {
       console.error('프로필 수정 중 오류 발생:', error);
     }
-  };
-
-  const adjustFrame = (style) => {
-    return {
-      ...style,
-      left: style.left - 10,
-    };
   };
 
   return (
@@ -90,15 +83,12 @@ const EditProfileScreen = ({ route }) => {
           <View style={styles.separator} />
           <View style={styles.infoRow}>
             <Text style={styles.infoLabel}>선호노선</Text>
-            <ModalDropdown
-              options={['1호차', '2호차', '3호차', '4호차', '5호차', '6호차']}
-              defaultValue={favoriteLine} // 선택하지 않았을 때 기본값 유지
-              onSelect={(index, value) => setFavoriteLine(value)} // 선택한 값만 상태에 반영
+            <DropdownBus
+              selectedValue={favoriteLine} // 선택한 값을 상태로 유지
+              onChangeValue={setFavoriteLine} // 선택 시 상태 업데이트
+              backgroundColor={WHITE}
+              color={PRIMARY.DEFAULT}
               style={styles.dropdown}
-              textStyle={styles.dropdownText}
-              dropdownStyle={styles.dropdownStyle}
-              dropdownTextStyle={styles.dropdownTextStyle}
-              adjustFrame={adjustFrame} // 위치 조정 함수 추가
             />
           </View>
         </View>
@@ -156,6 +146,8 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     paddingHorizontal: 20,
     marginVertical: 8,
+    alignItems: 'center',
+    justifyContent: 'flex-start',
   },
   infoLabel: {
     flex: 0.7,
@@ -188,23 +180,7 @@ const styles = StyleSheet.create({
     backgroundColor: GRAY.BTN,
   },
   dropdown: {
-    flex: 1.3,
-    padding: 10,
-    backgroundColor: WHITE,
-    borderColor: GRAY.BTN,
-    borderWidth: 1,
-    borderRadius: 5,
-  },
-  dropdownText: {
-    fontSize: 14,
-    color: PRIMARY.DEFAULT,
-  },
-  dropdownStyle: {
-    width: '53%',
-  },
-  dropdownTextStyle: {
-    fontSize: 14,
-    color: BLACK,
+    alignSelf: 'flex-start',
   },
   imageText: {
     left: 150,
