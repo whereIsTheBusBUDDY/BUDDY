@@ -50,15 +50,15 @@ export const AdminProvider = ({ children }) => {
         isSendingRef.current = true; // 전송 상태 설정
 
         try {
-          // 테스트 위치ㅁ
-          const latitude = 36.346771;
-          const longitude = 127.393179;
+          // 테스트 위치
+          // const latitude = 36.346771;
+          // const longitude = 127.393179;
 
-          // const { coords } = await Location.getCurrentPositionAsync({
-          //   accuracy: Location.Accuracy.BestForNavigation,
-          // });
+          const { coords } = await Location.getCurrentPositionAsync({
+            accuracy: Location.Accuracy.BestForNavigation,
+          });
 
-          // const { latitude, longitude } = coords;
+          const { latitude, longitude } = coords;
           console.log('위치추적 정보', { latitude, longitude });
           setLocation({ latitude, longitude });
 
