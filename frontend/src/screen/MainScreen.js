@@ -26,6 +26,8 @@ import {
   checkBusStatus,
   fetchPassengerData,
 } from '../api/user';
+import * as Speech from 'expo-speech'; // Speech 모듈을 추가로 import
+
 // import { sseUrl } from '../api/url';
 
 const MainScreen = () => {
@@ -113,7 +115,15 @@ const MainScreen = () => {
       eventSource.addEventListener('ARRIVE', (e) => {
         console.log('ARRIVE event: ', e.data);
         setArriveMessage((prev) => prev + e.data);
-        sendNotification('BUDDY', `버스가 ${e.data} 정류장에 도착하였습니다.`);
+        const notificationText = `🚌 버스가 곧 ${e.data} 정류장에 도착합니다.`;
+        sendNotification('BUDDY', notificationText);
+
+        // TTS를 사용하여 알림 내용 읽기
+        Speech.speak(notificationText, {
+          language: 'ko', // 한국어로 설정
+          pitch: 1.0,
+          rate: 1.0,
+        });
       });
 
       eventSource.onerror = (e) => {
