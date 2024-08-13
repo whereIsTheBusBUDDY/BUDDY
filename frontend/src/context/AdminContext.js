@@ -52,14 +52,14 @@ export const AdminProvider = ({ children }) => {
 
         try {
           // 테스트 위치
-          const latitude = 36.358602;
-          const longitude = 127.412893;
+          // const latitude = 36.358602;
+          // const longitude = 127.412893;
 
-          // const { coords } = await Location.getCurrentPositionAsync({
-          //   accuracy: Location.Accuracy.BestForNavigation,
-          // });
+          const { coords } = await Location.getCurrentPositionAsync({
+            accuracy: Location.Accuracy.BestForNavigation,
+          });
 
-          // const { latitude, longitude } = coords;
+          const { latitude, longitude } = coords;
 
           console.log('위치추적 정보', { latitude, longitude });
           setLocation({ latitude, longitude });
