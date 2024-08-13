@@ -342,6 +342,7 @@ const BusScreen = () => {
 
     try {
       const responseData = await postBusData(data);
+      console.log(data);
       console.log('Response data:', responseData); // 서버 응답 확인
       let time = responseData.predicted_time;
       console.log('Response time:', time); // 서버 응답 확인
