@@ -60,7 +60,7 @@ const ContentTab = () => {
         component={BusScreen}
         options={{
           headerTitle: '실시간 셔틀',
-          headerShadowVisible: false,
+          headerShown: false,
         }}
       />
       <Tab.Screen
