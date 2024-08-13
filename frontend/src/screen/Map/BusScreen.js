@@ -13,11 +13,9 @@ import {
 import MapView, { Marker, Polyline } from 'react-native-maps';
 import { FontAwesome } from '@expo/vector-icons';
 import * as Location from 'expo-location';
-import ModalDropdown from 'react-native-modal-dropdown';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { WHITE, PRIMARY, GRAY, BLACK } from '../../constant/color';
-import { currentBus } from '../../api/busUser';
-import { postBusData } from '../../api/busUser';
+import { currentBus, postBusData, postBusDataGpu } from '../../api/busUser';
 import RenderingScreen from '../common/RenderingScreen';
 import StationMarker from './StationMarker';
 import NotExistScreen from '../common/NotExistScreen';
@@ -38,6 +36,11 @@ const BusScreen = () => {
   const intervalRef = useRef(null);
   const [isExist, setIsExist] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+
+  const isAfternoon = () => {
+    const currentHour = new Date().getHours();
+    return currentHour >= 12; // 현재 시간이 12시(정오) 이후인지 체크
+  };
 
   // API에서 경로 데이터를 가져오는 함수
   const fetchBusStops = async (busLine) => {
@@ -343,7 +346,6 @@ const BusScreen = () => {
 
     try {
       const responseData = await postBusData(data);
-      console.log(data);
       console.log('Response data:', responseData); // 서버 응답 확인
       let time = responseData.predicted_time;
       console.log('Response time:', time); // 서버 응답 확인
@@ -353,8 +355,13 @@ const BusScreen = () => {
         console.log('Setting arrival time:', time);
         setArrivalTime(time);
         // let re
-      } else if (time == -1) {
+      } else if (time === -1) {
         console.log(time);
+        responseDataGPU = await postBusDatapostBusDataGpu(data);
+        let time = responseDataGPU.predicted_time;
+        console.log('gpu Response time:', time);
+        console.log('gpu Setting arrival time:', time);
+        setArrivalTime(time);
       } else {
         console.warn('Arrival time not found in response');
       }
@@ -473,7 +480,9 @@ const BusScreen = () => {
             <View style={styles.line}>
               <Text style={styles.textStyle}>{selectedRoute}호차</Text>
               <Text style={styles.point}>
-                {arrivalTime
+                {isAfternoon()
+                  ? '정보 제공 시간이 아닙니다'
+                  : arrivalTime
                   ? `${arrivalTime}분 후 도착`
                   : '도착 시간 정보 없음'}
               </Text>
