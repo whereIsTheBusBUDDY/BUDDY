@@ -33,7 +33,7 @@ const MainScreen = () => {
   const [passengerData, setPassengerData] = useState({});
   const [lastNotice, setLastNotice] = useState('');
   const [lastNoticeCreateAt, setLastNoticeCreateAt] = useState('');
-  const items = ['1호차', '2호차', '3호차', '4호차', '5호차', '6호차'];
+  // const items = ['1호차', '2호차', '3호차', '4호차', '5호차', '6호차'];
 
   const [connectMessage, setConnectMessage] = useState('');
   const [noticeMessage, setNoticeMessage] = useState('');
@@ -374,7 +374,7 @@ const MainScreen = () => {
             <DropdownBus
               selectedValue={selectedBus}
               onChangeValue={setSelectedBus}
-              backgroundColor="#93c5fd"
+              backgroundColor={SKYBLUE.FONT}
             ></DropdownBus>
             <Text style={styles.bottomContainerText}>운행시간표</Text>
           </View>

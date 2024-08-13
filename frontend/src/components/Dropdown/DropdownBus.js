@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Picker } from '@react-native-picker/picker';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Text } from 'react-native'; // Text 추가
 import { WHITE, BLACK, PRIMARY } from '../../constant/color';
 
 const DropdownBus = ({
   selectedValue,
   onChangeValue,
   backgroundColor = PRIMARY.DEFAULT,
+  color = WHITE,
 }) => {
   const [value, setValue] = useState(selectedValue || '1호차'); // 기본값
   const items = [
@@ -32,15 +33,10 @@ const DropdownBus = ({
             onChangeValue(itemValue);
           }
         }}
-        style={[styles.picker, { backgroundColor }]}
+        style={[styles.picker, { backgroundColor, color }]}
       >
         {items.map((item) => (
-          <Picker.Item
-            key={item.value}
-            label={item.label}
-            value={item.value}
-            color={BLACK}
-          />
+          <Picker.Item key={item.value} label={item.label} value={item.value} />
         ))}
       </Picker>
     </View>
@@ -53,10 +49,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     overflow: 'hidden',
   },
-
   picker: {
     height: 50,
-    color: WHITE,
     borderRadius: 10,
   },
 });
