@@ -11,7 +11,7 @@ import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import BoardItem from '../../components/BoardItem';
 import TabButton from '../../components/BoardTabButton';
 import { WHITE, GRAY, SKYBLUE, PRIMARY } from '../../constant/color';
-import { fetchBoards, fetchBoardDetail } from '../../api/board';
+import { fetchBoards, fetchBoardDetail } from '../../api/user';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 

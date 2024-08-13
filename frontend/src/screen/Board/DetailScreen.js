@@ -18,7 +18,7 @@ import {
   createComment,
   deleteComment,
   getNickname,
-} from '../../api/board';
+} from '../../api/user';
 import Button, { ButtonColors } from '../../components/smallButton';
 
 const DetailScreen = ({ route }) => {

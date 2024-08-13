@@ -4,7 +4,7 @@ import { WHITE, GRAY } from '../../constant/color';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Button, { ButtonColors } from '../../components/Button';
 import { useNavigation } from '@react-navigation/native';
-import { createBoard } from '../../api/board';
+import { createBoard } from '../../api/user';
 
 export default function App({ route }) {
   const [category, setCategory] = useState(route.params.selectedCategory);
