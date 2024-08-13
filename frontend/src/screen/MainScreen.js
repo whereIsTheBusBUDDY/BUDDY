@@ -26,7 +26,7 @@ import {
   checkBusStatus,
   fetchPassengerData,
 } from '../api/user';
-import { sseUrl } from '../api/url';
+// import { sseUrl } from '../api/url';
 
 const MainScreen = () => {
   const { setHasUnreadNotifications } = useContext(NotificationContext);
@@ -84,6 +84,8 @@ const MainScreen = () => {
         console.error('No token found in AsyncStorage');
         return;
       }
+
+      const sseUrl = 'http://i11b109.p.ssafy.io:8080/subscribe';
 
       const headers = {
         Authorization: `Bearer ${token}`,
