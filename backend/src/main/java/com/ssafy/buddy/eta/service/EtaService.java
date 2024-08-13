@@ -118,9 +118,8 @@ public class EtaService {
             JsonNode routeNode = root.get("route");
             JsonNode optionNode = routeNode.path("tracomfort").get(0);
             JsonNode summaryNode = optionNode.path("summary");
-            JsonNode goalNode = summaryNode.path("goal");
 
-            int totalDuration = goalNode.path("duration").asInt();
+            int totalDuration = summaryNode.path("duration").asInt();
 
             JsonNode waypointsNode = summaryNode.path("waypoints");
 
