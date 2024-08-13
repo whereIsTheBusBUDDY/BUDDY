@@ -8,6 +8,7 @@ import {
   Text,
   TouchableOpacity,
   Image,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import MapView, { Marker, Polyline } from 'react-native-maps';
 import { FontAwesome } from '@expo/vector-icons';
@@ -384,97 +385,103 @@ const BusScreen = () => {
     return <RenderingScreen />;
   }
   return (
-    <View style={styles.container}>
-      <View style={styles.dropdown}>
-        <DropdownBus
-          selectedValue={`${selectedRoute}호차`}
-          onChangeValue={(value) => setSelectedRoute(value.replace('호차', ''))}
-          backgroundColor={PRIMARY.DEFAULT}
-          color={WHITE}
-        />
-      </View>
-      {locationMap ? (
-        <View>
-          <View style={styles.dropdown}>
-            <DropdownBus
-              selectedValue={`${selectedRoute}호차`}
-              onChangeValue={(value) =>
-                setSelectedRoute(value.replace('호차', ''))
-              }
-              backgroundColor={PRIMARY.DEFAULT}
-              color={WHITE}
-            />
-          </View>
-          <MapView
-            ref={mapRef}
-            style={styles.map}
-            initialRegion={{
-              latitude: locationMap.latitude,
-              longitude: locationMap.longitude,
-              latitudeDelta: locationMap.latitudeDelta,
-              longitudeDelta: locationMap.longitudeDelta,
-            }}
-            showsUserLocation={true} // 사용자 위치 표시
-          >
-            {/* 선택된 호차에 대한 버스 위치 마커 */}
-            {busLocation && (
-              <Marker coordinate={busLocation} title="현재 버스 위치">
-                <Image
-                  resizeMode="cover"
-                  source={require('../../../assets/busMarker.png')} // 버스 이미지 파일 경로 설정
-                  style={styles.busImage}
-                />
-              </Marker>
-            )}
-
-            {/* API로부터 받아온 정류장 데이터를 마커로 표시 */}
-            {stations.map((station) => (
-              <StationMarker
-                key={station.id}
-                station={station}
-                onPress={onBusStopMarkerClick}
-              />
-            ))}
-
-            {/* 경로 표시를 위한 Polyline */}
-            <Polyline
-              coordinates={busStops.map((stop) => ({
-                latitude: stop.latitude,
-                longitude: stop.longitude,
-              }))}
-              strokeWidth={10}
-              strokeColor={PRIMARY.DEFAULT}
-            />
-          </MapView>
-          <TouchableOpacity style={styles.button} onPress={moveToMarker}>
-            <FontAwesome name="location-arrow" size={24} color="white" />
-          </TouchableOpacity>
+    <TouchableWithoutFeedback onPress={() => setSelectedStation(null)}>
+      <View style={styles.container}>
+        <View style={styles.dropdown}>
+          <DropdownBus
+            selectedValue={`${selectedRoute}호차`}
+            onChangeValue={(value) =>
+              setSelectedRoute(value.replace('호차', ''))
+            }
+            backgroundColor={PRIMARY.DEFAULT}
+            color={WHITE}
+          />
         </View>
-      ) : (
-        <RenderingScreen />
-      )}
-      {/* 선택된 정류장이 있을 때만 표시 */}
-      {selectedStation && (
-        <View style={styles.infobox}>
-          <View style={styles.titlecontainer}>
-            <Text style={styles.title}>{selectedStation.stationName}</Text>
-            <TouchableOpacity onPress={toggleStar}>
-              <Text style={starSelected ? styles.starSelected : styles.star}>
-                ★
-              </Text>
+        {locationMap ? (
+          <View>
+            <View style={styles.dropdown}>
+              <DropdownBus
+                selectedValue={`${selectedRoute}호차`}
+                onChangeValue={(value) =>
+                  setSelectedRoute(value.replace('호차', ''))
+                }
+                backgroundColor={PRIMARY.DEFAULT}
+                color={WHITE}
+              />
+            </View>
+            <MapView
+              ref={mapRef}
+              style={styles.map}
+              initialRegion={{
+                latitude: locationMap.latitude,
+                longitude: locationMap.longitude,
+                latitudeDelta: locationMap.latitudeDelta,
+                longitudeDelta: locationMap.longitudeDelta,
+              }}
+              showsUserLocation={true} // 사용자 위치 표시
+            >
+              {/* 선택된 호차에 대한 버스 위치 마커 */}
+              {busLocation && (
+                <Marker coordinate={busLocation} title="현재 버스 위치">
+                  <Image
+                    resizeMode="cover"
+                    source={require('../../../assets/busMarker.png')} // 버스 이미지 파일 경로 설정
+                    style={styles.busImage}
+                  />
+                </Marker>
+              )}
+
+              {/* API로부터 받아온 정류장 데이터를 마커로 표시 */}
+              {stations.map((station) => (
+                <StationMarker
+                  key={station.id}
+                  station={station}
+                  onPress={onBusStopMarkerClick}
+                />
+              ))}
+
+              {/* 경로 표시를 위한 Polyline */}
+              <Polyline
+                coordinates={busStops.map((stop) => ({
+                  latitude: stop.latitude,
+                  longitude: stop.longitude,
+                }))}
+                strokeWidth={10}
+                strokeColor={PRIMARY.DEFAULT}
+              />
+            </MapView>
+            <TouchableOpacity style={styles.button} onPress={moveToMarker}>
+              <FontAwesome name="location-arrow" size={24} color="white" />
             </TouchableOpacity>
           </View>
+        ) : (
+          <RenderingScreen />
+        )}
+        {/* 선택된 정류장이 있을 때만 표시 */}
+        {selectedStation && (
+          <View style={styles.infobox}>
+            <View style={styles.titlecontainer}>
+              <Text style={styles.title}>{selectedStation.stationName}</Text>
+              <TouchableOpacity onPress={toggleStar}>
+                <Text style={starSelected ? styles.starSelected : styles.star}>
+                  ★
+                </Text>
+              </TouchableOpacity>
+            </View>
 
-          <View style={styles.partline} />
-          <View style={styles.line}>
-            <Text style={styles.textStyle}>{selectedRoute}호차</Text>
-            <Text style={styles.point}>
-              {arrivalTime ? `${arrivalTime}분 후 도착` : '도착 시간 정보 없음'}
-            </Text>
+            <View style={styles.partline} />
+            <View style={styles.line}>
+              <Text style={styles.textStyle}>{selectedRoute}호차</Text>
+              <Text style={styles.point}>
+                {arrivalTime
+                  ? `${arrivalTime}분 후 도착`
+                  : '도착 시간 정보 없음'}
+              </Text>
+            </View>
           </View>
-        </View>
-      )}
-    </View>
+        )}
+      </View>
+    </TouchableWithoutFeedback>
   );
 };
 
