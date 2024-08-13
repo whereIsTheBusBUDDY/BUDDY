@@ -39,6 +39,7 @@ const ContentTab = () => {
         },
         tabBarLabelStyle: {
           paddingBottom: 10,
+          fontSize:13,
         },
       })}
     >
