@@ -511,18 +511,6 @@ const styles = StyleSheet.create({
     width: SCREEN_WIDTH,
     height: SCREEN_HEIGHT, // Map takes the full height
   },
-  // dropdown: {
-  //   position: 'absolute',
-  //   width: 100, // 드롭다운 버튼의 너비 조정
-  //   top: Platform.OS === 'ios' ? 60 : 70, // 플랫폼에 따라 상단 위치 조정
-  //   right: 30, // 오른쪽 가장자리에서 10px 떨어짐
-  //   backgroundColor: '#f97316', // 배경색은 주황색
-  //   borderRadius: 20,
-  //   paddingVertical: 8,
-  //   paddingHorizontal: 10,
-  //   alignItems: 'center',
-  //   zIndex: 1000,
-  // },
   dropdownText: {
     color: '#fff',
     fontSize: 16,
