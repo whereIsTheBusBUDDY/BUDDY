@@ -1,5 +1,3 @@
-//셔틀 노선도
-
 import React, { useEffect, useState, useRef } from 'react';
 import {
   StyleSheet,
@@ -13,10 +11,10 @@ import {
 import MapView, { Marker, Polyline } from 'react-native-maps';
 import { FontAwesome } from '@expo/vector-icons';
 import * as Location from 'expo-location';
-import ModalDropdown from 'react-native-modal-dropdown';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { WHITE, PRIMARY, GRAY } from '../../constant/color';
+import { WHITE, PRIMARY, GRAY, BLACK } from '../../constant/color';
 import RenderingScreen from '../common/RenderingScreen';
+import DropdownBus from '../../components/Dropdown/DropdownBus';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -27,6 +25,7 @@ const MapScreen = () => {
   const [stations, setStations] = useState([]); // 정류장 데이터를 위한 상태
   const [selectedStation, setSelectedStation] = useState(null); // 선택된 정류장을 저장
   const [starSelected, setStarSelected] = useState(false); // 즐겨찾기 상태
+  const [loading, setLoading] = useState(true); // 로딩 상태
   const mapRef = useRef(null);
 
   // API에서 경로 데이터를 가져오는 함수
@@ -208,76 +207,84 @@ const MapScreen = () => {
       });
 
       // 기본 노선에 대한 경로 및 정류장 데이터 가져오기
-      fetchBusStops(selectedRoute);
-      fetchStations(selectedRoute);
-      fetchBookmarks(); // 즐겨찾기 목록 가져오기
+      await fetchBusStops(selectedRoute);
+      await fetchStations(selectedRoute);
+      await fetchBookmarks(); // 즐겨찾기 목록 가져오기
+
+      setLoading(false); // 로딩 완료
     })();
   }, []);
 
   // 새로운 노선 선택 시 경로 및 정류장 데이터 업데이트
   useEffect(() => {
-    fetchBusStops(selectedRoute);
-    fetchStations(selectedRoute);
+    if (!loading) {
+      fetchBusStops(selectedRoute);
+      fetchStations(selectedRoute);
+    }
   }, [selectedRoute]);
 
   // 선택된 정류장의 즐겨찾기 상태 확인
   useEffect(() => {
-    fetchBookmarks(); // 선택한 정류장이 변경될 때마다 즐겨찾기 목록 업데이트
+    if (!loading) {
+      fetchBookmarks(); // 선택한 정류장이 변경될 때마다 즐겨찾기 목록 업데이트
+    }
   }, [selectedStation]);
 
   return (
     <View style={styles.container}>
-      {/* 드롭다운 메뉴 */}
-      <ModalDropdown
-        options={['1호차', '2호차', '3호차', '4호차', '5호차', '6호차']}
-        defaultValue="1호차"
-        style={styles.dropdown}
-        textStyle={styles.dropdownText}
-        dropdownStyle={styles.dropdownDropdown}
-        onSelect={(index, value) => {
-          setSelectedRoute(`${parseInt(index) + 1}`);
-        }}
-      />
-
       {locationMap ? (
-        <MapView
-          ref={mapRef}
-          style={styles.map}
-          initialRegion={{
-            latitude: locationMap.latitude,
-            longitude: locationMap.longitude,
-            latitudeDelta: locationMap.latitudeDelta,
-            longitudeDelta: locationMap.longitudeDelta,
-          }}
-          showsUserLocation={true} // 사용자 위치 표시
-        >
-          {/* API로부터 받아온 정류장 데이터를 마커로 표시 */}
-          {stations.map((station) => (
-            <Marker
-              key={station.id}
-              coordinate={{
-                latitude: station.latitude,
-                longitude: station.longitude,
-              }}
-              onPress={() => setSelectedStation(station)} // 마커 클릭 시 정류장 선택
-            >
-              <Image
-                source={require('../../../assets/busStopIcon.png')}
-                style={styles.stationMarker}
-              />
-            </Marker>
-          ))}
+        <>
+          {/* 드롭다운 메뉴: 지도 로드 후에만 표시 */}
+          <View style={styles.dropdown}>
+            <DropdownBus
+              selectedValue={`${selectedRoute}호차`}
+              onChangeValue={(value) =>
+                setSelectedRoute(value.replace('호차', ''))
+              }
+              backgroundColor={PRIMARY.DEFAULT}
+              color={WHITE}
+            />
+          </View>
 
-          {/* 경로 표시를 위한 Polyline */}
-          <Polyline
-            coordinates={busStops.map((stop) => ({
-              latitude: stop.latitude,
-              longitude: stop.longitude,
-            }))}
-            strokeWidth={10}
-            strokeColor={PRIMARY.DEFAULT}
-          />
-        </MapView>
+          <MapView
+            ref={mapRef}
+            style={styles.map}
+            initialRegion={{
+              latitude: locationMap.latitude,
+              longitude: locationMap.longitude,
+              latitudeDelta: locationMap.latitudeDelta,
+              longitudeDelta: locationMap.longitudeDelta,
+            }}
+            showsUserLocation={true} // 사용자 위치 표시
+          >
+            {/* API로부터 받아온 정류장 데이터를 마커로 표시 */}
+            {stations.map((station) => (
+              <Marker
+                key={station.id}
+                coordinate={{
+                  latitude: station.latitude,
+                  longitude: station.longitude,
+                }}
+                onPress={() => setSelectedStation(station)} // 마커 클릭 시 정류장 선택
+              >
+                <Image
+                  source={require('../../../assets/busStopIcon.png')}
+                  style={styles.stationMarker}
+                />
+              </Marker>
+            ))}
+
+            {/* 경로 표시를 위한 Polyline */}
+            <Polyline
+              coordinates={busStops.map((stop) => ({
+                latitude: stop.latitude,
+                longitude: stop.longitude,
+              }))}
+              strokeWidth={10}
+              strokeColor={PRIMARY.DEFAULT}
+            />
+          </MapView>
+        </>
       ) : (
         <RenderingScreen />
       )}
@@ -310,25 +317,9 @@ const styles = StyleSheet.create({
   },
   dropdown: {
     position: 'absolute',
-    width: 100, // 드롭다운 버튼의 너비 조정
-    top: Platform.OS === 'ios' ? 60 : 70, // 플랫폼에 따라 상단 위치 조정
-    right: 30, // 오른쪽 가장자리에서 10px 떨어짐
-    backgroundColor: '#f97316', // 배경색은 주황색
-    borderRadius: 20,
-    paddingVertical: 8,
-    paddingHorizontal: 10,
-    alignItems: 'center',
+    top: 80,
+    left: 20,
     zIndex: 1000,
-  },
-  dropdownText: {
-    color: '#fff',
-    fontSize: 16,
-  },
-  dropdownDropdown: {
-    width: 100, // 드롭다운 리스트의 너비를 버튼과 동일하게 조정
-    height: 200,
-    borderWidth: 1,
-    borderRadius: 20,
   },
   loadingContainer: {
     flex: 1,

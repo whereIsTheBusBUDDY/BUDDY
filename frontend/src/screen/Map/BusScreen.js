@@ -1,4 +1,4 @@
-// 필요한 라이브러리 및 모듈 불러오기
+// 실시간 버스 위치
 import { useFocusEffect } from '@react-navigation/native';
 import React, { useEffect, useState, useRef } from 'react';
 import {
@@ -7,7 +7,6 @@ import {
   Dimensions,
   Text,
   TouchableOpacity,
-  Platform,
   Image,
 } from 'react-native';
 import MapView, { Marker, Polyline } from 'react-native-maps';
@@ -15,12 +14,13 @@ import { FontAwesome } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import ModalDropdown from 'react-native-modal-dropdown';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { PRIMARY, GRAY } from '../../constant/color';
+import { WHITE, PRIMARY, GRAY, BLACK } from '../../constant/color';
 import { currentBus } from '../../api/busUser';
 import { postBusData } from '../../api/busUser';
 import RenderingScreen from '../common/RenderingScreen';
 import StationMarker from './StationMarker';
 import NotExistScreen from '../common/NotExistScreen';
+import DropdownBus from '../../components/Dropdown/DropdownBus';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -366,19 +366,16 @@ const BusScreen = () => {
     return (
       <View style={styles.container}>
         {/* 드롭다운 메뉴 */}
-        <ModalDropdown
-          options={['1호차', '2호차', '3호차', '4호차', '5호차', '6호차']}
-          defaultValue={`${selectedRoute}호차`}
-          style={styles.dropdown}
-          textStyle={styles.dropdownText}
-          dropdownStyle={styles.dropdownDropdown}
-          value={`${selectedRoute}호차`}
-          onSelect={(index, value) => {
-            setIsLoading(true);
-            setSelectedRoute(() => `${parseInt(index) + 1}`);
-            console.log('드롭 ', selectedRoute);
-          }}
-        />
+        <View style={styles.dropdown}>
+          <DropdownBus
+            selectedValue={`${selectedRoute}호차`}
+            onChangeValue={(value) =>
+              setSelectedRoute(value.replace('호차', ''))
+            }
+            backgroundColor={PRIMARY.DEFAULT}
+            color={WHITE}
+          />
+        </View>
         <NotExistScreen busNumber={selectedRoute} />
       </View>
     );
@@ -387,23 +384,26 @@ const BusScreen = () => {
   }
   return (
     <View style={styles.container}>
-      {/* 드롭다운 메뉴 */}
-      <ModalDropdown
-        options={['1호차', '2호차', '3호차', '4호차', '5호차', '6호차']}
-        defaultValue={`${selectedRoute}호차`}
-        style={styles.dropdown}
-        textStyle={styles.dropdownText}
-        value={`${selectedRoute}호차`}
-        dropdownStyle={styles.dropdownDropdown}
-        onSelect={(index, value) => {
-          setIsLoading(true);
-          setSelectedRoute(() => `${parseInt(index) + 1}`);
-          console.log(selectedRoute);
-        }}
-      />
-
+      <View style={styles.dropdown}>
+        <DropdownBus
+          selectedValue={`${selectedRoute}호차`}
+          onChangeValue={(value) => setSelectedRoute(value.replace('호차', ''))}
+          backgroundColor={PRIMARY.DEFAULT}
+          color={WHITE}
+        />
+      </View>
       {locationMap ? (
         <View>
+          <View style={styles.dropdown}>
+            <DropdownBus
+              selectedValue={`${selectedRoute}호차`}
+              onChangeValue={(value) =>
+                setSelectedRoute(value.replace('호차', ''))
+              }
+              backgroundColor={PRIMARY.DEFAULT}
+              color={WHITE}
+            />
+          </View>
           <MapView
             ref={mapRef}
             style={styles.map}
@@ -428,7 +428,11 @@ const BusScreen = () => {
 
             {/* API로부터 받아온 정류장 데이터를 마커로 표시 */}
             {stations.map((station) => (
-              <StationMarker station={station} onPress={onBusStopMarkerClick} />
+              <StationMarker
+                key={station.id}
+                station={station}
+                onPress={onBusStopMarkerClick}
+              />
             ))}
 
             {/* 경로 표시를 위한 Polyline */}
@@ -448,7 +452,6 @@ const BusScreen = () => {
       ) : (
         <RenderingScreen />
       )}
-
       {/* 선택된 정류장이 있을 때만 표시 */}
       {selectedStation && (
         <View style={styles.infobox}>
@@ -491,18 +494,18 @@ const styles = StyleSheet.create({
     width: SCREEN_WIDTH,
     height: SCREEN_HEIGHT, // Map takes the full height
   },
-  dropdown: {
-    position: 'absolute',
-    width: 100, // 드롭다운 버튼의 너비 조정
-    top: Platform.OS === 'ios' ? 60 : 70, // 플랫폼에 따라 상단 위치 조정
-    right: 30, // 오른쪽 가장자리에서 10px 떨어짐
-    backgroundColor: '#f97316', // 배경색은 주황색
-    borderRadius: 20,
-    paddingVertical: 8,
-    paddingHorizontal: 10,
-    alignItems: 'center',
-    zIndex: 1000,
-  },
+  // dropdown: {
+  //   position: 'absolute',
+  //   width: 100, // 드롭다운 버튼의 너비 조정
+  //   top: Platform.OS === 'ios' ? 60 : 70, // 플랫폼에 따라 상단 위치 조정
+  //   right: 30, // 오른쪽 가장자리에서 10px 떨어짐
+  //   backgroundColor: '#f97316', // 배경색은 주황색
+  //   borderRadius: 20,
+  //   paddingVertical: 8,
+  //   paddingHorizontal: 10,
+  //   alignItems: 'center',
+  //   zIndex: 1000,
+  // },
   dropdownText: {
     color: '#fff',
     fontSize: 16,
@@ -584,6 +587,12 @@ const styles = StyleSheet.create({
     height: 60,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  dropdown: {
+    position: 'absolute',
+    top: 80,
+    left: 20,
+    zIndex: 1000,
   },
 });
 

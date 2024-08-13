@@ -48,6 +48,7 @@ const styles = StyleSheet.create({
     width: 120,
     borderRadius: 10,
     overflow: 'hidden',
+    justifyContent: 'center',
   },
   picker: {
     height: 50,
