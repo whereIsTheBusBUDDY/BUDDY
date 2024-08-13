@@ -3,6 +3,7 @@ package com.ssafy.buddy.location.service;
 import com.ssafy.buddy.boarding.repository.BoardingRepository;
 import com.ssafy.buddy.location.domain.*;
 import com.ssafy.buddy.location.repository.*;
+import com.ssafy.buddy.station.repository.StationRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ public class LocationService {
     private final FifthBusRepository fifthBusRepository;
     private final SixthBusRepository sixthBusRepository;
     private final BoardingRepository boardingRepository;
+    private final StationRepository stationRepository;
     public FirstBus getLatestFirstBusLocation() {
         return firstBusRepository.findFirstBusLastLocation()
                 .orElseThrow(() -> new EntityNotFoundException("1호차 위치가 존재하지 않습니다."));
@@ -84,21 +86,27 @@ public class LocationService {
     @Transactional
     public void stopBus(int budId){
         if(budId == 1){
+            stationRepository.updateVisited(budId);
             boardingRepository.deleteBoardingByBusNumber(budId);
             firstBusRepository.deleteAll();
         }else if(budId == 2){
+            stationRepository.updateVisited(budId);
             boardingRepository.deleteBoardingByBusNumber(budId);
             secondBusRepository.deleteAll();
         }else if(budId == 3){
+            stationRepository.updateVisited(budId);
             boardingRepository.deleteBoardingByBusNumber(budId);
             thirdBusRepository.deleteAll();
         }else if(budId == 4){
+            stationRepository.updateVisited(budId);
             boardingRepository.deleteBoardingByBusNumber(budId);
             fourthRepository.deleteAll();
         }else if(budId == 5){
+            stationRepository.updateVisited(budId);
             boardingRepository.deleteBoardingByBusNumber(budId);
             fifthBusRepository.deleteAll();
         }else if(budId == 6){
+            stationRepository.updateVisited(budId);
             boardingRepository.deleteBoardingByBusNumber(budId);
             sixthBusRepository.deleteAll();
         }else {
