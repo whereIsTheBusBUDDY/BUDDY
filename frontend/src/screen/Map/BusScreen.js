@@ -48,6 +48,16 @@ const BusScreen = () => {
     }
   };
 
+  const moveToMarker = () => {
+    if (busLocation && mapRef.current) {
+      mapRef.current.animateToRegion({
+        ...busLocation,
+        latitudeDelta: 0.005,
+        longitudeDelta: 0.005,
+      });
+    }
+  };
+
   // API에서 정류장 데이터를 가져오는 함수
   const fetchStations = async (busLine) => {
     try {
@@ -197,10 +207,10 @@ const BusScreen = () => {
 
       // 현재 위치로 초기 위치 설정
       setLocationMap({
-        latitude: 36.3553089,
-        longitude: 127.2984993,
-        // latitude: location.coords.latitude,
-        // longitude: location.coords.longitude,
+        // latitude: 36.3553089,
+        // longitude: 127.2984993,
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
         latitudeDelta: 0.005,
         longitudeDelta: 0.005,
       });
@@ -358,43 +368,48 @@ const BusScreen = () => {
       />
 
       {locationMap ? (
-        <MapView
-          ref={mapRef}
-          style={styles.map}
-          initialRegion={{
-            latitude: locationMap.latitude,
-            longitude: locationMap.longitude,
-            latitudeDelta: locationMap.latitudeDelta,
-            longitudeDelta: locationMap.longitudeDelta,
-          }}
-          showsUserLocation={true} // 사용자 위치 표시
-        >
-          {/* 선택된 호차에 대한 버스 위치 마커 */}
-          {busLocation && (
-            <Marker coordinate={busLocation} title="현재 버스 위치">
-              <Image
-                resizeMode="cover"
-                source={require('../../../assets/busMarker.png')} // 버스 이미지 파일 경로 설정
-                style={styles.busImage}
-              />
-            </Marker>
-          )}
+        <View>
+          <MapView
+            ref={mapRef}
+            style={styles.map}
+            initialRegion={{
+              latitude: locationMap.latitude,
+              longitude: locationMap.longitude,
+              latitudeDelta: locationMap.latitudeDelta,
+              longitudeDelta: locationMap.longitudeDelta,
+            }}
+            showsUserLocation={true} // 사용자 위치 표시
+          >
+            {/* 선택된 호차에 대한 버스 위치 마커 */}
+            {busLocation && (
+              <Marker coordinate={busLocation} title="현재 버스 위치">
+                <Image
+                  resizeMode="cover"
+                  source={require('../../../assets/busMarker.png')} // 버스 이미지 파일 경로 설정
+                  style={styles.busImage}
+                />
+              </Marker>
+            )}
 
-          {/* API로부터 받아온 정류장 데이터를 마커로 표시 */}
-          {stations.map((station) => (
-            <StationMarker station={station} onPress={onBusStopMarkerClick} />
-          ))}
+            {/* API로부터 받아온 정류장 데이터를 마커로 표시 */}
+            {stations.map((station) => (
+              <StationMarker station={station} onPress={onBusStopMarkerClick} />
+            ))}
 
-          {/* 경로 표시를 위한 Polyline */}
-          <Polyline
-            coordinates={busStops.map((stop) => ({
-              latitude: stop.latitude,
-              longitude: stop.longitude,
-            }))}
-            strokeWidth={10}
-            strokeColor={PRIMARY.DEFAULT}
-          />
-        </MapView>
+            {/* 경로 표시를 위한 Polyline */}
+            <Polyline
+              coordinates={busStops.map((stop) => ({
+                latitude: stop.latitude,
+                longitude: stop.longitude,
+              }))}
+              strokeWidth={10}
+              strokeColor={PRIMARY.DEFAULT}
+            />
+          </MapView>
+          <TouchableOpacity style={styles.button} onPress={moveToMarker}>
+            <FontAwesome name="location-arrow" size={24} color="white" />
+          </TouchableOpacity>
+        </View>
       ) : (
         <RenderingScreen />
       )}
@@ -523,6 +538,17 @@ const styles = StyleSheet.create({
   },
   point: {
     color: '#f97316',
+  },
+  button: {
+    position: 'absolute',
+    bottom: 90,
+    right: 20,
+    backgroundColor: 'orange',
+    borderRadius: 30,
+    width: 60,
+    height: 60,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 
