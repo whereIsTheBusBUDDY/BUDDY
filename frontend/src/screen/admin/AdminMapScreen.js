@@ -1,3 +1,4 @@
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Alert,
   Button,
@@ -10,30 +11,41 @@ import {
   View,
 } from 'react-native';
 import { useAdminContext } from '../../context/AdminContext';
-import MapView, { Marker } from 'react-native-maps';
-import { useEffect, useRef, useState } from 'react';
+import MapView, { Marker, Polyline } from 'react-native-maps';
 import * as Location from 'expo-location';
 import { FontAwesome } from '@expo/vector-icons'; // 아이콘을 사용하기 위해 추가
 import StopTrackingButton from '../../components/admin/StopTrackingButton';
 import { ButtonType } from '../../components/AdminSelectButton';
 import { useNavigation } from '@react-navigation/native';
 import RenderingScreen from '../common/RenderingScreen';
-import { WHITE } from '../../constant/color';
+import { WHITE, PRIMARY } from '../../constant/color';
 import { boardingCount } from '../../api/busAdmin';
+import { fetchBusStops } from '../../api/busUser'; // 제대로 경로 확인
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
+
 const AdminMapScreen = () => {
   const { busNumber } = useAdminContext();
   const [locationMap, setLocationMap] = useState(null);
   const [boardingNumber, setBoardingNumber] = useState(null);
+  const [busStops, setBusStops] = useState([]); // 경로 데이터를 위한 상태
   const mapRef = useRef(null);
+
   useEffect(() => {
-    let num = boardingCount(busNumber);
-    num.then((resolvedNum) => {
-      setBoardingNumber(resolvedNum);
-    });
-    setBoardingNumber(num);
-  }, []);
+    const fetchData = async () => {
+      try {
+        const responseDataRoute = await fetchBusStops(busNumber); // await 사용
+        setBusStops(responseDataRoute);
+
+        const num = await boardingCount(busNumber);
+        setBoardingNumber(num);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+    fetchData();
+  }, [busNumber]); // busNumber가 변경될 때마다 새로 데이터를 가져옵니다.
+
   const {
     handleStartTracking,
     handleStopTracking,
@@ -42,6 +54,7 @@ const AdminMapScreen = () => {
     setIsTracking,
     isTracking,
   } = useAdminContext();
+
   const navigate = useNavigation();
 
   const moveToMarker = () => {
@@ -53,12 +66,10 @@ const AdminMapScreen = () => {
       });
     }
   };
+
   const stopBus = () => {
     setIsTracking(false);
     console.log('stopBus 실행');
-    // if (!isTracking) {
-    //   handleStopTracking();
-    // }
     handleStopTracking();
     Alert.alert('운행을 종료합니다.');
     navigate.navigate('AdminMain');
@@ -72,7 +83,6 @@ const AdminMapScreen = () => {
         latitudeDelta: 0.005,
         longitudeDelta: 0.005,
       });
-      // console.log('location update', location);
       if (mapRef.current) {
         mapRef.current.animateToRegion(
           {
@@ -81,11 +91,12 @@ const AdminMapScreen = () => {
             latitudeDelta: 0.005,
             longitudeDelta: 0.005,
           },
-          500
-        ); // 500ms 애니메이션 지속 시간
+          500 // 500ms 애니메이션 지속 시간
+        );
       }
     }
   }, [location]);
+
   return (
     <View style={styles.container}>
       {locationMap ? (
@@ -102,6 +113,15 @@ const AdminMapScreen = () => {
               resizeMode="contain"
             />
           </Marker>
+          {/* 경로 표시를 위한 Polyline */}
+          <Polyline
+            coordinates={busStops.map((stop) => ({
+              latitude: stop.latitude,
+              longitude: stop.longitude,
+            }))}
+            strokeWidth={10}
+            strokeColor={PRIMARY.DEFAULT}
+          />
         </MapView>
       ) : (
         <RenderingScreen />
@@ -118,7 +138,7 @@ const AdminMapScreen = () => {
           onPress={stopBus}
           disabled={false}
           buttonType={ButtonType.PRIMARY}
-          height={50}
+          height={65}
         />
       </View>
       <TouchableOpacity style={styles.button} onPress={moveToMarker}>
@@ -127,6 +147,7 @@ const AdminMapScreen = () => {
     </View>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -164,7 +185,7 @@ const styles = StyleSheet.create({
   },
   closebus: {
     position: 'absolute',
-    bottom: -50,
+    bottom: -20,
     justifyContent: 'center',
     alignItems: 'center',
     paddingVertical: 10,

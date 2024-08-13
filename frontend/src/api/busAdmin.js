@@ -73,3 +73,17 @@ export const boardingCount = async (busId) => {
     console.error('탑승인원 불러오기 실패', error);
   }
 };
+
+// eta log 보내기
+export const postEtaLog = async (busLine, stationId) => {
+  try {
+    const response = await apiClient.post('/eta/log', {
+      busLine,
+      stationId,
+    });
+    console.log('eta log 보내기 성공', busLine, stationId);
+    return response;
+  } catch (error) {
+    console.error('eta log 보내기 실패', error);
+  }
+};

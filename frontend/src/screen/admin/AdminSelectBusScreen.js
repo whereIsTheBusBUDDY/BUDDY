@@ -3,7 +3,7 @@ import RegistButton, { ButtonType } from '../../components/RegistButton';
 import { useNavigation } from '@react-navigation/native';
 import AdminSelectButton from '../../components/AdminSelectButton';
 import { useAdminContext } from '../../context/AdminContext';
-import { PRIMARY } from '../../constant/color';
+import { PRIMARY, SKYBLUE } from '../../constant/color';
 import { useUserContext } from '../../context/UserContext';
 
 const AdminSelectBusScreen = () => {

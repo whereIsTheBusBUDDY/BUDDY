@@ -3,12 +3,13 @@ import { Pressable, StyleSheet, Text, View, Alert } from 'react-native'; // Aler
 import { useUserContext } from '../../context/UserContext';
 import { useAdminContext } from '../../context/AdminContext';
 import AdminMainButton from '../../components/admin/AdminMainButton';
-import { PRIMARY, WHITE } from '../../constant/color';
+import { PRIMARY, WHITE, SKYBLUE } from '../../constant/color';
 import { ButtonType } from '../../components/AdminSelectButton';
 import * as Notifications from 'expo-notifications';
 import { boardingCount } from '../../api/busAdmin';
 import { useNavigation } from '@react-navigation/native';
 import StartTrackingButton from '../../components/admin/StartTrackingButton';
+import StopTrackingButton from '../../components/admin/StopTrackingButton';
 import PeopleCountButton from '../../components/admin/PeopleCountButton';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import EventSource from 'react-native-event-source';
@@ -160,17 +161,31 @@ const AdminMainScreen = () => {
     navigate.navigate('AdminMapScreen');
   };
 
+  const goMapBus = () => {
+    navigate.navigate('AdminMapScreen');
+  };
+
   return (
     <View style={styles.container}>
       <Text>운행 시작시 GPS가 활성화되며,</Text>
       <Text>실시간 셔틀버스 위치가 공유됩니다.</Text>
       <StartTrackingButton
         title={`${busNumber}호차`}
-        onPress={isTracking ? stopBus : startBus}
+        onPress={isTracking ? goMapBus : startBus}
         disabled={false}
-        buttonType={ButtonType.PRIMARY}
+        buttonType={isTracking ? ButtonType.GRAY : ButtonType.PRIMARY}
         height={150}
       />
+      {isTracking && (
+        <StopTrackingButton
+          title={`${busNumber}호차`}
+          onPress={stopBus}
+          disabled={false}
+          buttonType={ButtonType.PRIMARY}
+          height={100}
+          style={styles.stopContainer}
+        />
+      )}
       <PeopleCountButton
         title={'탑승현황'}
         onPress={handleStartTracking}

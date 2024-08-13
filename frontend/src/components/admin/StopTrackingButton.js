@@ -1,10 +1,11 @@
-import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
-import { BLACK, GRAY, PRIMARY, WHITE } from '../../constant/color';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { BLACK, GRAY, PRIMARY, WHITE, SKYBLUE } from '../../constant/color';
 import { useAdminContext } from '../../context/AdminContext';
 
 export const ButtonType = {
   PRIMARY: 'PRIMARY',
   GRAY: 'GRAY',
+  SKYBLUE: 'SKYBLUE',
 };
 const StopTrackingButton = ({
   title,
@@ -13,7 +14,7 @@ const StopTrackingButton = ({
   buttonType,
   height,
 }) => {
-  const colors = { PRIMARY, GRAY };
+  const colors = { PRIMARY, GRAY, SKYBLUE };
   const textColor = buttonType === ButtonType.PRIMARY ? WHITE : BLACK;
   const { isTracking } = useAdminContext();
   return (
@@ -43,14 +44,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingVertical: 10,
-    width: '100%',
     paddingHorizontal: 25,
-    marginHorizontal: 5,
-    marginBottom: 30,
+    width: '100%',
+    marginBottom: 10,
   },
   title: {
-    color: '#000',
-    fontSize: 15,
+    fontSize: 30,
     fontWeight: 'bold',
     justifyContent: 'center',
   },
