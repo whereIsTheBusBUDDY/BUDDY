@@ -16,8 +16,8 @@ import ProgressBar from '../../components/ProgressBar';
 import { signUp } from '../../api/auth';
 import apiClient from '../../api/api';
 import InputWithButton from '../../components/InputWithButton';
-import ModalDropdown from 'react-native-modal-dropdown';
-import { GRAY, PRIMARY, WHITE, BLACK } from '../../constant/color';
+import { BLACK, GRAY, PRIMARY, WHITE } from '../../constant/color';
+import DropdownBus from '../../components/Dropdown/DropdownBus'; // Make sure the path is correct
 
 const SignupScreen = () => {
   const [name, setName] = useState('');
@@ -26,7 +26,7 @@ const SignupScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
-  const [selectedLine, setSelectedLine] = useState(null);
+  const [selectedLine, setSelectedLine] = useState('1호차');
   const [isDisabled, setIsDisabled] = useState(true);
   const [isStudentIdChecked, setIsStudentIdChecked] = useState(false);
   const [isNicknameChecked, setIsNicknameChecked] = useState(false);
@@ -163,16 +163,6 @@ const SignupScreen = () => {
     setIsNicknameChecked(false); // 닉네임 변경 시 중복 확인 상태 초기화
   };
 
-  const adjustDropdownFrame = (frameStyle) => {
-    const dropdownHeight = 150;
-    const topPosition = frameStyle.y - dropdownHeight;
-    return {
-      ...frameStyle,
-      y: topPosition < 0 ? frameStyle.y : topPosition,
-      height: dropdownHeight,
-    };
-  };
-
   return (
     <SafeAreaView style={styles.box}>
       <KeyboardAvoidingView
@@ -235,17 +225,15 @@ const SignupScreen = () => {
               style={styles.input}
             />
             <View style={styles.dropdowncon}>
-              <Text style={styles.label}>선호하는 노선*</Text>
-              <ModalDropdown
-                options={['1호차', '2호차', '3호차', '4호차', '5호차', '6호차']}
-                style={[styles.input, styles.dropdown]}
-                textStyle={styles.dropdownText}
-                dropdownStyle={styles.dropdownStyle}
-                dropdownTextStyle={styles.dropdownTextStyle}
-                defaultValue="노선을 선택하세요"
-                onSelect={(index, value) => setSelectedLine(value)}
-                adjustFrame={adjustDropdownFrame}
-              />
+              <Text style={styles.labelContainer}>선호하는 노선*</Text>
+              <View style={styles.dropdownContainer}>
+                <DropdownBus
+                  selectedValue={selectedLine}
+                  onChangeValue={setSelectedLine}
+                  backgroundColor={GRAY.BACKGROUND}
+                  color={GRAY.FONT}
+                />
+              </View>
             </View>
             <View style={styles.container1}>
               <RegistButton
@@ -305,25 +293,22 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginBottom: 10,
   },
-  dropdown: {
-    justifyContent: 'center',
-    borderColor: GRAY.DEFAULT,
-  },
-  dropdownText: {
-    fontSize: 16,
-    color: GRAY.FONT,
-  },
-  dropdownStyle: {
-    width: '80%',
-  },
-  dropdownTextStyle: {
-    fontSize: 16,
-    color: GRAY.FONT,
+  dropdownContainer: {
+    marginTop: 5,
+    // marginHorizontal: 20,
+    // justifyContent: 'flex-end',
   },
   dropdowncon: {
     marginTop: 5,
     marginHorizontal: 10,
-    // borderColor: GRAY.DEFAULT,
+    // flexDirection: 'row',
+  },
+  labelContainer: {
+    marginLeft: 5,
+    fontSize: 14,
+    // marginBottom: 5,
+    // alignSelf: 'center',
+    color: GRAY.FONT,
   },
 });
 
