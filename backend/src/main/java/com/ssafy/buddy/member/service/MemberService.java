@@ -24,7 +24,9 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @Service
@@ -35,6 +37,8 @@ public class MemberService {
     private final WebClient.Builder webClientBuilder;
     private WebClient webClient;
     private final EmailSender emailSender;
+
+    private final Map<String, String> temporaryPasswordMap = new ConcurrentHashMap<>();
 
     @PostConstruct
     public void init() {
@@ -90,15 +94,24 @@ public class MemberService {
     public void sendPasswordEmail(String email) {
         memberRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("등록된 이메일이 없습니다."));
+
         String temporaryPassword = UUID.randomUUID().toString().substring(0, 6);
-        emailSender.sendTemporaryPassword(email, temporaryPassword);
+        String id = UUID.randomUUID().toString();
+        temporaryPasswordMap.put(id, temporaryPassword);
+
+        emailSender.sendTemporaryPassword(email, id, temporaryPassword);
     }
 
     @Transactional
-    public void resetPassword(String email, String temporaryPassword) {
+    public void resetPassword(String email, String id) {
+        String temporaryPassword = temporaryPasswordMap.get(id);
+        if (temporaryPassword == null) throw new IllegalArgumentException("잘못된 id");
+
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("등록된 이메일이 없습니다."));
+
         member.updatePassword(passwordEncoder.encode(temporaryPassword));
+        temporaryPasswordMap.remove(id);
     }
 
     @Transactional
@@ -107,7 +120,6 @@ public class MemberService {
         member.updatePassword(passwordEncoder.encode(password));
     }
 
-    //fastAPI yolo 요청
     public ResponseEntity<IdcardCheckResponse> sendImageToFastApi(MultipartFile image){
         if (image == null || image.isEmpty()) {
             throw new IllegalArgumentException("File is missing");
@@ -131,7 +143,6 @@ public class MemberService {
             throw new RuntimeException(e);
         }
 
-        // ResponseEntity로 IdcardCheckResponse 객체를 반환
         return ResponseEntity.ok(response);
     }
 

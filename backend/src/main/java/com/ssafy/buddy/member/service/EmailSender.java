@@ -19,12 +19,13 @@ public class EmailSender {
     private final JavaMailSender javaMailSender;
     private final TemplateEngine templateEngine;
 
-    public void sendTemporaryPassword(String email, String temporaryPassword) {
+    public void sendTemporaryPassword(String email, String id, String temporaryPassword) {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
 
         Context context = new Context();
-        context.setVariable("temporaryPassword", temporaryPassword);
         context.setVariable("email", email);
+        context.setVariable("id", id);
+        context.setVariable("temporaryPassword", temporaryPassword);
         String emailContent = templateEngine.process("reset-password", context);
 
         try {
