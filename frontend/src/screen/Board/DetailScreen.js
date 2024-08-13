@@ -8,6 +8,7 @@ import {
   SafeAreaView,
   KeyboardAvoidingView,
   Platform,
+  Keyboard,
 } from 'react-native';
 import { BLACK, WHITE, SKYBLUE, GRAY, PRIMARY } from '../../constant/color';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -21,7 +22,7 @@ import {
 } from '../../api/user';
 import Button, { ButtonColors } from '../../components/smallButton';
 
-const DetailScreen = ({ route }) => {
+const DetailScreen = ({ route, setKeyboardVisible }) => {
   const [board, setBoard] = useState(route.params.board);
   const [comment, setComment] = useState('');
   const [comments, setComments] = useState(board.comments || []);
@@ -50,6 +51,27 @@ const DetailScreen = ({ route }) => {
       }
     }, [route.params.board])
   );
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      () => {
+        setKeyboardVisible(true);
+      }
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      () => {
+        setKeyboardVisible(false);
+      }
+    );
+
+    // Clean up listeners on unmount
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, [setKeyboardVisible]);
 
   const handleDeleteBoard = async () => {
     try {

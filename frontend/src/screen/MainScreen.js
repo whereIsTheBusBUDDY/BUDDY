@@ -10,7 +10,6 @@ import {
   RefreshControl,
   Alert,
 } from 'react-native';
-import ModalDropdown from 'react-native-modal-dropdown';
 import * as Notifications from 'expo-notifications';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ImageButton, { ButtonColors } from '../components/ImageButton';
@@ -18,12 +17,18 @@ import TimeTable from '../components/TimeTable';
 import busRoutes from '../data/busRoutes';
 import { BLACK, WHITE, SKYBLUE, GRAY } from '../constant/color';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
-import apiClient from '../api/api';
 import EventSource from 'react-native-event-source';
-import { NotificationContext } from '../context/NotificationContext'; // Context import
+import { NotificationContext } from '../context/NotificationContext';
 import DropdownBus from '../components/Dropdown/DropdownBus';
+import {
+  fetchProfileData,
+  fetchLastNotice,
+  checkBusStatus,
+  fetchPassengerData,
+} from '../api/user';
+
 const MainScreen = () => {
-  const { setHasUnreadNotifications } = useContext(NotificationContext); // 상태 업데이트 함수 가져오기
+  const { setHasUnreadNotifications } = useContext(NotificationContext);
 
   const width = useWindowDimensions().width - 40;
   const navigation = useNavigation();
@@ -33,18 +38,16 @@ const MainScreen = () => {
   const [passengerData, setPassengerData] = useState({});
   const [lastNotice, setLastNotice] = useState('');
   const [lastNoticeCreateAt, setLastNoticeCreateAt] = useState('');
-  // const items = ['1호차', '2호차', '3호차', '4호차', '5호차', '6호차'];
-
   const [connectMessage, setConnectMessage] = useState('');
   const [noticeMessage, setNoticeMessage] = useState('');
   const [suggestMessage, setSuggestMessage] = useState('');
   const [arriveMessage, setArriveMessage] = useState('');
 
   useEffect(() => {
-    fetchPassengerData();
-    initializeSSE(); // Initialize SSE when the component mounts
-    requestNotificationPermissions(); // Request notification permissions
-    fetchLastNotice();
+    fetchPassengerDataAsync();
+    initializeSSE();
+    requestNotificationPermissions();
+    fetchLastNoticeAsync();
   }, []);
 
   const requestNotificationPermissions = async () => {
@@ -54,7 +57,6 @@ const MainScreen = () => {
     }
   };
 
-  // Set up notification handler
   Notifications.setNotificationHandler({
     handleNotification: async () => ({
       shouldShowAlert: true,
@@ -63,15 +65,14 @@ const MainScreen = () => {
     }),
   });
 
-  // ✅ 알림 전송
   const sendNotification = async (title, content) => {
-    setHasUnreadNotifications(true); // 알림 전송 시 dot-single 표시
+    setHasUnreadNotifications(true);
     await Notifications.scheduleNotificationAsync({
       content: {
         title: title,
         body: content,
       },
-      trigger: null, // 즉시 보내려면 'trigger'에 'null'을 설정
+      trigger: null,
     });
   };
 
@@ -127,35 +128,35 @@ const MainScreen = () => {
     }
   };
 
-  const fetchProfileData = async () => {
+  const fetchProfileDataAsync = async () => {
     try {
-      const response = await apiClient.get('/members/me');
-      const mappedData = mapProfileData(response.data);
+      const data = await fetchProfileData();
+      const mappedData = mapProfileData(data);
       setProfileData(mappedData);
       if (mappedData.선호노선) {
         setSelectedBus(`${mappedData.선호노선}호차`);
       }
-      console.log(response.data);
+      console.log(data);
     } catch (error) {
       console.error('프로필 정보를 가져오는 중 오류 발생:', error);
     }
   };
 
-  const fetchLastNotice = async () => {
+  const fetchLastNoticeAsync = async () => {
     try {
-      const response = await apiClient.get('/board/notice/last');
-      setLastNoticeCreateAt(response.data.createdAt);
-      setLastNotice(response.data.title || '공지사항이 없습니다');
+      const data = await fetchLastNotice();
+      setLastNoticeCreateAt(data.createdAt);
+      setLastNotice(data.title || '공지사항이 없습니다');
     } catch (error) {
       console.error('마지막 공지사항을 가져오는 중 오류 발생:', error);
       setLastNotice('공지사항을 불러오지 못했습니다.');
     }
   };
 
-  const checkBusStatus = async () => {
+  const checkBusStatusAsync = async () => {
     try {
-      const response = await apiClient.get('/start/check');
-      return response.data;
+      const status = await checkBusStatus();
+      return status;
     } catch (error) {
       console.error('운행 상태 확인 중 오류 발생:', error);
       return false;
@@ -163,7 +164,7 @@ const MainScreen = () => {
   };
 
   const handleBusLocationPress = async () => {
-    const isBusRunning = await checkBusStatus();
+    const isBusRunning = await checkBusStatusAsync();
     console.log(isBusRunning);
     if (isBusRunning) {
       navigation.navigate('Bus');
@@ -185,10 +186,10 @@ const MainScreen = () => {
     }
   };
 
-  const fetchPassengerData = async () => {
+  const fetchPassengerDataAsync = async () => {
     try {
-      const response = await apiClient.get('/boarding');
-      setPassengerData(response.data);
+      const data = await fetchPassengerData();
+      setPassengerData(data);
     } catch (error) {
       console.error('탑승 인원 정보를 가져오는 중 오류 발생:', error);
     }
@@ -196,14 +197,14 @@ const MainScreen = () => {
 
   useFocusEffect(
     React.useCallback(() => {
-      fetchProfileData();
+      fetchProfileDataAsync();
     }, [])
   );
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    fetchProfileData().then(() => setRefreshing(false));
-    fetchPassengerData();
+    fetchProfileDataAsync().then(() => setRefreshing(false));
+    fetchPassengerDataAsync();
   }, []);
 
   const mapProfileData = (data) => {
@@ -213,17 +214,6 @@ const MainScreen = () => {
       이메일: data.email,
       닉네임: data.nickname,
       선호노선: data.favoriteLine,
-    };
-  };
-
-  const handleSelect = (index, value) => {
-    setSelectedBus(value);
-  };
-
-  const adjustFrame = (style) => {
-    return {
-      ...style,
-      left: style.left - 20,
     };
   };
 
