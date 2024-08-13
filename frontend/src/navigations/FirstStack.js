@@ -22,16 +22,7 @@ const FirstStack = () => {
         name={'introduce'}
         component={IntroduceScreen}
         options={{
-          headerTitle: '',
-          headerLeft: () => (
-            <Image source={require('../../assets/BUDDY.png')} />
-          ),
-          // headerRight: () => <Fontisto name="bell" size={24} color="black" />,
-          headerStyle: {
-            shadowColor: 'transparent',
-            elevation: 0,
-          },
-          headerShadowVisible: false,
+          headerShown: false,
         }}
       />
       <Stack.Screen
