@@ -7,8 +7,9 @@ import {
   busVisited,
   sendStop,
   sendAlarm,
+  postEtaLog,
 } from '../api/busAdmin';
-import { Alert } from 'react-native';
+import Toast from 'react-native-root-toast';
 
 const AdminContext = createContext();
 
@@ -20,7 +21,7 @@ export const AdminProvider = ({ children }) => {
   const intervalRef = useRef(null);
   const isSendingRef = useRef(false);
   const [time, setTime] = useState(0);
-  const [station, setStation] = useState(null); // 펜딩 알람 상태 추가
+  const [station, setStation] = useState(null);
 
   const calculateDistance = (lat1, lon1, lat2, lon2) => {
     const R = 6371e3; // 지구 반지름(미터)
@@ -51,28 +52,20 @@ export const AdminProvider = ({ children }) => {
 
         try {
           // 테스트 위치
-          // const latitude = 36.346771;
-          // const longitude = 127.393179;
+          const latitude = 36.358602;
+          const longitude = 127.412893;
 
-          const { coords } = await Location.getCurrentPositionAsync({
-            accuracy: Location.Accuracy.BestForNavigation,
-          });
+          // const { coords } = await Location.getCurrentPositionAsync({
+          //   accuracy: Location.Accuracy.BestForNavigation,
+          // });
 
-          const { latitude, longitude } = coords;
+          // const { latitude, longitude } = coords;
+
           console.log('위치추적 정보', { latitude, longitude });
           setLocation({ latitude, longitude });
 
           await sendBusLocation(busNumber, latitude, longitude);
           console.log(busNumber, latitude, longitude);
-
-          // const checkTime = () => {
-          //   const currentTime = new Date().getHours();
-          //   const newTime = currentTime < 12 ? 1 : 2;
-          //   setTime(newTime);
-          //   console.log('현재시간(시기준)', currentTime);
-          // };
-
-          // checkTime();
 
           // 루트 정류장 방문 여부 업데이트
           setRouteStops((prevRouteStops) =>
@@ -85,6 +78,9 @@ export const AdminProvider = ({ children }) => {
               );
 
               if (stopDistance <= 100 && !stop.visited) {
+                postEtaLog(busNumber, stop.id);
+                console.log('postEtaLog', busNumber, stop.id);
+
                 const checkTime = () => {
                   const currentTime = new Date().getHours();
                   const newTime = currentTime < 12 ? 1 : 2;
@@ -95,10 +91,17 @@ export const AdminProvider = ({ children }) => {
                 checkTime();
                 console.log(`${stop.stationName} 정류장 방문 기록`);
                 busVisited(stop.id, true);
-                Alert.alert(`${stop.stationName} 정류장에 도착하였습니다.`);
+
+                Toast.show(`${stop.stationName} 정류장에 도착하였습니다.`, {
+                  duration: Toast.durations.SHORT, // 2초 or 3.5초
+                  position: Toast.positions.CENTER, // 위치
+                  shadow: true,
+                  animation: true,
+                  hideOnPress: true,
+                });
+
                 // sendAlarm(stop.id, time);
                 // console.log('북마크 api 전달', stop.id, time);
-                // 펜딩 알람 상태에 스톱 ID 설정
                 setStation(stop.id);
                 return { ...stop, visited: true };
               }
@@ -131,7 +134,6 @@ export const AdminProvider = ({ children }) => {
     };
   }, [isTracking, busNumber]);
 
-  // 버스 번호 변경 시, 해당 노선의 정류장 목록을 설정
   useEffect(() => {
     if (busNumber) {
       getBusStations(busNumber)
@@ -147,7 +149,6 @@ export const AdminProvider = ({ children }) => {
     }
   }, [busNumber]);
 
-  // time이 변경될 때마다 실행
   useEffect(() => {
     const sendPendingAlarm = async () => {
       if (station !== null) {
@@ -164,7 +165,7 @@ export const AdminProvider = ({ children }) => {
     };
 
     sendPendingAlarm();
-  }, [time, station]); // time과 station을 의존성 배열에 추가
+  }, [time, station]);
 
   const handleStartTracking = () => {
     if (!isTracking) {

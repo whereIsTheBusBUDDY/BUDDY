@@ -35,8 +35,8 @@ const StartTrackingButton = ({
           />
           <View style={styles.title_contianer}>
             <Text style={[styles.title, { color: textColor }]}>{title}</Text>
-            <Text style={[styles.title, { color: textColor }]}>
-              {isTracking ? '운행종료' : '운행시작'}
+            <Text style={[styles.text, { color: textColor }]}>
+              {isTracking ? '운행 중' : '운행시작'}
             </Text>
           </View>
         </View>
@@ -73,6 +73,11 @@ const styles = StyleSheet.create({
   },
   title_contianer: {
     alignItems: 'center',
+  },
+  text: {
+    fontSize: 40,
+    fontWeight: 'bold',
+    justifyContent: 'center',
   },
 });
 export default StartTrackingButton;

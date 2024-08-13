@@ -357,7 +357,7 @@ const BusScreen = () => {
         // let re
       } else if (time === -1) {
         console.log(time);
-        responseDataGPU = await postBusDatapostBusDataGpu(data);
+        responseDataGPU = await postBusDataGpu(data);
         let time = responseDataGPU.predicted_time;
         console.log('gpu Response time:', time);
         console.log('gpu Setting arrival time:', time);

@@ -17,6 +17,8 @@ export const GRAY = {
 };
 
 export const SKYBLUE = {
+  DEFAULT: '#3b82f6',
   BACKGROUND: '#dbeafe',
   FONT: '#93c5fd',
+  CLICK: '#60a5fa',
 };

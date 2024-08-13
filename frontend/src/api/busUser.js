@@ -1,4 +1,5 @@
 import apiClient from './api';
+import { routeUrl } from './url';
 
 // 현재 버스 위치 받아오기
 export const currentBus = async (busId) => {
@@ -46,14 +47,15 @@ export const postBusDataGpu = async (data) => {
   }
 };
 
-// 경로 데이터 가져오기
+// API에서 경로 데이터를 가져오는 함수
 export const fetchBusStops = async (busLine) => {
   try {
-    const response = await apiClient.get(`/coordinates?busLine=${busLine}`);
-    return response.data;
+    const response = await fetch(`${routeUrl}/coordinates?busLine=${busLine}`);
+    return response.json();
+    // const data = await response.json();
+    // setBusStops(data); // 경로 데이터 설정
   } catch (error) {
     console.error('Error fetching bus stops:', error);
-    throw error;
   }
 };
 
