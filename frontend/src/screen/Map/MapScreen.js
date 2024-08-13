@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Platform,
   Image,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import MapView, { Marker, Polyline } from 'react-native-maps';
 import { FontAwesome } from '@expo/vector-icons';
@@ -144,7 +145,6 @@ const MapScreen = () => {
 
         console.log('Bookmark removed');
       } else {
-        // 즐겨찾기 추가 - POST 요청 (필요시 구현)
         const response = await fetch(
           `http://i11b109.p.ssafy.io:8080/bookmarks?stationId=${selectedStation.id}`,
           {
@@ -231,78 +231,80 @@ const MapScreen = () => {
   }, [selectedStation]);
 
   return (
-    <View style={styles.container}>
-      {locationMap ? (
-        <>
-          {/* 드롭다운 메뉴: 지도 로드 후에만 표시 */}
-          <View style={styles.dropdown}>
-            <DropdownBus
-              selectedValue={`${selectedRoute}호차`}
-              onChangeValue={(value) =>
-                setSelectedRoute(value.replace('호차', ''))
-              }
-              backgroundColor={PRIMARY.DEFAULT}
-              color={WHITE}
-            />
+    <TouchableWithoutFeedback onPress={() => setSelectedStation(null)}>
+      <View style={styles.container}>
+        {locationMap ? (
+          <>
+            {/* 드롭다운 메뉴: 지도 로드 후에만 표시 */}
+            <View style={styles.dropdown}>
+              <DropdownBus
+                selectedValue={`${selectedRoute}호차`}
+                onChangeValue={(value) =>
+                  setSelectedRoute(value.replace('호차', ''))
+                }
+                backgroundColor={PRIMARY.DEFAULT}
+                color={WHITE}
+              />
+            </View>
+
+            <MapView
+              ref={mapRef}
+              style={styles.map}
+              initialRegion={{
+                latitude: locationMap.latitude,
+                longitude: locationMap.longitude,
+                latitudeDelta: locationMap.latitudeDelta,
+                longitudeDelta: locationMap.longitudeDelta,
+              }}
+              showsUserLocation={true} // 사용자 위치 표시
+            >
+              {/* API로부터 받아온 정류장 데이터를 마커로 표시 */}
+              {stations.map((station) => (
+                <Marker
+                  key={station.id}
+                  coordinate={{
+                    latitude: station.latitude,
+                    longitude: station.longitude,
+                  }}
+                  onPress={() => setSelectedStation(station)} // 마커 클릭 시 정류장 선택
+                >
+                  <Image
+                    source={require('../../../assets/busStopIcon.png')}
+                    style={styles.stationMarker}
+                  />
+                </Marker>
+              ))}
+
+              {/* 경로 표시를 위한 Polyline */}
+              <Polyline
+                coordinates={busStops.map((stop) => ({
+                  latitude: stop.latitude,
+                  longitude: stop.longitude,
+                }))}
+                strokeWidth={10}
+                strokeColor={PRIMARY.DEFAULT}
+              />
+            </MapView>
+          </>
+        ) : (
+          <RenderingScreen />
+        )}
+
+        {/* 선택된 정류장이 있을 때만 표시 */}
+        {selectedStation && (
+          <View style={styles.infobox}>
+            <View style={styles.titlecontainer}>
+              <Text style={styles.title}>{selectedStation.stationName}</Text>
+              <TouchableOpacity onPress={toggleStar}>
+                <Text style={starSelected ? styles.starSelected : styles.star}>
+                  ★
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
-
-          <MapView
-            ref={mapRef}
-            style={styles.map}
-            initialRegion={{
-              latitude: locationMap.latitude,
-              longitude: locationMap.longitude,
-              latitudeDelta: locationMap.latitudeDelta,
-              longitudeDelta: locationMap.longitudeDelta,
-            }}
-            showsUserLocation={true} // 사용자 위치 표시
-          >
-            {/* API로부터 받아온 정류장 데이터를 마커로 표시 */}
-            {stations.map((station) => (
-              <Marker
-                key={station.id}
-                coordinate={{
-                  latitude: station.latitude,
-                  longitude: station.longitude,
-                }}
-                onPress={() => setSelectedStation(station)} // 마커 클릭 시 정류장 선택
-              >
-                <Image
-                  source={require('../../../assets/busStopIcon.png')}
-                  style={styles.stationMarker}
-                />
-              </Marker>
-            ))}
-
-            {/* 경로 표시를 위한 Polyline */}
-            <Polyline
-              coordinates={busStops.map((stop) => ({
-                latitude: stop.latitude,
-                longitude: stop.longitude,
-              }))}
-              strokeWidth={10}
-              strokeColor={PRIMARY.DEFAULT}
-            />
-          </MapView>
-        </>
-      ) : (
-        <RenderingScreen />
-      )}
-
-      {/* 선택된 정류장이 있을 때만 표시 */}
-      {selectedStation && (
-        <View style={styles.infobox}>
-          <View style={styles.titlecontainer}>
-            <Text style={styles.title}>{selectedStation.stationName}</Text>
-            <TouchableOpacity onPress={toggleStar}>
-              <Text style={starSelected ? styles.starSelected : styles.star}>
-                ★
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      )}
-    </View>
+        )}
+      </View>
+    </TouchableWithoutFeedback>
   );
 };
 
