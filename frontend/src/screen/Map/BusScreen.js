@@ -20,6 +20,7 @@ import { currentBus } from '../../api/busUser';
 import { postBusData } from '../../api/busUser';
 import RenderingScreen from '../common/RenderingScreen';
 import StationMarker from './StationMarker';
+import NotExistScreen from '../common/NotExistScreen';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -34,6 +35,8 @@ const BusScreen = () => {
   const [arrivalTime, setArrivalTime] = useState(null);
   const mapRef = useRef(null);
   const intervalRef = useRef(null);
+  const [isExist, setIsExist] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   // API에서 경로 데이터를 가져오는 함수
   const fetchBusStops = async (busLine) => {
@@ -224,6 +227,7 @@ const BusScreen = () => {
 
   // 새로운 노선 선택 시 경로 및 정류장 데이터 업데이트
   useEffect(() => {
+    setIsLoading(true);
     fetchBusStops(selectedRoute);
     fetchStations(selectedRoute);
 
@@ -238,6 +242,7 @@ const BusScreen = () => {
         latitudeDelta: 0.005,
         longitudeDelta: 0.005,
       });
+      setIsLoading(false);
     }
   }, [selectedRoute]);
 
@@ -253,9 +258,11 @@ const BusScreen = () => {
       intervalRef.current = setInterval(async () => {
         try {
           const responseData = await currentBus(selectedRoute); // API 요청 및 데이터 가져오기
-
+          console.log('드롭다운 ', selectedRoute);
           if (!responseData) {
             console.error('버스 데이터를 가져오지 못했습니다.');
+            setIsLoading(false);
+            setIsExist(false);
             return;
           }
 
@@ -287,13 +294,16 @@ const BusScreen = () => {
             setBusLocation(newBusLocation); // 버스 위치 상태 업데이트
 
             console.log('버스 위치 업데이트:', newBusLocation); // 콘솔에 버스 위치 출력
+            setIsExist(true);
           } else {
             console.error(
               `위치 데이터가 없습니다: ${latitudeKey}, ${longitudeKey}`
             );
+            setIsExist(false);
           }
         } catch (error) {
           console.error('버스 위치를 가져오는 중 오류 발생:', error);
+          setIsExist(false);
         }
       }, 2000);
 
@@ -352,18 +362,43 @@ const BusScreen = () => {
     }
     console.log(arrivalTime);
   };
-
+  if (!isExist && !isLoading) {
+    return (
+      <View style={styles.container}>
+        {/* 드롭다운 메뉴 */}
+        <ModalDropdown
+          options={['1호차', '2호차', '3호차', '4호차', '5호차', '6호차']}
+          defaultValue={`${selectedRoute}호차`}
+          style={styles.dropdown}
+          textStyle={styles.dropdownText}
+          dropdownStyle={styles.dropdownDropdown}
+          value={`${selectedRoute}호차`}
+          onSelect={(index, value) => {
+            setIsLoading(true);
+            setSelectedRoute(() => `${parseInt(index) + 1}`);
+            console.log('드롭 ', selectedRoute);
+          }}
+        />
+        <NotExistScreen busNumber={selectedRoute} />
+      </View>
+    );
+  } else if (!isExist && isLoading) {
+    return <RenderingScreen />;
+  }
   return (
     <View style={styles.container}>
       {/* 드롭다운 메뉴 */}
       <ModalDropdown
         options={['1호차', '2호차', '3호차', '4호차', '5호차', '6호차']}
-        defaultValue="1호차"
+        defaultValue={`${selectedRoute}호차`}
         style={styles.dropdown}
         textStyle={styles.dropdownText}
+        value={`${selectedRoute}호차`}
         dropdownStyle={styles.dropdownDropdown}
         onSelect={(index, value) => {
-          setSelectedRoute(`${parseInt(index) + 1}`);
+          setIsLoading(true);
+          setSelectedRoute(() => `${parseInt(index) + 1}`);
+          console.log(selectedRoute);
         }}
       />
 
