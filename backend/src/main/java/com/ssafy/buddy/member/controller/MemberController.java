@@ -64,10 +64,10 @@ public class MemberController {
         memberService.sendPasswordEmail(email);
     }
 
-    @PostMapping("/reset-password")
-    public void resetPassword(@RequestParam("email") String email, @RequestParam("tempPassword") String tempPassword,
+    @GetMapping("/reset-password")
+    public void resetPassword(@RequestParam("email") String email, @RequestParam("id") String id,
                               HttpServletResponse response) throws IOException {
-        memberService.resetPassword(email, tempPassword);
+        memberService.resetPassword(email, id);
         response.sendRedirect("/reset-password-success");
     }
 
