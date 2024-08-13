@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
   },
   tabContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between', // TabButton과 글쓰기 버튼 사이의 공간 배분
+    justifyContent: 'space-between',
     alignItems: 'center',
     paddingVertical: 10,
     paddingHorizontal: 10,
@@ -128,11 +128,11 @@ const styles = StyleSheet.create({
   },
   tabButtons: {
     flexDirection: 'row',
-    flex: 1, // TabButton이 가능한 한 많은 공간 차지
+    flex: 1,
   },
   writebtn: {
     alignSelf: 'flex-end',
-    backgroundColor: 'transparent', // 투명 배경
+    backgroundColor: 'transparent',
     paddingHorizontal: 10,
     marginBottom: 5,
   },
