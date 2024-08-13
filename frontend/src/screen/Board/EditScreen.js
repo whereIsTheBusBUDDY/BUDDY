@@ -3,7 +3,7 @@ import { View, TextInput, StyleSheet, ScrollView, Alert } from 'react-native';
 import { WHITE, GRAY } from '../../constant/color';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Button, { ButtonColors } from '../../components/Button';
-import { updateBoard } from '../../api/board';
+import { updateBoard } from '../../api/user';
 
 const EditScreen = ({ route, navigation }) => {
   const { board } = route.params;
