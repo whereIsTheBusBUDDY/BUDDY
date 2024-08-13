@@ -33,20 +33,21 @@ const BoardScreen = () => {
     fetchUserRole();
   }, []);
 
-  const loadBoards = useCallback(async () => {
-    try {
-      const boards = await fetchBoards(selectedCategory);
-      setBoards(boards);
-    } catch (error) {
-      console.error('게시판 조회 실패:', error);
-    }
-  }, [selectedCategory]);
+  // const loadBoards = useCallback(async () => {
+  //   try {
+  //     const boards = await fetchBoards(selectedCategory);
+  //     setBoards(boards);
+  //     console.log('알림페이지 게시글들 조회 ::::::::::::::::', boards);
+  //   } catch (error) {
+  //     console.error('게시판 조회 실패:', error);
+  //   }
+  // }, [selectedCategory]);
 
-  useFocusEffect(
-    useCallback(() => {
-      loadBoards();
-    }, [loadBoards])
-  );
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     loadBoards();
+  //   }, [loadBoards])
+  // );
 
   const handleBoardPress = async (boardId) => {
     try {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -6,14 +6,11 @@ import {
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
-import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { GRAY, PRIMARY, WHITE } from '../../constant/color';
-import apiClient from '../../api/api';
 
-const NotificationScreen = () => {
+const AdminSuggestScreen = () => {
   const [notifications, setNotifications] = useState([]); // 빈 배열로 초기화
-  const navigation = useNavigation(); // 네비게이션 객체 가져오기
 
   useEffect(() => {
     const fetchNotifications = async () => {
@@ -41,10 +38,15 @@ const NotificationScreen = () => {
         }
 
         const data = await response.json();
-        // console.log(data);
+        console.log(data);
 
         if (Array.isArray(data)) {
-          setNotifications(data); // 데이터가 배열일 경우에만 상태를 업데이트
+          // 'SUGGEST' 타입의 알림만 필터링하여 상태를 업데이트
+          const suggestNotifications = data.filter(
+            (item) => item.type === 'SUGGEST'
+          );
+          setNotifications(suggestNotifications);
+          console.log('SUGGEST 타입 알림:', suggestNotifications);
         } else {
           console.error('데이터 형식이 올바르지 않습니다.', data);
         }
@@ -56,16 +58,6 @@ const NotificationScreen = () => {
     fetchNotifications();
   }, []);
 
-  const handleNotificationPress = async (boardId) => {
-    try {
-      const response = await apiClient.get(`/board/${boardId}`);
-      navigation.navigate('Detail', { board: response.data });
-      console.log(response.data);
-    } catch (error) {
-      console.error('게시글 상세조회 실패:', error);
-    }
-  };
-
   return (
     <ScrollView style={styles.container}>
       {notifications.map((item) => (
@@ -75,27 +67,12 @@ const NotificationScreen = () => {
             styles.notificationItem,
             item.important && styles.importantNotification,
           ]}
-          onPress={() => {
-            if (item.type === 'NOTICE') {
-              handleNotificationPress(item.boardId);
-            }
-            if (item.type === 'ARRIVE') {
-              navigation.navigate('Bus');
-            }
-          }}
         >
-          {item.type === 'NOTICE' && (
-            <Text style={styles.message}>
-              📌 공지사항에 글이 등록되었습니다.
-            </Text>
-          )}
-
-          {item.type === 'ARRIVE' && (
-            <Text style={styles.message}>
-              🚌 버스가 곧 {item.stationName} 정류장에 도착합니다.
-            </Text>
-          )}
-
+          <Text style={styles.message}>
+            {item.senderName}님이{' '}
+            <Text style={styles.highlight}>"{item.suggestion}"</Text>를
+            건의하였습니다.
+          </Text>
           <Text style={styles.timestamp}>{item.timestamp}</Text>
         </TouchableOpacity>
       ))}
@@ -108,11 +85,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: WHITE,
     paddingHorizontal: 20,
+    paddingTop: 10,
   },
   notificationItem: {
     backgroundColor: GRAY.BACKGROUND,
     padding: 16,
-    // paddingVertical: 10,
     borderRadius: 8,
     marginBottom: 8,
   },
@@ -121,14 +98,19 @@ const styles = StyleSheet.create({
   },
   message: {
     fontSize: 16,
-    marginBottom: 8,
+    marginBottom: 15,
+  },
+  date: {
+    fontSize: 12,
+    color: GRAY.FONT,
+  },
+  highlight: {
+    color: PRIMARY.DEFAULT,
   },
   timestamp: {
     color: GRAY.FONT,
     fontSize: 13,
-    marginTop: 12,
-    marginLeft: 5,
   },
 });
 
-export default NotificationScreen;
+export default AdminSuggestScreen;

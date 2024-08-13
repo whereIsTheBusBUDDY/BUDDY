@@ -6,6 +6,7 @@ import AdminSelectBus from '../screen/admin/AdminSelectBusScreen';
 import AdminSelectBusScreen from '../screen/admin/AdminSelectBusScreen';
 import AdminMapScreen from '../screen/admin/AdminMapScreen';
 import BoardStack from './BoardStack';
+import AdminSuggestScreen from '../screen/admin/AdminSuggestScreen';
 
 const Stack = createNativeStackNavigator();
 const AdminStack = () => {
@@ -19,7 +20,6 @@ const AdminStack = () => {
           headerLeft: () => (
             <Image source={require('../../assets/BUDDY.png')} />
           ),
-          headerRight: () => <Fontisto name="bell" size={24} color="black" />,
           headerStyle: {
             shadowColor: 'transparent',
             elevation: 0,
@@ -35,7 +35,6 @@ const AdminStack = () => {
           headerLeft: () => (
             <Image source={require('../../assets/BUDDY.png')} />
           ),
-          headerRight: () => <Fontisto name="bell" size={24} color="black" />,
           headerStyle: {
             shadowColor: 'transparent',
             elevation: 0,
@@ -54,6 +53,14 @@ const AdminStack = () => {
           },
           headerShadowVisible: false,
           headerTransparent: true,
+        }}
+      />
+      <Stack.Screen
+        name="Suggest"
+        component={AdminSuggestScreen}
+        options={{
+          headerTitle: '건의함 보기',
+          headerShadowVisible: false,
         }}
       />
       <Stack.Screen
