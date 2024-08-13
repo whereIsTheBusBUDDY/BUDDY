@@ -6,7 +6,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.ssafy.buddy.eta.controller.request.BusDataRequest;
 import com.ssafy.buddy.eta.controller.request.BusStopRequest;
+import com.ssafy.buddy.eta.controller.request.EtaLogRequest;
 import com.ssafy.buddy.eta.controller.response.EtaResponse;
+import com.ssafy.buddy.eta.domain.EtaLog;
+import com.ssafy.buddy.eta.repository.EtaRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,6 +18,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -22,6 +26,7 @@ import java.util.List;
 public class EtaService {
 
     private final WebClient.Builder webClientBuilder;
+    private final EtaRepository etaRepository;
     private WebClient webClient;
 
     @PostConstruct
@@ -158,5 +163,15 @@ public class EtaService {
             throw new RuntimeException("GPU 서버에서 JSON 파일이 안 넘어옴", e);
         }
         return response;
+    }
+
+    //eta 로그 남기기
+    public void saveEtaLog(EtaLogRequest etaLogRequest) {
+        EtaLog etaLog = new EtaLog(
+                etaLogRequest.getBusLine(),
+                etaLogRequest.getStationId(),
+                LocalDateTime.now() // 현재 날짜를 저장
+        );
+        etaRepository.save(etaLog);
     }
 }
