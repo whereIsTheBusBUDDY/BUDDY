@@ -8,11 +8,13 @@ import {
   SafeAreaView,
   KeyboardAvoidingView,
   Platform,
+  RefreshControl,
 } from 'react-native';
 import { BLACK, WHITE, SKYBLUE, GRAY, PRIMARY } from '../../constant/color';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import SendInput from '../../components/SendInput';
+import { fetchBoardDetail } from '../../api/user';
 import {
   deleteBoard,
   createComment,
@@ -26,6 +28,8 @@ const DetailScreen = ({ route }) => {
   const [comment, setComment] = useState('');
   const [comments, setComments] = useState(board.comments || []);
   const [nickname, setNickname] = useState('');
+  const [refreshing, setRefreshing] = useState(false);
+  const [key, setKey] = useState(0);
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -33,6 +37,7 @@ const DetailScreen = ({ route }) => {
       try {
         const nickname = await getNickname();
         setNickname(nickname);
+        console.log(comments);
       } catch (error) {
         console.error('닉네임 가져오기 실패:', error);
       }
@@ -55,24 +60,37 @@ const DetailScreen = ({ route }) => {
     try {
       const accessToken = await AsyncStorage.getItem('accessToken');
 
-      if (!accessToken) {
-        console.error('액세스 토큰이 없습니다.');
-        return;
-      }
-
-      await deleteBoard(board.boardId, accessToken);
-      Alert.alert('성공', '게시글이 성공적으로 삭제되었습니다!', [
-        { text: '확인', onPress: () => navigation.goBack() },
-      ]);
+      Alert.alert(
+        '',
+        '게시글을 삭제하시겠습니까?',
+        [
+          {
+            text: '취소',
+            style: 'cancel',
+          },
+          {
+            text: '삭제',
+            onPress: async () => {
+              try {
+                await deleteBoard(board.boardId, accessToken);
+                navigation.goBack();
+              } catch (error) {
+                console.error('게시글 삭제 중 오류:', error);
+              }
+            },
+            style: 'destructive',
+          },
+        ],
+        { cancelable: true }
+      );
     } catch (error) {
       console.error('게시글 삭제 오류:', error);
-      Alert.alert('오류', `게시글 삭제 실패: ${error.message}`);
     }
   };
 
   const handleCommentSubmit = async () => {
     if (!comment.trim()) {
-      Alert.alert('오류', '댓글을 입력해주세요.');
+      Alert.alert('', '댓글을 입력해주세요.');
       return;
     }
 
@@ -86,25 +104,24 @@ const DetailScreen = ({ route }) => {
 
       const response = await createComment(board.boardId, comment, accessToken);
 
-      // 새로운 댓글을 comments 상태에 추가
       const newComment = {
-        commentId: response.commentId, // 서버에서 받은 고유 commentId 사용
+        commentId: response.commentId, // 서버에서 반환된 commentId 사용
         commentContent: comment,
         createDate: new Date().toISOString(),
-        nickname: nickname || '익명',
+        nickname: nickname,
       };
 
       setComments((prevComments) => [...prevComments, newComment]);
       setComment('');
+      await fetchBoardDetail(board.boardId);
     } catch (error) {
       console.error('댓글 작성 중 오류:', error);
-      Alert.alert('오류', `댓글 작성 실패: ${error.message}`);
     }
   };
 
   const handleCommentDelete = async (deletedCommentId) => {
     Alert.alert(
-      '삭제 확인',
+      '',
       '댓글을 삭제하시겠습니까?',
       [
         {
@@ -121,9 +138,9 @@ const DetailScreen = ({ route }) => {
                   (comment) => comment.commentId !== deletedCommentId
                 )
               );
+              setKey(key + 1);
             } catch (error) {
               console.error('댓글 삭제 중 오류:', error);
-              Alert.alert('오류', `댓글 삭제 실패: ${error.message}`);
             }
           },
           style: 'destructive',
@@ -133,6 +150,12 @@ const DetailScreen = ({ route }) => {
     );
   };
 
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    // 새로고침 로직을 추가 (예: API 요청)
+    setTimeout(() => setRefreshing(false), 3000);
+  }, []);
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <KeyboardAvoidingView
@@ -140,7 +163,12 @@ const DetailScreen = ({ route }) => {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 80}
       >
-        <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <ScrollView
+          contentContainerStyle={styles.scrollContainer}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+        >
           <View
             style={[
               styles.noticeContainer,

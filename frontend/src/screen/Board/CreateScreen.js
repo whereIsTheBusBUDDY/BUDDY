@@ -14,24 +14,18 @@ export default function App({ route }) {
 
   const handleSubmit = async () => {
     if (!title || !content) {
-      Alert.alert('오류', '제목과 내용을 모두 입력하세요.');
+      Alert.alert('', '제목과 내용을 모두 입력해주세요.');
       return;
     }
 
     try {
-      // AsyncStorage에서 액세스 토큰 불러오기
       const accessToken = await AsyncStorage.getItem('accessToken');
 
-      if (!accessToken) {
-        console.error('Access token is missing');
-        return;
-      }
-
       await createBoard(category, title, content, accessToken);
-      Alert.alert('성공', '게시글이 성공적으로 작성되었습니다!');
+      Alert.alert('', '게시글이 성공적으로 작성되었습니다!');
       navigation.navigate('Board');
     } catch (error) {
-      Alert.alert('오류', `게시글 작성 실패: ${error.message}`);
+      Alert.alert('', `게시글 작성 실패: ${error.message}`);
     }
   };
 

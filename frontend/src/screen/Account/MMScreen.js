@@ -124,7 +124,7 @@ const MMScreen = () => {
               onPress={handleNext}
               buttonType={'PRIMARY'}
               height={63}
-              disabled={isDisabled} // 버튼 활성화 상태 적용
+              disabled={isDisabled}
             />
           </View>
         </View>

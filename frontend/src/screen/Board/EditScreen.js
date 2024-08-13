@@ -19,7 +19,7 @@ const EditScreen = ({ route, navigation }) => {
 
   const handleSubmit = async () => {
     if (!title || !boardContent) {
-      Alert.alert('오류', '제목과 내용을 모두 입력하세요.');
+      Alert.alert('', '제목과 내용을 모두 입력하세요.');
       return;
     }
 
@@ -32,10 +32,10 @@ const EditScreen = ({ route, navigation }) => {
       }
 
       await updateBoard(board.boardId, title, boardContent, accessToken);
-      Alert.alert('성공', '게시글이 성공적으로 수정되었습니다!');
+      Alert.alert('', '게시글이 성공적으로 수정되었습니다!');
       navigation.navigate('Board');
     } catch (error) {
-      Alert.alert('오류', `게시글 수정 실패: ${error.message}`);
+      console.log(error);
     }
   };
 
