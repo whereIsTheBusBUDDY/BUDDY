@@ -11,9 +11,11 @@ import {
 import { PRIMARY, WHITE } from '../constant/color';
 import Button, { ButtonColors } from '../components/Button';
 import { useNavigation } from '@react-navigation/native';
+import { useFirstContext } from '../context/FirstContent';
 
 const IntroduceScreen = () => {
   const navigation = useNavigation();
+  const { screen, setScreen } = useFirstContext();
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
@@ -47,7 +49,12 @@ const IntroduceScreen = () => {
           buttonColor={ButtonColors.GRAY}
           buttonStyle={styles.navigationButton}
         />
-        <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate('Login');
+            setScreen(false);
+          }}
+        >
           <Text style={styles.linkText}>
             이미 회원이신가요?{' '}
             <Text style={styles.highlightText}>로그인 바로가기</Text>

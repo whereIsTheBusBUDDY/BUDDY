@@ -23,12 +23,11 @@ const ChangePasswordScreen = () => {
   const [isDisabled, setIsDisabled] = useState(true);
 
   useEffect(() => {
-    // 유효성 검사 함수
     const validateForm = () => {
       if (currentPassword && newPassword && confirmPassword) {
-        setIsDisabled(false); // 모든 필드가 입력되면 버튼 활성화
+        setIsDisabled(false);
       } else {
-        setIsDisabled(true); // 하나라도 비어 있으면 버튼 비활성화
+        setIsDisabled(true);
       }
     };
     validateForm();
@@ -42,7 +41,7 @@ const ChangePasswordScreen = () => {
 
       if (response.data === true) {
         if (newPassword !== confirmPassword) {
-          Alert.alert('비밀번호 불일치', '비밀번호를 확인해주세요.');
+          Alert.alert('', '새 비밀번호가 일치하지 않습니다.');
           return;
         }
 
@@ -51,12 +50,12 @@ const ChangePasswordScreen = () => {
         });
 
         Alert.alert(
-          '비밀번호 변경 성공',
-          '비밀번호가 성공적으로 변경되었습니다.',
+          '',
+          '비밀번호가 변경되었습니다.',
           [{ text: '확인', onPress: () => navigation.goBack() }]
         );
       } else {
-        Alert.alert('오류', '현재 비밀번호가 올바르지 않습니다.');
+        Alert.alert('', '현재 비밀번호가 올바르지 않습니다.');
       }
     } catch (error) {
       console.error(

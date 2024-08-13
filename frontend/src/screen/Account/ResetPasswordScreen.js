@@ -6,7 +6,7 @@ import {
   StyleSheet,
   View,
 } from 'react-native';
-import { PRIMARY, WHITE } from '../../constant/color';
+import { WHITE } from '../../constant/color';
 import Input, { keyboardTypes } from '../../components/Input';
 import RegistButton, { ButtonType } from '../../components/RegistButton';
 import apiClient from '../../api/api';
@@ -18,29 +18,17 @@ const ResetPasswordScreen = () => {
   const navigation = useNavigation();
 
   const onResetPassword = async () => {
-    if (!email) {
-      Alert.alert('Error', '이메일을 입력해주세요.');
-      return;
-    }
-
     setLoading(true);
     try {
-      await apiClient.post(
-        `/reset-password?email=${encodeURIComponent(email)}`
-      );
-      Alert.alert(
-        '임시 비밀번호 전송 완료',
-        '전송된 임시 비밀번호로 로그인 후 마이페이지에서 비밀번호를 변경해주세요.',
-        [
-          {
-            text: '확인',
-            onPress: () => navigation.navigate('Login'), // 로그인 페이지로 이동
-          },
-        ]
-      );
+      await apiClient.post(`/send-email?email=${encodeURIComponent(email)}`);
+      Alert.alert('', '이메일을 확인해주세요.', [
+        {
+          text: '확인',
+          onPress: () => navigation.navigate('Login'),
+        },
+      ]);
     } catch (e) {
-      console.error('네트워크 오류:', e.message);
-      Alert.alert('Error', '비밀번호 재설정 요청에 실패했습니다.');
+      Alert.alert('', '입력한 이메일을 확인해주세요.');
     } finally {
       setLoading(false);
     }
@@ -53,7 +41,7 @@ const ResetPasswordScreen = () => {
     >
       <View style={styles.container}>
         <Input
-          title={'이메일'}
+          title={'EMAIL'}
           placeholder={'이메일을 입력해주세요.'}
           keyboardType={keyboardTypes.EMAIL}
           value={email}
