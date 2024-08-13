@@ -40,9 +40,9 @@ const SignupScreen = () => {
       if (
         name &&
         studentId.length === 7 &&
-        isStudentIdChecked && // 학번 중복 확인 여부
+        isStudentIdChecked &&
         nickname.trim() !== '' &&
-        isNicknameChecked && // 닉네임 중복 확인 여부
+        isNicknameChecked &&
         validateEmail(email) &&
         password &&
         passwordConfirm &&
@@ -103,11 +103,8 @@ const SignupScreen = () => {
       const result = await signUp(userData);
       navigation.navigate('MM');
     } catch (error) {
+      Alert.alert('', '이미 가입된 이메일입니다.');
       console.log('Registration Error:', error.response?.data || error.message);
-      Alert.alert(
-        'Registration Error',
-        error.response?.data?.message || 'Registration failed'
-      );
     }
   };
 
@@ -127,7 +124,6 @@ const SignupScreen = () => {
       }
     } catch (error) {
       console.error('Request failed:', error.message);
-      Alert.alert('오류 발생', '학번 확인 중 문제가 발생했습니다.');
     }
   };
 
@@ -147,20 +143,18 @@ const SignupScreen = () => {
       }
     } catch (error) {
       console.error('Request failed:', error.message);
-      Alert.alert('오류 발생', '닉네임 확인 중 문제가 발생했습니다.');
     }
   };
 
   const handleStudentIdChange = (text) => {
-    // 숫자만 입력되도록 하고, 7자리가 아니면 버튼 비활성화
     const numericText = text.replace(/[^0-9]/g, '');
     setStudentId(numericText);
-    setIsStudentIdChecked(false); // 학번 변경 시 중복 확인 상태 초기화
+    setIsStudentIdChecked(false);
   };
 
   const handleNicknameChange = (text) => {
     setNickname(text);
-    setIsNicknameChecked(false); // 닉네임 변경 시 중복 확인 상태 초기화
+    setIsNicknameChecked(false);
   };
 
   const adjustDropdownFrame = (frameStyle) => {
@@ -196,7 +190,7 @@ const SignupScreen = () => {
               onPress={handleCheckStudentId}
               keyboardType="numeric"
               maxLength={7}
-              disabled={studentId.length !== 7 || isStudentIdChecked} // 7자리가 아니거나 중복확인 통과하면 버튼 비활성화
+              disabled={studentId.length !== 7 || isStudentIdChecked}
             />
             <InputWithButton
               title={'닉네임*'}
@@ -204,8 +198,8 @@ const SignupScreen = () => {
               value={nickname}
               onChangeText={handleNicknameChange}
               onPress={handleCheckNickname}
-              keyboardType="default" // 기본 키보드 설정
-              disabled={nickname.trim() === '' || isNicknameChecked} // 닉네임이 비어있거나 중복확인 통과하면 버튼 비활성화
+              keyboardType="default"
+              disabled={nickname.trim() === '' || isNicknameChecked}
             />
             <Input
               title={'이메일*'}

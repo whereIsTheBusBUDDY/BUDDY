@@ -57,7 +57,7 @@ const MMScreen = () => {
         const result = await mmAuth(mmData);
         console.log('인증 코드 전송 완료');
       } catch (error) {
-        console.log('인증 코드 전송 실패:', error.message);
+        console.log('', error.message);
       }
     };
 
@@ -65,20 +65,17 @@ const MMScreen = () => {
   }, [mmText]);
 
   useEffect(() => {
-    // value와 mmText를 비교하여 버튼 활성화 상태 설정
     if (value === mmText) {
-      setIsDisabled(false); // 인증 코드가 맞으면 버튼 활성화
+      setIsDisabled(false);
     } else {
-      setIsDisabled(true); // 인증 코드가 틀리면 버튼 비활성화
+      setIsDisabled(true);
     }
   }, [value, mmText]);
 
   const handleNext = () => {
     if (value === mmText) {
-      console.log('인증코드가 맞습니다');
       navigation.navigate('Login');
     } else {
-      console.log('인증코드가 틀렸습니다');
     }
   };
 
@@ -116,10 +113,10 @@ const MMScreen = () => {
               </View>
             )}
           />
-          <Text style={styles.subtxt}>
+          {/* <Text style={styles.subtxt}>
             코드를 받지 못하셨나요?{' '}
             <Text style={styles.pointxt}>인증코드 재전송</Text>
-          </Text>
+          </Text> */}
           <View style={styles.flexGrow} />
           <View style={styles.buttonContainer}>
             <RegistButton

@@ -40,7 +40,7 @@ const LoginScreen = () => {
         setScreen(false);
         setLoginUser({ email, role: data.role });
       } catch (e) {
-        Alert.alert('Login Error', e.message);
+        Alert.alert('', e.message);
       } finally {
         setLoading(false);
       }
@@ -54,7 +54,7 @@ const LoginScreen = () => {
     >
       <View style={styles.container}>
         <Input
-          title={'Email'}
+          title={'EMAIL'}
           placeholder={'이메일을 입력해주세요.'}
           keyboardType={keyboardTypes.EMAIL}
           value={email}
@@ -62,7 +62,7 @@ const LoginScreen = () => {
           onChangeText={(text) => setEmail(text.trim())}
         />
         <Input
-          title={'Password'}
+          title={'PASSWORD'}
           placeholder={'비밀번호를 입력해주세요.'}
           keyboardType={keyboardTypes.DEFAULT}
           value={password}
