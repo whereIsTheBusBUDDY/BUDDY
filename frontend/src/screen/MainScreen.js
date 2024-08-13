@@ -111,7 +111,7 @@ const MainScreen = () => {
       eventSource.addEventListener('ARRIVE', (e) => {
         console.log('ARRIVE event: ', e.data);
         setArriveMessage((prev) => prev + e.data);
-        sendNotification('BUDDY', '');
+        sendNotification('BUDDY', `버스가 ${e.data} 정류장에 도착하였습니다.`);
       });
 
       eventSource.onerror = (e) => {
