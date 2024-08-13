@@ -1,0 +1,5 @@
+ALTER TABLE board
+MODIFY COLUMN content LONGTEXT;
+
+ALTER TABLE comment
+MODIFY COLUMN comment_content LONGTEXT;
