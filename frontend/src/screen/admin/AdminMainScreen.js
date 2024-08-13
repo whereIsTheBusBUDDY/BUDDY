@@ -89,11 +89,6 @@ const AdminMainScreen = () => {
         setConnectMessage((prev) => prev + e.data);
       });
 
-      eventSource.addEventListener('NOTICE', (e) => {
-        console.log('NOTICE event: ', e.data);
-        setNoticeMessage((prev) => prev + e.data);
-      });
-
       eventSource.addEventListener('SUGGEST', (e) => {
         console.log('SUGGEST event: ', e.data);
         setSuggestMessage((prev) => prev + e.data);
@@ -186,7 +181,9 @@ const AdminMainScreen = () => {
       />
       <AdminMainButton
         title={'건의함 보기'}
-        onPress={handleStartTracking}
+        onPress={() => {
+          navigate.navigate('Suggest');
+        }}
         disabled={false}
         buttonType={ButtonType.PRIMARY}
         height={50}
