@@ -1,5 +1,61 @@
 import apiClient from './api';
 
+// 닉네임 가져오기
+export const getNickname = async () => {
+  try {
+    const response = await apiClient.get('/members/me');
+    return response.data.nickname;
+  } catch (error) {
+    console.error('닉네임 가져오기 실패:', error);
+    throw error;
+  }
+};
+
+// 프로필 데이터 가져오기
+export const fetchProfileData = async () => {
+  try {
+    const response = await apiClient.get('/members/me');
+    return response.data;
+  } catch (error) {
+    console.error('프로필 정보를 가져오는 중 오류 발생:', error);
+    throw error;
+  }
+};
+
+// 마지막 공지사항 가져오기
+export const fetchLastNotice = async () => {
+  try {
+    const response = await apiClient.get('/board/notice/last');
+    return response.data;
+  } catch (error) {
+    console.error('마지막 공지사항을 가져오는 중 오류 발생:', error);
+    throw error;
+  }
+};
+
+// 버스 운행 상태 확인
+export const checkBusStatus = async () => {
+  try {
+    const response = await apiClient.get('/start/check');
+    return response.data;
+  } catch (error) {
+    console.error('운행 상태 확인 중 오류 발생:', error);
+    throw error;
+  }
+};
+
+// 승객 데이터 가져오기
+export const fetchPassengerData = async () => {
+  try {
+    const response = await apiClient.get('/boarding');
+    return response.data;
+  } catch (error) {
+    console.error('탑승 인원 정보를 가져오는 중 오류 발생:', error);
+    throw error;
+  }
+};
+
+// ******************게시판 관련***********************
 // 게시글 목록 가져오기
 export const fetchBoards = async (category) => {
   try {
@@ -101,17 +157,6 @@ export const deleteComment = async (commentId) => {
     return response.data;
   } catch (error) {
     console.error('댓글 삭제 실패:', error);
-    throw error;
-  }
-};
-
-// 닉네임 가져오기
-export const getNickname = async () => {
-  try {
-    const response = await apiClient.get('/members/me');
-    return response.data.nickname;
-  } catch (error) {
-    console.error('닉네임 가져오기 실패:', error);
     throw error;
   }
 };
