@@ -83,6 +83,7 @@ const CameraScreen = () => {
         );
 
         console.log('서버 응답:', response.data);
+
         navigation.navigate('IDScreen', { result: response.data });
       } catch (error) {
         console.error(

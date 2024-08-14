@@ -6,9 +6,9 @@ import {
   ScrollView,
   Alert,
   SafeAreaView,
-  KeyboardAvoidingView,
-  Platform,
+  Keyboard,
   RefreshControl,
+  Platform,
 } from 'react-native';
 import { BLACK, WHITE, SKYBLUE, GRAY, PRIMARY } from '../../constant/color';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -29,6 +29,7 @@ const DetailScreen = ({ route }) => {
   const [comments, setComments] = useState(board.comments || []);
   const [nickname, setNickname] = useState('');
   const [refreshing, setRefreshing] = useState(false);
+  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
   const [key, setKey] = useState(0);
   const navigation = useNavigation();
 
@@ -55,6 +56,26 @@ const DetailScreen = ({ route }) => {
       }
     }, [route.params.board])
   );
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      () => {
+        setKeyboardVisible(true); // 키보드가 나타날 때 상태를 업데이트
+      }
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      () => {
+        setKeyboardVisible(false); // 키보드가 사라질 때 상태를 업데이트
+      }
+    );
+
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
 
   const handleDeleteBoard = async () => {
     try {
@@ -158,11 +179,7 @@ const DetailScreen = ({ route }) => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <KeyboardAvoidingView
-        style={styles.container}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 80}
-      >
+      <View style={styles.container}>
         <ScrollView
           contentContainerStyle={styles.scrollContainer}
           refreshControl={
@@ -247,7 +264,14 @@ const DetailScreen = ({ route }) => {
           )}
         </ScrollView>
         {board.category === 'free' && (
-          <View style={styles.commentInputContainer}>
+          <View
+            style={[
+              styles.commentInputContainer,
+              isKeyboardVisible && {
+                marginBottom: Platform.OS === 'ios' ? 30 : 20,
+              },
+            ]}
+          >
             <SendInput
               placeholder="댓글을 입력해주세요!"
               buttonText="작성"
@@ -257,7 +281,7 @@ const DetailScreen = ({ route }) => {
             />
           </View>
         )}
-      </KeyboardAvoidingView>
+      </View>
     </SafeAreaView>
   );
 };

@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { View, StyleSheet, Text, ScrollView, SafeAreaView } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Text,
+  ScrollView,
+  SafeAreaView,
+  Alert,
+} from 'react-native';
 import {
   CodeField,
   Cursor,
@@ -75,6 +82,10 @@ const MMScreen = () => {
   const handleNext = () => {
     if (value === mmText) {
       navigation.navigate('Login');
+      Alert.alert(
+        '회원가입 완료',
+        '회원가입이 완료되었습니다.\n로그인 후 이용해주세요 !'
+      );
     } else {
     }
   };
