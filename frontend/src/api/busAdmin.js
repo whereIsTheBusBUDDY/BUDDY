@@ -17,8 +17,8 @@ export const sendBusLocation = async (busId, latitude, longitude) => {
 // 버스 운행 종료
 export const sendStop = async (busId) => {
   try {
-    // 2초 딜레이 추가
-    await new Promise((resolve) => setTimeout(resolve, 30000));
+    // 딜레이 추가
+    await new Promise((resolve) => setTimeout(resolve, 12000));
 
     const response = await apiClient.get(`stop/${busId}`);
     console.log('운행 종료 데이터 전송 성공:', response.data);

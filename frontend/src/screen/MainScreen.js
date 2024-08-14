@@ -271,10 +271,16 @@ const MainScreen = () => {
                   {profileData.이름}
                 </Text>
                 <Text style={{ fontSize: 20 }}>{'님,'}</Text>
-                <Text style={{ color: SKYBLUE.FONT, fontSize: 16 }}>
+                <Text
+                  style={{
+                    color: SKYBLUE.FONT,
+                    fontSize: 16,
+                    fontWeight: 'bold',
+                  }}
+                >
                   {'\n실시간 셔틀버스 위치'}
                 </Text>
-                <Text style={{ fontSize: 16 }}>{'를 확인해보세요!'}</Text>
+                <Text style={{ fontSize: 16 }}>{'를 확인하세요!'}</Text>
               </>
             }
             onPress={handleBusLocationPress}
