@@ -20,6 +20,7 @@ import RenderingScreen from '../common/RenderingScreen';
 import StationMarker from './StationMarker';
 import NotExistScreen from '../common/NotExistScreen';
 import DropdownBus from '../../components/Dropdown/DropdownBus';
+import { BASEurl } from '../../api/url';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -76,16 +77,13 @@ const BusScreen = () => {
         return;
       }
 
-      const response = await fetch(
-        `http://i11b109.p.ssafy.io:8080/stations/${busLine}`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${accessToken}`, // 액세스 토큰을 Authorization 헤더에 추가
-          },
-        }
-      );
+      const response = await fetch(`${BASEurl}/stations/${busLine}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`, // 액세스 토큰을 Authorization 헤더에 추가
+        },
+      });
 
       // 응답 상태 확인
       if (!response.ok) {
@@ -110,7 +108,7 @@ const BusScreen = () => {
         return;
       }
 
-      const response = await fetch('http://i11b109.p.ssafy.io:8080/bookmarks', {
+      const response = await fetch(`${BASEurl}/bookmarks`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -151,7 +149,7 @@ const BusScreen = () => {
       if (starSelected) {
         // 즐겨찾기 해제 - DELETE 요청
         const response = await fetch(
-          `http://i11b109.p.ssafy.io:8080/bookmarks?stationId=${selectedStation.id}`,
+          `${BASEurl}/bookmarks?stationId=${selectedStation.id}`,
           {
             method: 'DELETE',
             headers: {
@@ -170,7 +168,7 @@ const BusScreen = () => {
       } else {
         // 즐겨찾기 추가 - POST 요청 (필요시 구현)
         const response = await fetch(
-          `http://i11b109.p.ssafy.io:8080/bookmarks?stationId=${selectedStation.id}`,
+          `${BASEurl}/bookmarks?stationId=${selectedStation.id}`,
           {
             method: 'POST',
             headers: {

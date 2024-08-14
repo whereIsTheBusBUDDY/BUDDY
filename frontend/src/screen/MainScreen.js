@@ -27,6 +27,7 @@ import {
   fetchPassengerData,
 } from '../api/user';
 import * as Speech from 'expo-speech'; // Speech 모듈을 추가로 import
+import { BASEurl } from '../api/url';
 
 // import { sseUrl } from '../api/url';
 
@@ -87,7 +88,7 @@ const MainScreen = () => {
         return;
       }
 
-      const sseUrl = 'http://i11b109.p.ssafy.io:8080/subscribe';
+      const sseUrl = `${BASEurl}/subscribe`;
 
       const headers = {
         Authorization: `Bearer ${token}`,
