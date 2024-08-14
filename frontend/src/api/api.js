@@ -1,8 +1,9 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { BASEurl } from './url';
 
 const apiClient = axios.create({
-  baseURL: 'http://i11b109.p.ssafy.io:8080',
+  baseURL: BASEurl,
   timeout: 10000,
 });
 
