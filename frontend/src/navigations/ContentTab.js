@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import ChatScreen from '../screen/CheckIn/ChatScreen';
 import MainStack from './MainStack';
@@ -7,10 +7,32 @@ import { GRAY, PRIMARY } from '../constant/color';
 import BoardStack from './BoardStack';
 import ProfileStack from './ProfileStack';
 import BusScreen from '../screen/Map/BusScreen';
+import { Keyboard } from 'react-native';
 
 const Tab = createBottomTabNavigator();
 
 const ContentTab = () => {
+  const [isTabBarVisible, setIsTabBarVisible] = useState(true);
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      () => {
+        setIsTabBarVisible(false); // 키보드가 올라오면 TabBar 숨기기
+      }
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      () => {
+        setIsTabBarVisible(true); // 키보드가 내려가면 TabBar 보이기
+      }
+    );
+
+    return () => {
+      keyboardDidHideListener.remove();
+      keyboardDidShowListener.remove();
+    };
+  }, []);
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -33,10 +55,15 @@ const ContentTab = () => {
         },
         tabBarActiveTintColor: PRIMARY.DEFAULT,
         tabBarInactiveTintColor: GRAY.FONT,
-        tabBarStyle: {
-          height: '10%',
-          padding: 5,
-        },
+        tabBarStyle: [
+          {
+            height: '10%',
+            padding: 5,
+          },
+          {
+            display: isTabBarVisible ? 'flex' : 'none', // TabBar의 가시성을 조정
+          },
+        ],
         tabBarLabelStyle: {
           paddingBottom: 10,
           fontSize:13,
