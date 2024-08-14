@@ -13,11 +13,12 @@ public class MemberResponse {
     private String nickname;
     private String email;
     private int favoriteLine;
+    private String role;
 
     public static MemberResponse from(Member member) {
         return new MemberResponse(
                 member.getId(), member.getName(), member.getStudentId(),
-                member.getNickname(), member.getEmail(), member.getFavoriteLine()
+                member.getNickname(), member.getEmail(), member.getFavoriteLine(), member.getRole().name()
         );
     }
 }
