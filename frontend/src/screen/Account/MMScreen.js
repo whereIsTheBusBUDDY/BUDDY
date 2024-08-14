@@ -86,7 +86,11 @@ const MMScreen = () => {
           <ProgressBar step={step} />
           <View>
             <Text style={styles.origintxt}>
-              Mattermost 인증채널에{'\n'}
+              Mattermost {'<11기 공지 전용>'} 채널에서{'\n'}
+              <Text style={styles.pointxt}>Buddy MM 인증방</Text>을
+              추가해주세요!{'\n'}
+              {'\n'}
+              인증채널에{'\n'}
               <Text style={styles.pointxt}>{combinedWord}</Text>님에게 전송된{' '}
               {'\n'}
               <Text style={styles.pointxt}>인증코드</Text>를 입력해주세요

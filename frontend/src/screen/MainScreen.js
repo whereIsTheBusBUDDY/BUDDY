@@ -252,7 +252,7 @@ const MainScreen = () => {
       >
         <StatusBar style="dark" />
         <View style={styles.topContainer}>
-          <Text style={styles.notice}>공지사항 {'>'}</Text>
+          <Text style={styles.notice}>공지사항</Text>
 
           <ImageButton
             title={`${lastNoticeCreateAt} | ${lastNotice}`}
