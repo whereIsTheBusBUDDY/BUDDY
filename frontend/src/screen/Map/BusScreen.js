@@ -40,7 +40,7 @@ const BusScreen = () => {
 
   const isAfternoon = () => {
     const currentHour = new Date().getHours();
-    return currentHour >= 12; // 현재 시간이 12시(정오) 이후인지 체크
+    return currentHour >= 17; // 현재 시간이 12시(정오) 이후인지 체크
   };
 
   // API에서 경로 데이터를 가져오는 함수
