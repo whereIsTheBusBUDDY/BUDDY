@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.5)', // 배경색 투명도 조절
+    backgroundColor: 'rgba(0,0,0,0.6)', // 배경색 투명도 조절
   },
   modalView: {
     margin: 20,

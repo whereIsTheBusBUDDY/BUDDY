@@ -89,7 +89,7 @@ const IDScreen = () => {
           <View>
             <Text style={styles.content}>
               ① 학생증의 앞면이 보이도록 놓아주세요.{'\n'}
-              닥에 놓은면 더 잘 인식됩니다.
+              바닥에 놓은면 더 잘 인식됩니다.
             </Text>
 
             <Text style={styles.content}>
