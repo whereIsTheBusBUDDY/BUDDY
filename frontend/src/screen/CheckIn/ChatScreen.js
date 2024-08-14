@@ -10,6 +10,7 @@ import {
 import { useWebSocket } from '../../context/WebSocketContext';
 import apiClient from '../../api/api';
 import { GRAY, SKYBLUE, WHITE } from '../../constant/color';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import SendInput from '../../components/SendInput';
 
 const ChatScreen = ({ route }) => {
@@ -64,6 +65,7 @@ const ChatScreen = ({ route }) => {
 
   return (
     <View style={styles.topContainer}>
+      <Text style={styles.roomText}>{roomId}호차</Text>
       <FlatList
         style={styles.listContainer}
         ref={flatListRef}
@@ -111,6 +113,11 @@ const ChatScreen = ({ route }) => {
 };
 
 const styles = StyleSheet.create({
+  roomText: {
+    textAlign: 'center',
+    fontSize: 20,
+    marginHorizontal: 20,
+  },
   messageContainer: {
     marginVertical: 8,
     maxWidth: '70%',
