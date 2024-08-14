@@ -7,6 +7,8 @@ import {
   ScrollView,
   SafeAreaView,
   ImageBackground,
+  TouchableOpacity,
+  Alert,
 } from 'react-native';
 import { BLACK, GRAY, PRIMARY, WHITE } from '../../constant/color';
 import Button, { ButtonColors } from '../../components/Button';
@@ -23,8 +25,14 @@ const EditProfileScreen = ({ route }) => {
   const email = profileData.이메일;
   const [nickname, setNickname] = useState(profileData.닉네임);
   const [favoriteLine, setFavoriteLine] = useState(profileData.선호노선);
+  const [isNicknameChecked, setIsNicknameChecked] = useState(false);
 
   const handleSave = async () => {
+    if (!isNicknameChecked) {
+      Alert.alert('', '닉네임 중복 확인을 해주세요.');
+      return;
+    }
+
     try {
       const updatedNickName = nickname || profileData.닉네임;
       const updatedFavoriteLine = favoriteLine.replace('호차', '');
@@ -37,6 +45,30 @@ const EditProfileScreen = ({ route }) => {
     } catch (error) {
       console.error('프로필 수정 중 오류 발생:', error);
     }
+  };
+
+  const handleCheckNickname = async () => {
+    try {
+      const response = await apiClient.get(
+        `/check-nickname?nickname=${nickname}`
+      );
+
+      if (response.data === true) {
+        Alert.alert('', '이미 사용 중인 닉네임입니다.');
+        setNickname('');
+        setIsNicknameChecked(false);
+      } else {
+        Alert.alert('', '사용 가능한 닉네임입니다.');
+        setIsNicknameChecked(true);
+      }
+    } catch (error) {
+      console.error('닉네임 중복 확인 중 오류 발생:', error.message);
+    }
+  };
+
+  const handleNicknameChange = (text) => {
+    setNickname(text);
+    setIsNicknameChecked(false);
   };
 
   return (
@@ -70,10 +102,22 @@ const EditProfileScreen = ({ route }) => {
             <Text style={styles.infoLabel}>닉네임</Text>
             <TextInput
               value={nickname}
-              onChangeText={setNickname}
+              onChangeText={handleNicknameChange}
               style={styles.infoValue}
               placeholder="닉네임"
             />
+            <TouchableOpacity
+              style={[
+                styles.button,
+                nickname.trim() === '' || isNicknameChecked
+                  ? styles.buttonDisabled
+                  : {},
+              ]}
+              onPress={handleCheckNickname}
+              disabled={nickname.trim() === '' || isNicknameChecked}
+            >
+              <Text style={styles.checkButtonText}>중복확인</Text>
+            </TouchableOpacity>
           </View>
           <View style={styles.separator} />
           <View style={styles.infoRow}>
@@ -97,6 +141,7 @@ const EditProfileScreen = ({ route }) => {
           onPress={handleSave}
           buttonColor={ButtonColors.GRAY}
           buttonStyle={styles.btn}
+          disabled={!isNicknameChecked} // 닉네임 중복 확인이 완료되지 않으면 버튼 비활성화
         />
         <Button
           title="비밀번호 수정"
@@ -158,22 +203,17 @@ const styles = StyleSheet.create({
     flex: 1.3,
     fontSize: 14,
     color: PRIMARY.DEFAULT,
+    marginLeft: 45,
   },
-  infoValueInput: {
+  infoFixedValue: {
     flex: 1.3,
     fontSize: 14,
-    color: BLACK,
-    borderBottomColor: GRAY.BTN,
+    color: GRAY.FONT,
   },
-  imageTextInput: {
-    fontSize: 18,
-    letterSpacing: 5,
-    position: 'absolute',
-    left: 150,
-    top: 80,
-    color: BLACK,
-    borderBottomWidth: 1,
-    borderBottomColor: GRAY.BTN,
+  checkButtonText: {
+    color: WHITE,
+    fontSize: 14,
+    paddingVertical: 4,
   },
   separator: {
     height: 1,
@@ -188,13 +228,20 @@ const styles = StyleSheet.create({
     fontSize: 18,
     letterSpacing: 5,
   },
-  infoFixedValue: {
-    flex: 1.3,
-    fontSize: 14,
-    color: GRAY.FONT,
-  },
   btn: {
     width: '100%',
+  },
+  button: {
+    backgroundColor: PRIMARY.DEFAULT,
+    justifyContent: 'center',
+    // height: '40%',
+    borderRadius: 10,
+    paddingVertical: 1,
+    paddingHorizontal: 10,
+    marginLeft: 10,
+  },
+  buttonDisabled: {
+    backgroundColor: GRAY.BTN,
   },
 });
 
