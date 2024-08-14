@@ -14,7 +14,7 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { GRAY, PRIMARY, WHITE, BLACK } from '../../constant/color';
-import { BASEurl } from '../../api/url';
+import { BASEurl, cameraUrl } from '../../api/url';
 
 const CameraScreen = () => {
   const [facing, setFacing] = useState(CameraType.back);
@@ -73,7 +73,7 @@ const CameraScreen = () => {
 
         // 서버로 요청 보내기
         const response = await axios.post(
-          `${BASEurl}/upload`, // 올바른 URL인지 확인
+          `${cameraUrl}/upload`, // 올바른 URL인지 확인
           formData,
           {
             headers: {
