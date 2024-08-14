@@ -7,6 +7,7 @@ import {
   ScrollView,
   SafeAreaView,
   useWindowDimensions,
+  Alert,
 } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import RegistButton from '../../components/RegistButton';
@@ -20,13 +21,41 @@ const IDScreen = () => {
   const step = 1;
   const [photo, setPhoto] = useState(null);
   const [result, setResult] = useState('');
+  const [isPopupVisible, setIsPopupVisible] = useState(false);
 
   useEffect(() => {
     if (route.params?.result) {
       setResult(route.params.result);
       setPhoto(route.params.result.photo); // 카메라에서 받은 사진 URI 저장
+      setIsPopupVisible(true); // 팝업을 표시하도록 설정
     }
   }, [route.params?.result]);
+
+  useEffect(() => {
+    if (isPopupVisible) {
+      if (result && result.allow !== undefined) {
+        const message =
+          result.allow == true
+            ? '학생증 인증이 완료되었습니다!'
+            : '인증에 실패하였습니다. 다시 시도해주세요.';
+
+        Alert.alert(
+          result.allow ? '인증 완료' : '인증 실패',
+          message,
+          [
+            {
+              text: '확인',
+              onPress: () => {
+                console.log('확인 버튼이 눌렸습니다');
+                setIsPopupVisible(false); // 팝업만 닫기
+              },
+            },
+          ],
+          { cancelable: false }
+        );
+      }
+    }
+  }, [isPopupVisible, result]);
 
   const handleNext = () => {
     if (step < 3) {
@@ -73,8 +102,7 @@ const IDScreen = () => {
             </Text>
           </View>
 
-          {/* {!result || !result.allow ? ( */}
-          {!result || !result.allow ? ( // 결과가 없으면 (아직 인증 진행하지 않음)
+          {!result || !result.allow ? (
             <View style={styles.buttonContainer}>
               <RegistButton
                 title="학생증 촬영하기"
@@ -197,7 +225,6 @@ const styles = StyleSheet.create({
   },
   compmsg: {
     fontSize: 18,
-    // fontWeight: 'bold',
     textAlign: 'center',
     color: '#f97316',
     marginLeft: 10,
