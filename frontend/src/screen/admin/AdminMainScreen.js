@@ -14,10 +14,11 @@ import PeopleCountButton from '../../components/admin/PeopleCountButton';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import EventSource from 'react-native-event-source';
 import * as Speech from 'expo-speech'; // Speech 모듈을 추가로 import
+import { BASEurl } from '../../api/url';
 
 const AdminMainScreen = () => {
   const { loginUser, setLoginUser } = useUserContext();
-  const [boardingNumber, setBoardingNumber] = useState(null);
+  const [boardingNumber, setBoardingNumber] = useState(0);
   const {
     busNumber,
     setIsTracking,
@@ -70,7 +71,7 @@ const AdminMainScreen = () => {
 
       console.log('Access Token:', token);
 
-      const sseUrl = 'http://i11b109.p.ssafy.io:8080/subscribe';
+      const sseUrl = `${BASEurl}/subscribe`;
 
       const headers = {
         Authorization: `Bearer ${token}`,

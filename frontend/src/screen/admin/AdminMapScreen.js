@@ -27,7 +27,7 @@ const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const AdminMapScreen = () => {
   const { busNumber } = useAdminContext();
   const [locationMap, setLocationMap] = useState(null);
-  const [boardingNumber, setBoardingNumber] = useState(null);
+  const [boardingNumber, setBoardingNumber] = useState(0);
   const [busStops, setBusStops] = useState([]); // 경로 데이터를 위한 상태
   const mapRef = useRef(null);
 

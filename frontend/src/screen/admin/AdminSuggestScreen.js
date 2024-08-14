@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { GRAY, PRIMARY, WHITE } from '../../constant/color';
+import { BASEurl } from '../../api/url';
 
 const AdminSuggestScreen = () => {
   const [notifications, setNotifications] = useState([]); // 빈 배열로 초기화
@@ -22,16 +23,13 @@ const AdminSuggestScreen = () => {
           return;
         }
 
-        const response = await fetch(
-          'http://i11b109.p.ssafy.io:8080/notifications',
-          {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${accessToken}`, // Bearer 토큰 추가
-            },
-          }
-        );
+        const response = await fetch(`${BASEurl}/notifications`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`, // Bearer 토큰 추가
+          },
+        });
 
         if (!response.ok) {
           throw new Error('네트워크 응답이 올바르지 않습니다.');
