@@ -217,6 +217,7 @@ const MainScreen = () => {
     setRefreshing(true);
     fetchProfileDataAsync().then(() => setRefreshing(false));
     fetchPassengerDataAsync();
+    fetchLastNoticeAsync();
   }, []);
 
   const mapProfileData = (data) => {
