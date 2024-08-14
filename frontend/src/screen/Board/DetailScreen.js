@@ -205,7 +205,7 @@ const DetailScreen = ({ route }) => {
           </View>
           {board.category === 'free' && (
             <>
-              <ScrollView style={styles.commentScrollContainer}>
+              <View style={styles.commentScrollContainer}>
                 <Text style={styles.commentTitle}>댓글</Text>
                 <View style={styles.commentContainer}>
                   {comments.length > 0 ? (
@@ -242,7 +242,7 @@ const DetailScreen = ({ route }) => {
                     <Text style={styles.noComments}>댓글이 없습니다.</Text>
                   )}
                 </View>
-              </ScrollView>
+              </View>
             </>
           )}
         </ScrollView>
@@ -275,6 +275,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     paddingHorizontal: 20,
     paddingTop: 20,
+    // marginBottom: 50,
   },
   noticeContainer: {
     minHeight: '60%',
@@ -288,6 +289,7 @@ const styles = StyleSheet.create({
     marginBottom: 0,
   },
   freeContainer: {
+    minHeight: '50%',
     backgroundColor: GRAY.BACKGROUND,
     padding: 20,
   },
@@ -320,7 +322,8 @@ const styles = StyleSheet.create({
     bottom: 10,
   },
   commentScrollContainer: {
-    maxHeight: 200,
+    // maxHeight: 200,
+    // marginBottom: 20,
   },
   commentContainer: {
     marginBottom: 20,
