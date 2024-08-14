@@ -3,12 +3,25 @@ import { StyleSheet, Text, View, Alert } from 'react-native';
 import MsgButton from '../../components/MsgButton';
 import CustomPopup from '../../components/MsgPopup';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { BASEurl } from '../../api/url';
+import { SKYBLUE, PRIMARY, BLACK } from '../../constant/color';
 
 const MessageScreen = () => {
   const [popupVisible, setPopupVisible] = useState(false);
   const [popupFirstLine, setPopupFirstLine] = useState('');
   const [popupSecondLine, setPopupSecondLine] = useState('');
   const [popupThirdLine, setPopupThirdLine] = useState('');
+  const [busNumber, setBusNumber] = useState(null);
+
+  getBusId = async () => {
+    try {
+      const busNumber = await AsyncStorage.getItem('busNumber');
+      setBusNumber(busNumber);
+    } catch (error) {
+      console.error('오류 발생', error);
+    }
+  };
+  getBusId();
 
   const showPopup = (buttonTitle) => {
     setPopupFirstLine('기사님께');
@@ -61,6 +74,7 @@ const MessageScreen = () => {
 
   return (
     <View style={styles.container}>
+      <Text style={styles.bustxt}>{busNumber}호차</Text>
       <Text style={styles.origintxt}>
         <Text style={styles.pointxt}>본인의 실명</Text>으로 기사님께 전달되니
       </Text>
@@ -103,14 +117,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  bustxt: {
+    textAlign: 'center',
+    fontWeight: 'bold',
+    fontSize: 30,
+    marginBottom: 20,
+    color: PRIMARY.DEFAULT,
+  },
   origintxt: {
     textAlign: 'center',
     fontWeight: 'bold',
     fontSize: 15,
-    color: '#737373',
+    color: BLACK,
   },
   pointxt: {
-    color: '#f97316',
+    color: PRIMARY.DEFAULT,
   },
   button: {
     marginTop: 70,
