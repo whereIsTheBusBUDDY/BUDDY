@@ -12,8 +12,18 @@ import EventSource from 'react-native-event-source';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { WebSocketProvider } from './context/WebSocketContext';
 import { NotificationProvider } from './context/NotificationContext';
+import { registerBackgroundFetch } from './background/BackgroundTask';
 
 export default function App() {
+  useEffect(() => {
+    registerBackgroundFetch()
+      .then(() => {
+        console.log('백그라운드 작업이 등록됨');
+      })
+      .catch(() => {
+        console.error('백그라운드 작업 등록 중 오류 발생:', err);
+      });
+  }, []);
   return (
     <NotificationProvider>
       <WebSocketProvider>

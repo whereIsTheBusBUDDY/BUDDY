@@ -1,16 +1,23 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoadingPage from '../screen/LoadingScreen';
 import IntroduceScreen from '../screen/IntroduceScreen';
-import { Fontisto } from '@expo/vector-icons';
-import { Image } from 'react-native';
+import { Fontisto, Entypo } from '@expo/vector-icons';
+import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 import LoginScreen from '../screen/Account/LoginScreen';
 import IDScreen from '../screen/Account/IDScreen';
 import SignupScreen from '../screen/Account/SignupScreen';
 import MMScreen from '../screen/Account/MMScreen';
 import CameraScreen from '../screen/Account/CameraScreen';
+import MainScreen from '../screen/MainScreen';
+import { useContext } from 'react';
+import { NotificationContext } from '../context/NotificationContext';
+import MainStack from './MainStack';
+import AdminStack from './AdminStack';
 
 const Stack = createNativeStackNavigator();
 const FirstStack = () => {
+  const { hasUnreadNotifications, setHasUnreadNotifications } =
+    useContext(NotificationContext);
   return (
     <Stack.Navigator>
       <Stack.Screen
@@ -90,8 +97,35 @@ const FirstStack = () => {
           headerShadowVisible: false,
         }}
       />
+      <Stack.Screen
+        name={'MainStack'}
+        component={MainStack}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name={'AdminStack'}
+        component={AdminStack}
+        options={{
+          headerShown: false,
+        }}
+      />
     </Stack.Navigator>
   );
 };
+
+const styles = StyleSheet.create({
+  noti: {
+    position: 'relative',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  dot: {
+    position: 'absolute',
+    top: -12,
+    right: -8,
+  },
+});
 
 export default FirstStack;
