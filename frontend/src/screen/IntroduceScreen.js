@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import {
   View,
   ScrollView,
@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Dimensions,
   TouchableOpacity,
+  Animated,
 } from 'react-native';
 import { PRIMARY, WHITE } from '../constant/color';
 import Button, { ButtonColors } from '../components/Button';
@@ -16,32 +17,57 @@ import { useFirstContext } from '../context/FirstContent';
 const IntroduceScreen = () => {
   const navigation = useNavigation();
   const { screen, setScreen } = useFirstContext();
+
+  const scrollY = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.sequence([
+      Animated.timing(scrollY, {
+        toValue: -100,
+        duration: 500,
+        useNativeDriver: true,
+      }),
+      Animated.timing(scrollY, {
+        toValue: 0,
+        duration: 500,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, [scrollY]);
+
   return (
     <View style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollViewContent}>
-        <View style={styles.imageContainer}>
-          <Image
-            source={require('../../assets/001.png')}
-            style={styles.firstImage}
-            resizeMode="cover"
-          />
-          <Image
-            source={require('../../assets/002.png')}
-            style={styles.image}
-            resizeMode="cover"
-          />
-          <Image
-            source={require('../../assets/003.png')}
-            style={styles.image}
-            resizeMode="cover"
-          />
-          <Image
-            source={require('../../assets/004.png')}
-            style={styles.image}
-            resizeMode="cover"
-          />
-        </View>
-      </ScrollView>
+      <Animated.View
+        style={[
+          styles.scrollableContainer,
+          { transform: [{ translateY: scrollY }] },
+        ]}
+      >
+        <ScrollView contentContainerStyle={styles.scrollViewContent}>
+          <View style={styles.imageContainer}>
+            <Image
+              source={require('../../assets/001.png')}
+              style={styles.firstImage}
+              resizeMode="cover"
+            />
+            <Image
+              source={require('../../assets/002.png')}
+              style={styles.image}
+              resizeMode="cover"
+            />
+            <Image
+              source={require('../../assets/003.png')}
+              style={styles.image}
+              resizeMode="cover"
+            />
+            <Image
+              source={require('../../assets/004.png')}
+              style={styles.image}
+              resizeMode="cover"
+            />
+          </View>
+        </ScrollView>
+      </Animated.View>
       <View style={styles.fixedContainer}>
         <Button
           title="회원가입하러 가기"
@@ -69,6 +95,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: WHITE,
+  },
+  scrollableContainer: {
+    flex: 1,
   },
   scrollViewContent: {
     paddingVertical: 30,
