@@ -27,7 +27,7 @@
     "android": {
       "package": "com.ssafy.buddy",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/bus.png",
+        "foregroundImage": "./assets/buddy-app-logo.png",
         "backgroundColor": "#ffffff",
         "googleServicesFile": "./google-services.json"
       },
