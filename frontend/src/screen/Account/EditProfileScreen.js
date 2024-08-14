@@ -12,7 +12,7 @@ import { BLACK, GRAY, PRIMARY, WHITE } from '../../constant/color';
 import Button, { ButtonColors } from '../../components/Button';
 import apiClient from '../../api/api';
 import { useNavigation } from '@react-navigation/native';
-import DropdownBus from '../../components/Dropdown/DropdownBus'; // 적절한 경로로 수정하세요
+import DropdownBus from '../../components/Dropdown/DropdownBus';
 
 const EditProfileScreen = ({ route }) => {
   const { profileData } = route.params;
