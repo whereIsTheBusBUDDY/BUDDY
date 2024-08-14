@@ -5,10 +5,13 @@ import AdminSelectButton from '../../components/AdminSelectButton';
 import { useAdminContext } from '../../context/AdminContext';
 import { PRIMARY, SKYBLUE } from '../../constant/color';
 import { useUserContext } from '../../context/UserContext';
+import { BASEurl } from '../../api/url';
+import apiClient from '../../api/api';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const AdminSelectBusScreen = () => {
   const navigate = useNavigation();
-  const { setBusNumber } = useAdminContext();
+  const { setBusNumber, handleStopTracking } = useAdminContext();
   const { loginUser, setLoginUser } = useUserContext();
 
   const goMap = (title) => () => {
@@ -16,8 +19,23 @@ const AdminSelectBusScreen = () => {
     navigate.navigate('AdminMain');
   };
 
-  const logout = () => {
-    setLoginUser(null);
+  const logout = async () => {
+    handleStopTracking();
+    try {
+      const refreshToken = await AsyncStorage.getItem('refreshToken');
+      console.log(refreshToken);
+      if (refreshToken) {
+        await apiClient.post(`/out?refreshToken=${refreshToken}`);
+        console.log('로그아웃 요청 보냈음');
+      }
+      await AsyncStorage.removeItem('accessToken');
+      await AsyncStorage.removeItem('refreshToken');
+      await AsyncStorage.clear();
+
+      setLoginUser(null);
+    } catch (error) {
+      console.error('로그아웃 중 오류 발생:', error.message, error.response);
+    }
   };
 
   return (
