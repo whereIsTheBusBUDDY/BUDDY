@@ -116,7 +116,7 @@ const MainScreen = () => {
       eventSource.addEventListener('ARRIVE', (e) => {
         console.log('ARRIVE event: ', e.data);
         setArriveMessage((prev) => prev + e.data);
-        const notificationText = `🚌 버스가 곧 ${e.data} 정류장에 도착합니다.`;
+        const notificationText = `🚌 버스가 곧 즐겨찾기 정류장에 도착합니다.\n현재위치 : ${e.data}`;
         sendNotification('BUDDY', notificationText);
 
         // TTS를 사용하여 알림 내용 읽기

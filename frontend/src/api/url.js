@@ -1,5 +1,5 @@
 export const mm_url =
-  'https://meeting.ssafy.com/hooks/ais9hkgenjfaiyu1jcb4tmkucy';
+  'https://meeting.ssafy.com/hooks/5f5nz7o58jf8ppha85eami3iyc';
 
 export const sseUrl = 'http://i11b109.p.ssafy.io:8080/subscribe';
 
