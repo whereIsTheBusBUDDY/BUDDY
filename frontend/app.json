@@ -5,7 +5,7 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "sdkVersion": "51.0.0",
-    "icon": "./assets/bus.png",
+    "icon": "./assets/buddy-app-logo.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/bus.png",
