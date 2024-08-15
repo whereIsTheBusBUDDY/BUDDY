@@ -53,6 +53,7 @@ naver:
     header1: X-NCP-APIGW-API-KEY-ID
     header2: X-NCP-APIGW-API-KEY
 
+
 # local 환경
 ---
 spring:
@@ -63,6 +64,7 @@ spring:
     url: jdbc:mysql://localhost:3306/buddy?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     username: ${DB_NAME}
     password: ${DB_PASSWORD}
+
 
 # dev 환경
 ---
@@ -75,3 +77,21 @@ spring:
     username: ${RDS_NAME}
     password: ${RDS_PASSWORD}
 
+
+# test 환경
+---
+spring:
+  config:
+    activate:
+      on-profile: test
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:testdb
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect

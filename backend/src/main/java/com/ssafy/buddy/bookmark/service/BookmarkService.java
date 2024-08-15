@@ -73,6 +73,6 @@ public class BookmarkService {
 
     private Station findByStationId(int stationId) {
         return stationRepository.findById(stationId)
-                .orElseThrow(() -> new EntityNotFoundException("정거장(memberId: " + stationId + ")이 존재하지 않습니다."));
+                .orElseThrow(() -> new EntityNotFoundException("정거장(stationId: " + stationId + ")이 존재하지 않습니다."));
     }
 }
