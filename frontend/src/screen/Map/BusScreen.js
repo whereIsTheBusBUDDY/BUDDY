@@ -38,6 +38,11 @@ const BusScreen = () => {
   const [isExist, setIsExist] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
+  const isAfternoon = () => {
+    const currentHour = new Date().getHours();
+    return currentHour >= 17; // 현재 시간이 12시(정오) 이후인지 체크
+  };
+
   // API에서 경로 데이터를 가져오는 함수
   const fetchBusStops = async (busLine) => {
     try {
@@ -476,7 +481,9 @@ const BusScreen = () => {
             <View style={styles.line}>
               <Text style={styles.textStyle}>{selectedRoute}호차</Text>
               <Text style={styles.point}>
-                {arrivalTime
+                {isAfternoon()
+                  ? '정보 제공 시간이 아닙니다'
+                  : arrivalTime
                   ? `${arrivalTime}분 후 도착`
                   : '도착 시간 정보 없음'}
               </Text>
