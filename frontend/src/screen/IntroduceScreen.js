@@ -35,6 +35,15 @@ const IntroduceScreen = () => {
     ]).start();
   }, [scrollY]);
 
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('beforeRemove', (e) => {
+      // 뒤로가기를 막음
+      e.preventDefault();
+    });
+
+    return unsubscribe;
+  }, [navigation]);
+
   return (
     <View style={styles.container}>
       <Animated.View
