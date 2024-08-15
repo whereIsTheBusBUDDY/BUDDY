@@ -20,12 +20,13 @@ import RenderingScreen from '../common/RenderingScreen';
 import StationMarker from './StationMarker';
 import NotExistScreen from '../common/NotExistScreen';
 import DropdownBus from '../../components/Dropdown/DropdownBus';
-import { BASEurl } from '../../api/url';
+import { BASEurl, routeUrl } from '../../api/url';
+import { fetchProfileData } from '../../api/user';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 const BusScreen = () => {
-  const [selectedRoute, setSelectedRoute] = useState('1'); // 기본적으로 '1'
+  const [selectedRoute, setSelectedRoute] = useState(''); // 기본 노선 -> 선호 노선으로 설정
   const [locationMap, setLocationMap] = useState(null); // 초기 위치를 null로 설정
   const [busStops, setBusStops] = useState([]); // 경로 데이터를 위한 상태
   const [stations, setStations] = useState([]); // 정류장 데이터를 위한 상태
@@ -38,16 +39,34 @@ const BusScreen = () => {
   const [isExist, setIsExist] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
+  // 17시 기준으로 eta 막기
   const isAfternoon = () => {
     const currentHour = new Date().getHours();
-    return currentHour >= 17; // 현재 시간이 12시(정오) 이후인지 체크
+    return currentHour >= 17;
+  };
+
+  // 프로필에서 선호노선 가져오기
+  const fetchFavoriteRoute = async () => {
+    try {
+      const data = await fetchProfileData();
+      const route = data.favoriteLine;
+      setSelectedRoute(route);
+      console.log('프로필데이터', data);
+      console.log('프로필선호노선', route);
+
+      // 선호 노선이 설정된 후 데이터를 가져옴
+      await fetchBusStops(route);
+      await fetchStations(route);
+    } catch (error) {
+      console.error('프로필 정보를 가져오는 중 오류 발생:', error);
+    }
   };
 
   // API에서 경로 데이터를 가져오는 함수
   const fetchBusStops = async (busLine) => {
     try {
       const response = await fetch(
-        `http://54.180.242.7:8080/coordinates?busLine=${busLine}`
+        `${routeUrl}/coordinates?busLine=${busLine}`
       );
       const data = await response.json();
       setBusStops(data); // 경로 데이터 설정
@@ -69,7 +88,6 @@ const BusScreen = () => {
   // API에서 정류장 데이터를 가져오는 함수
   const fetchStations = async (busLine) => {
     try {
-      // AsyncStorage에서 액세스 토큰 불러오기
       const accessToken = await AsyncStorage.getItem('accessToken');
 
       if (!accessToken) {
@@ -81,7 +99,7 @@ const BusScreen = () => {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessToken}`, // 액세스 토큰을 Authorization 헤더에 추가
+          Authorization: `Bearer ${accessToken}`,
         },
       });
 
@@ -220,33 +238,66 @@ const BusScreen = () => {
         longitudeDelta: 0.005,
       });
 
-      // 기본 노선에 대한 경로 및 정류장 데이터 가져오기
+      // 선호 노선을 기본으로 설정
+      await fetchFavoriteRoute();
+      await fetchBookmarks(); // 즐겨찾기 목록 가져오기
+
+      // // 기본 노선에 대한 경로 및 정류장 데이터 가져오기
       fetchBusStops(selectedRoute);
       fetchStations(selectedRoute);
-      fetchBookmarks(); // 즐겨찾기 목록 가져오기
+      // fetchBookmarks(); // 즐겨찾기 목록 가져오기
     })();
   }, []);
 
-  // 새로운 노선 선택 시 경로 및 정류장 데이터 업데이트
+  // // 새로운 노선 선택 시 경로 및 정류장 데이터 업데이트
+  // useEffect(() => {
+  //   setIsLoading(true);
+  //   fetchBusStops(selectedRoute);
+  //   fetchStations(selectedRoute);
+
+  //   // 지도 초기 위치 -> 현재위치
+  //   if (mapRef.current) {
+  //     mapRef.current.animateToRegion({
+  //       latitude: locationMap.latitude,
+  //       longitude: locationMap.longitude,
+  //       // latitude: 36.3553089,
+  //       // longitude: 127.2984993,
+
+  //       latitudeDelta: 0.005,
+  //       longitudeDelta: 0.005,
+  //     });
+  //     setIsLoading(false);
+  //   }
+  // }, [selectedRoute]);
+
   useEffect(() => {
-    setIsLoading(true);
-    fetchBusStops(selectedRoute);
-    fetchStations(selectedRoute);
+    const fetchData = async () => {
+      setIsLoading(true); // 로딩 시작
 
-    // 지도 초기 위치 -> 현재위치
-    if (mapRef.current) {
-      mapRef.current.animateToRegion({
-        latitude: locationMap.latitude,
-        longitude: locationMap.longitude,
-        // latitude: 36.3553089,
-        // longitude: 127.2984993,
+      try {
+        await fetchBusStops(selectedRoute); // 새로운 노선에 대한 경로 데이터 가져오기
+        await fetchStations(selectedRoute); // 새로운 노선에 대한 정류장 데이터 가져오기
 
-        latitudeDelta: 0.005,
-        longitudeDelta: 0.005,
-      });
-      setIsLoading(false);
+        // 지도 초기 위치 -> 현재 위치로 이동
+        if (mapRef.current && locationMap) {
+          mapRef.current.animateToRegion({
+            latitude: locationMap.latitude,
+            longitude: locationMap.longitude,
+            latitudeDelta: 0.005,
+            longitudeDelta: 0.005,
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching data for selected route:', error);
+      } finally {
+        setIsLoading(false); // 로딩 완료
+      }
+    };
+
+    if (selectedRoute) {
+      fetchData();
     }
-  }, [selectedRoute]);
+  }, [selectedRoute, locationMap]);
 
   // 선택된 정류장의 즐겨찾기 상태 확인
   useEffect(() => {
@@ -393,14 +444,14 @@ const BusScreen = () => {
     <TouchableWithoutFeedback onPress={() => setSelectedStation(null)}>
       <View style={styles.container}>
         <View style={styles.dropdown}>
-          <DropdownBus
+          {/* <DropdownBus
             selectedValue={`${selectedRoute}호차`}
             onChangeValue={(value) =>
               setSelectedRoute(value.replace('호차', ''))
             }
             backgroundColor={PRIMARY.DEFAULT}
             color={WHITE}
-          />
+          /> */}
         </View>
         {locationMap ? (
           <View>

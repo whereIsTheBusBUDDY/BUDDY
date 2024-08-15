@@ -9,6 +9,7 @@ import {
 import { BLACK, GRAY, PRIMARY, WHITE } from '../../constant/color';
 import apiClient from '../../api/api';
 import DropdownBus from '../../components/Dropdown/DropdownBus';
+import { fetchProfileData } from '../../api/user';
 
 const TabButton = ({ title, isActive, onPress }) => (
   <TouchableOpacity
@@ -94,8 +95,24 @@ const MyFavorites = () => {
 };
 
 const RegisterFavorites = () => {
-  const [selectedBus, setSelectedBus] = useState('1호차'); // 기본값을 1호차로 설정
+  const [selectedBus, setSelectedBus] = useState(''); // 초기값을 빈 문자열로 설정
   const [busStops, setBusStops] = useState([]);
+
+  // 프로필에서 선호노선 가져오기
+  const fetchFavoriteRoute = async () => {
+    try {
+      const data = await fetchProfileData();
+      const route = `${data.favoriteLine}호차`; // '호차'를 추가하여 드롭다운에 맞춤
+      setSelectedBus(route);
+      console.log('프로필데이터', data);
+      console.log('프로필선호노선', route);
+
+      // 선호 노선에 대한 데이터를 가져옴
+      handleSelect(route);
+    } catch (error) {
+      console.error('프로필 정보를 가져오는 중 오류 발생:', error);
+    }
+  };
 
   const handleSelect = async (value) => {
     setSelectedBus(value);
@@ -110,8 +127,8 @@ const RegisterFavorites = () => {
   };
 
   useEffect(() => {
-    // 페이지가 로드될 때 기본 노선의 데이터를 가져옴
-    handleSelect('1호차');
+    // 페이지가 로드될 때 선호 노선의 데이터를 가져옴
+    fetchFavoriteRoute();
   }, []);
 
   const toggleBookmark = async (stationId, isBookmarked) => {

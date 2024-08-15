@@ -9,7 +9,7 @@ const DropdownBus = ({
   backgroundColor = PRIMARY.DEFAULT,
   color = WHITE,
 }) => {
-  const [value, setValue] = useState(selectedValue || '1호차'); // 기본값
+  const [value, setValue] = useState(selectedValue); // 기본값
   const items = [
     { label: '1호차', value: '1호차' },
     { label: '2호차', value: '2호차' },
