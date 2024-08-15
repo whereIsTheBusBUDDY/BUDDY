@@ -83,7 +83,7 @@ export const AdminProvider = ({ children }) => {
 
                 const checkTime = () => {
                   const currentTime = new Date().getHours();
-                  const newTime = currentTime < 12 ? 1 : 2;
+                  const newTime = currentTime < 24 ? 1 : 2;
                   setTime(newTime);
                   console.log('현재시간(시기준)', currentTime);
                 };
