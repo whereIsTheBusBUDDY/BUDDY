@@ -19,6 +19,7 @@ const ChatScreen = ({ route }) => {
     useWebSocket();
   const [text, setText] = useState('');
   const [username, setUsername] = useState('');
+  const [userid, setUserid] = useState('');
   const flatListRef = useRef(null);
 
   useEffect(() => {
@@ -37,7 +38,12 @@ const ChatScreen = ({ route }) => {
       try {
         const response = await apiClient.get('/members/me');
         const { nickname } = response.data;
+        const { id } = response.data;
+        console.log('response', response.data);
+        console.log('닉', nickname);
+        console.log('아이디', id);
         setUsername(nickname);
+        setUserid(id);
       } catch (error) {
         console.error('닉네임 가져오기 실패:', error);
       }
@@ -48,7 +54,7 @@ const ChatScreen = ({ route }) => {
 
   const handleSend = () => {
     if (text.trim()) {
-      sendMessage(roomId, text, username);
+      sendMessage(roomId, text, username, userid);
       setText('');
       // 전송 후 자동 스크롤
       if (flatListRef.current) {
@@ -72,7 +78,7 @@ const ChatScreen = ({ route }) => {
         data={messages}
         keyExtractor={(item, index) => index.toString()}
         renderItem={({ item }) => {
-          const isUserMessage = item.sender === username;
+          const isUserMessage = item.userId === userid;
           return (
             <View
               style={[
@@ -116,10 +122,9 @@ const styles = StyleSheet.create({
   roomText: {
     textAlign: 'center',
     fontSize: 20,
-    marginHorizontal: 20,
   },
   messageContainer: {
-    marginVertical: 8,
+    marginVertical: 5,
     maxWidth: '70%',
   },
   userMessageContainer: {
@@ -149,18 +154,17 @@ const styles = StyleSheet.create({
   },
   senderText: {
     marginHorizontal: 5,
-    marginVertical: 3,
     fontSize: 12,
     color: '#555',
     marginTop: 2,
   },
   inputContainer: {
-    padding: 10,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
     flexDirection: 'row',
     alignItems: 'center',
     borderTopWidth: 1,
     borderColor: '#ddd',
-    paddingTop: 8,
   },
   input: {
     flex: 1,
@@ -175,10 +179,10 @@ const styles = StyleSheet.create({
     backgroundColor: GRAY.BACKGROUND,
     flex: 1,
     borderRadius: 15,
-    padding: 20,
+    paddingHorizontal: 20,
     margin: 10,
   },
-  topContainer: { backgroundColor: WHITE, flex: 1, padding: 16, padding: 5 },
+  topContainer: { backgroundColor: WHITE, flex: 1, padding: 5 },
 });
 
 export default ChatScreen;
