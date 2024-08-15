@@ -36,12 +36,27 @@ const IntroduceScreen = () => {
   }, [scrollY]);
 
   useEffect(() => {
+    const backAction = () => {
+      // 앱 종료
+      BackHandler.exitApp();
+      return true;
+    };
+
     const unsubscribe = navigation.addListener('beforeRemove', (e) => {
-      // 뒤로가기를 막음
       e.preventDefault();
+      backAction();
     });
 
-    return unsubscribe;
+    // 안드로이드 하드웨어 뒤로가기 버튼 처리
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction
+    );
+
+    return () => {
+      unsubscribe();
+      backHandler.remove();
+    };
   }, [navigation]);
 
   return (
