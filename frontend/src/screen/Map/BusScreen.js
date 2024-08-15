@@ -24,7 +24,7 @@ import DropdownBus from '../../components/Dropdown/DropdownBus';
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 const BusScreen = () => {
-  const [selectedRoute, setSelectedRoute] = useState('1'); // 기본적으로 '1'
+  const [selectedRoute, setSelectedRoute] = useState('4'); // 기본적으로 '1'
   const [locationMap, setLocationMap] = useState(null); // 초기 위치를 null로 설정
   const [busStops, setBusStops] = useState([]); // 경로 데이터를 위한 상태
   const [stations, setStations] = useState([]); // 정류장 데이터를 위한 상태
