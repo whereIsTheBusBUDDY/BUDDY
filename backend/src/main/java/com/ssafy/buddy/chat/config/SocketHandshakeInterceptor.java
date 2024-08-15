@@ -24,7 +24,6 @@ public class SocketHandshakeInterceptor implements HandshakeInterceptor {
         String query = uri.getQuery();
         if(query != null && query.startsWith("token=")) {
             String token = query.substring(6);
-            System.out.println("token = " + token);
             if(jwtTokenProvider.validateAccessToken(token)){
                 attributes.put("access_token", token);
                 return true;

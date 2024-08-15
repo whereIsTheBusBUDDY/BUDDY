@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -15,11 +16,15 @@ import org.springframework.web.bind.annotation.*;
 public class LocationController {
     private final KafkaProducerService producerService;
     private final LocationService locationService;
+
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/start/{busId}")
     public ResponseEntity<?> start(@PathVariable int busId, @RequestBody String location) {
         producerService.sendMessage(busId, location);
         return ResponseEntity.ok("위치 저장 성공");
     }
+
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/stop/{busId}")
     public ResponseEntity<?> stop(@PathVariable int busId) {
         locationService.stopBus(busId);

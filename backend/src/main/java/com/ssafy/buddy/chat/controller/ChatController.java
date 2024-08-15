@@ -17,6 +17,6 @@ public class ChatController {
     @MessageMapping("/{roomId}")
     @SendTo("/room/{roomId}")
     public ChatMessage sendMessage(@DestinationVariable int roomId, ChatResponse message) {
-        return new ChatMessage(roomId, message.getMessage(), message.getSender(), new Date());
+        return new ChatMessage(roomId, message.getMessage(), message.getSender(), new Date(), message.getUserId());
     }
 }
