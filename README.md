@@ -28,7 +28,7 @@
 
 | 윤보은        | 이승민  | 이주희   | 정석영 | 정지원 | 홍수인 |
 | ------------- | ------- | -------- | ------ | ------ | ------ |
-| Captain BE FE | FE Math | BE Infra | BE AI  | FE     | FE     |
+| Captain BE FE | FE | BE Infra | BE AI | FE     | FE     |
 
 ### **💻 기술 스택**
 
