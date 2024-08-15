@@ -16,12 +16,13 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { WHITE, PRIMARY, GRAY, BLACK } from '../../constant/color';
 import RenderingScreen from '../common/RenderingScreen';
 import DropdownBus from '../../components/Dropdown/DropdownBus';
-import { BASEurl } from '../../api/url';
+import { BASEurl, routeUrl } from '../../api/url';
+import { fetchProfileData } from '../../api/user';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 const MapScreen = () => {
-  const [selectedRoute, setSelectedRoute] = useState('1'); // 기본적으로 '1'
+  const [selectedRoute, setSelectedRoute] = useState(''); // 기본 노선 -> 선호 노선으로 설정
   const [locationMap, setLocationMap] = useState();
   const [busStops, setBusStops] = useState([]); // 경로 데이터를 위한 상태
   const [stations, setStations] = useState([]); // 정류장 데이터를 위한 상태
@@ -30,23 +31,40 @@ const MapScreen = () => {
   const [loading, setLoading] = useState(true); // 로딩 상태
   const mapRef = useRef(null);
 
+  // 프로필에서 선호노선 가져오기
+  const fetchFavoriteRoute = async () => {
+    try {
+      const data = await fetchProfileData();
+      const route = data.favoriteLine;
+      setSelectedRoute(route);
+      console.log('프로필데이터', data);
+      console.log('프로필선호노선', route);
+
+      // 선호 노선이 설정된 후 데이터를 가져옴
+      await fetchBusStops(route);
+      await fetchStations(route);
+    } catch (error) {
+      console.error('프로필 정보를 가져오는 중 오류 발생:', error);
+    }
+  };
+
   // API에서 경로 데이터를 가져오는 함수
   const fetchBusStops = async (busLine) => {
     try {
       const response = await fetch(
-        `http://54.180.242.7:8080/coordinates?busLine=${busLine}`
+        `${routeUrl}/coordinates?busLine=${busLine}`
       );
       const data = await response.json();
-      setBusStops(data); // 경로 데이터 설정
+      setBusStops(Array.isArray(data) ? data : []); // 경로 데이터 설정
     } catch (error) {
       console.error('Error fetching bus stops:', error);
+      setBusStops([]); // 오류 시 빈 배열로 설정
     }
   };
 
   // API에서 정류장 데이터를 가져오는 함수
   const fetchStations = async (busLine) => {
     try {
-      // AsyncStorage에서 액세스 토큰 불러오기
       const accessToken = await AsyncStorage.getItem('accessToken');
 
       if (!accessToken) {
@@ -58,20 +76,20 @@ const MapScreen = () => {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessToken}`, // 액세스 토큰을 Authorization 헤더에 추가
+          Authorization: `Bearer ${accessToken}`,
         },
       });
 
-      // 응답 상태 확인
       if (!response.ok) {
         console.error(`HTTP error! status: ${response.status}`);
         return;
       }
 
       const data = await response.json(); // JSON으로 응답을 파싱
-      setStations(data); // 정류장 데이터 설정
+      setStations(Array.isArray(data) ? data : []); // 정류장 데이터 설정
     } catch (error) {
       console.error('Error fetching stations:', error);
+      setStations([]); // 오류 시 빈 배열로 설정
     }
   };
 
@@ -89,7 +107,7 @@ const MapScreen = () => {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessToken}`, // 액세스 토큰을 Authorization 헤더에 추가
+          Authorization: `Bearer ${accessToken}`,
         },
       });
 
@@ -100,7 +118,7 @@ const MapScreen = () => {
 
       const data = await response.json(); // JSON으로 응답을 파싱
       const bookmarkedStationIds = data.map((bookmark) => bookmark.stationId);
-      // 현재 선택된 정류장이 즐겨찾기 목록에 있는지 확인
+
       setStarSelected(
         selectedStation
           ? bookmarkedStationIds.includes(selectedStation.id)
@@ -124,7 +142,6 @@ const MapScreen = () => {
 
     try {
       if (starSelected) {
-        // 즐겨찾기 해제 - DELETE 요청
         const response = await fetch(
           `${BASEurl}/bookmarks?stationId=${selectedStation.id}`,
           {
@@ -163,7 +180,6 @@ const MapScreen = () => {
         console.log('Bookmark added');
       }
 
-      // 즐겨찾기 상태 토글
       setStarSelected(!starSelected);
       fetchBookmarks(); // 즐겨찾기 목록 갱신
     } catch (error) {
@@ -181,6 +197,7 @@ const MapScreen = () => {
         return;
       }
 
+      // 현재 위치 가져오기
       let location = await Location.getCurrentPositionAsync({
         accuracy: Location.Accuracy.High,
       });
@@ -196,7 +213,6 @@ const MapScreen = () => {
         accuracy: Location.Accuracy.High,
       });
 
-      // 현재 위치로 초기 위치 설정
       setLocationMap({
         latitude: current_location.coords.latitude,
         longitude: current_location.coords.longitude,
@@ -204,9 +220,8 @@ const MapScreen = () => {
         longitudeDelta: 0.005,
       });
 
-      // 기본 노선에 대한 경로 및 정류장 데이터 가져오기
-      await fetchBusStops(selectedRoute);
-      await fetchStations(selectedRoute);
+      // 선호 노선을 기본으로 설정
+      await fetchFavoriteRoute();
       await fetchBookmarks(); // 즐겨찾기 목록 가져오기
 
       setLoading(false); // 로딩 완료
@@ -214,12 +229,43 @@ const MapScreen = () => {
   }, []);
 
   // 새로운 노선 선택 시 경로 및 정류장 데이터 업데이트
+  // useEffect(() => {
+  //   if (!loading) {
+  //     (async () => {
+  //       await fetchBusStops(selectedRoute); // selectedRoute 변경 후 경로 데이터 불러오기
+  //       await fetchStations(selectedRoute); // selectedRoute 변경 후 정류장 데이터 불러오기
+  //     })();
+  //   }
+  // }, [selectedRoute]);
+
   useEffect(() => {
-    if (!loading) {
-      fetchBusStops(selectedRoute);
-      fetchStations(selectedRoute);
+    const fetchData = async () => {
+      setLoading(true); // 로딩 시작
+
+      try {
+        await fetchBusStops(selectedRoute); // 새로운 노선에 대한 경로 데이터 가져오기
+        await fetchStations(selectedRoute); // 새로운 노선에 대한 정류장 데이터 가져오기
+
+        // 지도 초기 위치 -> 현재 위치로 이동
+        if (mapRef.current && locationMap) {
+          mapRef.current.animateToRegion({
+            latitude: locationMap.latitude,
+            longitude: locationMap.longitude,
+            latitudeDelta: 0.005,
+            longitudeDelta: 0.005,
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching data for selected route:', error);
+      } finally {
+        setLoading(false); // 로딩 완료
+      }
+    };
+
+    if (selectedRoute) {
+      fetchData();
     }
-  }, [selectedRoute]);
+  }, [selectedRoute, locationMap]);
 
   // 선택된 정류장의 즐겨찾기 상태 확인
   useEffect(() => {
@@ -233,7 +279,6 @@ const MapScreen = () => {
       <View style={styles.container}>
         {locationMap ? (
           <>
-            {/* 드롭다운 메뉴: 지도 로드 후에만 표시 */}
             <View style={styles.dropdown}>
               <DropdownBus
                 selectedValue={`${selectedRoute}호차`}
@@ -256,7 +301,6 @@ const MapScreen = () => {
               }}
               showsUserLocation={true} // 사용자 위치 표시
             >
-              {/* API로부터 받아온 정류장 데이터를 마커로 표시 */}
               {stations.map((station) => (
                 <Marker
                   key={station.id}
@@ -264,7 +308,7 @@ const MapScreen = () => {
                     latitude: station.latitude,
                     longitude: station.longitude,
                   }}
-                  onPress={() => setSelectedStation(station)} // 마커 클릭 시 정류장 선택
+                  onPress={() => setSelectedStation(station)}
                 >
                   <Image
                     source={require('../../../assets/busStopIcon.png')}
@@ -273,7 +317,6 @@ const MapScreen = () => {
                 </Marker>
               ))}
 
-              {/* 경로 표시를 위한 Polyline */}
               <Polyline
                 coordinates={busStops.map((stop) => ({
                   latitude: stop.latitude,
@@ -288,7 +331,6 @@ const MapScreen = () => {
           <RenderingScreen />
         )}
 
-        {/* 선택된 정류장이 있을 때만 표시 */}
         {selectedStation && (
           <View style={styles.infobox}>
             <View style={styles.titlecontainer}>
