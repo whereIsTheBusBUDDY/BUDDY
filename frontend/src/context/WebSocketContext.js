@@ -59,9 +59,9 @@ export const WebSocketProvider = ({ children }) => {
     }
   };
 
-  const sendMessage = (roomId, message, sender) => {
+  const sendMessage = (roomId, message, sender, userId) => {
     if (stompClient.current && connected) {
-      const messageObj = { message, sender };
+      const messageObj = { message, sender, userId };
       stompClient.current.publish({
         destination: `/send-chat/${roomId}`,
         body: JSON.stringify(messageObj),
