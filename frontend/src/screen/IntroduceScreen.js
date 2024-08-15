@@ -8,15 +8,18 @@ import {
   Dimensions,
   TouchableOpacity,
   Animated,
+  BackHandler,
+  ToastAndroid,
 } from 'react-native';
 import { PRIMARY, WHITE } from '../constant/color';
 import Button, { ButtonColors } from '../components/Button';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { useFirstContext } from '../context/FirstContent';
-
+const DOUBLE_PRESS_DELAY = 2000;
 const IntroduceScreen = () => {
   const navigation = useNavigation();
   const { screen, setScreen } = useFirstContext();
+  const [lastBackPressed, setLastBackPressed] = React.useState(0);
 
   const scrollY = useRef(new Animated.Value(0)).current;
 
@@ -35,29 +38,25 @@ const IntroduceScreen = () => {
     ]).start();
   }, [scrollY]);
 
-  useEffect(() => {
-    const backAction = () => {
-      // 앱 종료
-      BackHandler.exitApp();
-      return true;
-    };
-
-    const unsubscribe = navigation.addListener('beforeRemove', (e) => {
-      e.preventDefault();
-      backAction();
-    });
-
-    // 안드로이드 하드웨어 뒤로가기 버튼 처리
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      backAction
-    );
-
-    return () => {
-      unsubscribe();
-      backHandler.remove();
-    };
-  }, [navigation]);
+  useFocusEffect(
+    React.useCallback(() => {
+      const handleBackPress = () => {
+        const now = Date.now();
+        if (now - lastBackPressed < DOUBLE_PRESS_DELAY) {
+          BackHandler.exitApp();
+        } else {
+          setLastBackPressed(now);
+          ToastAndroid.show('두 번 눌러 앱 종료하기', ToastAndroid.SHORT);
+        }
+        return true;
+      };
+      const backHandler = BackHandler.addEventListener(
+        'hardwareBackPress',
+        handleBackPress
+      );
+      return () => backHandler.remove();
+    }, [lastBackPressed])
+  );
 
   return (
     <View style={styles.container}>
