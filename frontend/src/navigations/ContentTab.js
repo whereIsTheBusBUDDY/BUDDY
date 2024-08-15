@@ -57,7 +57,7 @@ const ContentTab = () => {
         tabBarInactiveTintColor: GRAY.FONT,
         tabBarStyle: [
           {
-            height: '10%',
+            height: '8%',
             padding: 5,
           },
           {
@@ -66,7 +66,7 @@ const ContentTab = () => {
         ],
         tabBarLabelStyle: {
           paddingBottom: 10,
-          fontSize:13,
+          fontSize: 13,
         },
       })}
     >

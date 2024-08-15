@@ -363,7 +363,7 @@ const MainScreen = () => {
           </View>
           <View style={styles.middleRightPad}>
             <View style={styles.numOfPeople}>
-              <Text style={styles.numOfPeopleText}>실시간 탑승 인원</Text>
+              <Text style={styles.numOfPeopleText}>버스 별 탑승 인원</Text>
               <View style={styles.numOfPeopleBox}>
                 {Object.entries(passengerData).map(
                   ([busNumber, passengers]) => (

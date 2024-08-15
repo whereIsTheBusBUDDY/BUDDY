@@ -5,8 +5,11 @@ import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { GRAY, PRIMARY, WHITE } from '../../constant/color';
 import apiClient from '../../api/api';
+import { useWebSocket } from '../../context/WebSocketContext';
 
 export default function QrScanner() {
+  const { connected, disconnect, setMessages, showMessage, messages } =
+    useWebSocket();
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
   const [busNumber, setBusNumber] = useState(null);
@@ -26,6 +29,9 @@ export default function QrScanner() {
     console.log(number);
 
     try {
+      if (connected) {
+        disconnect();
+      }
       await AsyncStorage.setItem('busNumber', number);
       console.log(`저장된 호차 번호: ${number}`);
 
@@ -43,6 +49,9 @@ export default function QrScanner() {
         `채팅방과 건의하기 기능이 활성화되었습니다.`,
         [{ text: '확인', onPress: () => navigation.navigate('Main') }]
       );
+
+      setMessages([]);
+      console.log(messages);
     } catch (error) {
       console.error('', error);
       Alert.alert('', '다시 시도해주세요.', [
