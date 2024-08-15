@@ -336,7 +336,7 @@ const MapScreen = () => {
             <View style={styles.titlecontainer}>
               <Text style={styles.title}>{selectedStation.stationName}</Text>
               <TouchableOpacity onPress={toggleStar}>
-                <View style={styles.starContainer}>
+                <View style={styles.starview}>
                   <Text
                     style={starSelected ? styles.starSelected : styles.star}
                   >
@@ -382,34 +382,31 @@ const styles = StyleSheet.create({
     bottom: 0,
     width: '100%',
     backgroundColor: 'rgba(255, 255, 255, 0.8)',
-    paddingVertical: 20,
-    paddingLeft: 40,
+    paddingBottom: 20,
+    paddingHorizontal: 40,
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
   },
-
   title: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
     paddingLeft: 5,
-    marginTop: 5,
+    marginTop: 20,
   },
   star: {
     fontSize: 30,
     fontWeight: 'bold',
     color: GRAY.DEFAULT, // 초기 별 색상은 회색
-    marginLeft: 10,
   },
   starSelected: {
     fontSize: 30,
     fontWeight: 'bold',
     color: PRIMARY.DEFAULT, // 선택 시 별 색상은 주황색
-    marginLeft: 10,
   },
-  starContainer: {
-    paddingLeft: 10,
-    paddingRight: 30,
-    // marginV
+  starview: {
+    paddingVertical: 10,
+    paddingRight: 5,
+    paddingLeft: 20,
   },
   titlecontainer: {
     flexDirection: 'row',
