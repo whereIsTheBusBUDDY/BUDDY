@@ -42,7 +42,7 @@ const BusScreen = () => {
   // 17시 기준으로 eta 막기
   const isAfternoon = () => {
     const currentHour = new Date().getHours();
-    return currentHour >= 17;
+    return currentHour >= 24;
   };
 
   // 프로필에서 선호노선 가져오기
