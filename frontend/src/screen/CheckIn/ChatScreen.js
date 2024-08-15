@@ -15,8 +15,15 @@ import SendInput from '../../components/SendInput';
 
 const ChatScreen = ({ route }) => {
   const { roomId } = route.params;
-  const { connect, disconnect, sendMessage, messages, connected } =
-    useWebSocket();
+  const {
+    connect,
+    disconnect,
+    sendMessage,
+    messages,
+    connected,
+    setMessages,
+    showMessage,
+  } = useWebSocket();
   const [text, setText] = useState('');
   const [username, setUsername] = useState('');
   const [userid, setUserid] = useState('');

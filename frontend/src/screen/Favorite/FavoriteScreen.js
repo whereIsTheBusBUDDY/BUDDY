@@ -6,7 +6,7 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from 'react-native';
-import { BLACK, GRAY, PRIMARY, WHITE } from '../../constant/color';
+import { BLACK, GRAY, PRIMARY, WHITE, SKYBLUE } from '../../constant/color';
 import apiClient from '../../api/api';
 import DropdownBus from '../../components/Dropdown/DropdownBus';
 import { fetchProfileData } from '../../api/user';
@@ -189,8 +189,35 @@ const RegisterFavorites = () => {
 
 const FavoriteScreen = () => {
   const [activeTab, setActiveTab] = useState('MyFavorites');
+  const [name, setName] = useState('');
+
+  // 프로필에서 이름 가져오기
+  const fetchFavoriteName = async () => {
+    try {
+      const data = await fetchProfileData();
+      const name = data.name;
+      setName(name);
+    } catch (error) {
+      console.error('프로필 정보를 가져오는 중 오류 발생:', error);
+    }
+  };
+  fetchFavoriteName();
+
   return (
     <ScrollView style={styles.container}>
+      <View style={styles.textContainer}>
+        {activeTab === 'MyFavorites' ? (
+          <Text style={styles.item}>
+            <Text style={styles.nameText}>{name}</Text>님이 즐겨찾는 목적지예요!
+            {'\n'}
+          </Text>
+        ) : (
+          <Text style={styles.item}>
+            <Text style={styles.nameText}>{name}</Text>님, 하차 알림을
+            받으시려면 {'\n'}즐겨찾는 목적지를 등록해주세요!
+          </Text>
+        )}
+      </View>
       <View style={styles.tabContainer}>
         <TabButton
           title="나의 즐겨찾기"
@@ -217,7 +244,7 @@ const styles = StyleSheet.create({
   tabContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginTop: 20,
+    // marginTop: 10,
   },
   tabButton: {
     paddingVertical: 10,
@@ -245,6 +272,7 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 10,
     paddingVertical: 30,
     paddingHorizontal: 15,
+    marginBottom: 30,
   },
   item: {
     fontSize: 16,
@@ -314,6 +342,11 @@ const styles = StyleSheet.create({
   centerAlign: {
     alignItems: 'center', // 가로 가운데 정렬
     marginBottom: 20,
+  },
+  nameText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: SKYBLUE.CLICK,
   },
 });
 

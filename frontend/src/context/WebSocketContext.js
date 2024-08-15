@@ -82,6 +82,7 @@ export const WebSocketProvider = ({ children }) => {
         disconnect,
         sendMessage,
         showMessage,
+        setMessages,
         connected,
         messages,
       }}
