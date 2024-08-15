@@ -42,13 +42,13 @@ const styles = StyleSheet.create({
   busImg: {
     width: 160,
     height: 160,
-    marginRight: 15,
+    // marginRight: 15,
     resizeMode: 'contain',
   },
   horizontal: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    padding: 10,
+    // padding: 10,
   },
 });
 export default RenderingScreen;

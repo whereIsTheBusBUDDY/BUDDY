@@ -36,12 +36,13 @@ const styles = StyleSheet.create({
     color: 'black',
     fontSize: 20,
     textAlign: 'center', // 텍스트를 각 줄에서 가운데 정렬
-    marginTop: 10, // 이미지와 텍스트 사이의 간격을 조정
+    marginTop: 6, // 이미지와 텍스트 사이의 간격을 조정
   },
   busImg: {
     width: 160,
     height: 160,
     resizeMode: 'contain',
+    marginBottom: 5,
   },
 });
 

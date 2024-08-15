@@ -1,3 +1,4 @@
+// 실시간 버스 위치
 import { useFocusEffect } from '@react-navigation/native';
 import React, { useEffect, useState, useRef } from 'react';
 import {
@@ -6,16 +7,16 @@ import {
   Dimensions,
   Text,
   TouchableOpacity,
-  Platform,
   Image,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import MapView, { Marker, Polyline } from 'react-native-maps';
 import { FontAwesome } from '@expo/vector-icons';
 import * as Location from 'expo-location';
-// import ModalDropdown from 'react-native-modal-dropdown';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { PRIMARY, GRAY, WHITE, BLACK, SKYBLUE } from '../../constant/color';
-import { currentBus, postBusData } from '../../api/busUser';
+import { WHITE, PRIMARY, GRAY, BLACK } from '../../constant/color';
+import { currentBus } from '../../api/busUser';
+import { postBusData } from '../../api/busUser';
 import RenderingScreen from '../common/RenderingScreen';
 import StationMarker from './StationMarker';
 import NotExistScreen from '../common/NotExistScreen';
@@ -341,6 +342,7 @@ const BusScreen = () => {
 
     try {
       const responseData = await postBusData(data);
+      console.log(data);
       console.log('Response data:', responseData); // 서버 응답 확인
       let time = responseData.predicted_time;
       console.log('Response time:', time); // 서버 응답 확인
@@ -382,90 +384,107 @@ const BusScreen = () => {
     return <RenderingScreen />;
   }
   return (
-    <View style={styles.container}>
-      {/* 드롭다운 메뉴 */}
-      <View style={styles.dropdown}>
-        <DropdownBus
-          selectedValue={`${selectedRoute}호차`}
-          onChangeValue={(value) => setSelectedRoute(value.replace('호차', ''))}
-          backgroundColor={PRIMARY.DEFAULT}
-          color={WHITE}
-        />
-      </View>
-
-      {locationMap ? (
-        <View>
-          <MapView
-            ref={mapRef}
-            style={styles.map}
-            initialRegion={{
-              latitude: locationMap.latitude,
-              longitude: locationMap.longitude,
-              latitudeDelta: locationMap.latitudeDelta,
-              longitudeDelta: locationMap.longitudeDelta,
-            }}
-            showsUserLocation={true} // 사용자 위치 표시
-          >
-            {/* 선택된 호차에 대한 버스 위치 마커 */}
-            {busLocation && (
-              <Marker coordinate={busLocation} title="현재 버스 위치">
-                <Image
-                  resizeMode="cover"
-                  source={require('../../../assets/busMarker.png')} // 버스 이미지 파일 경로 설정
-                  style={styles.busImage}
-                />
-              </Marker>
-            )}
-
-            {/* API로부터 받아온 정류장 데이터를 마커로 표시 */}
-            {stations.map((station) => (
-              <StationMarker
-                key={station.id}
-                station={station}
-                onPress={onBusStopMarkerClick}
-              />
-            ))}
-
-            {/* 경로 표시를 위한 Polyline */}
-            <Polyline
-              coordinates={busStops.map((stop) => ({
-                latitude: stop.latitude,
-                longitude: stop.longitude,
-              }))}
-              strokeWidth={10}
-              strokeColor={PRIMARY.DEFAULT}
-            />
-          </MapView>
-          <TouchableOpacity style={styles.button} onPress={moveToMarker}>
-            <FontAwesome name="location-arrow" size={24} color="white" />
-          </TouchableOpacity>
+    <TouchableWithoutFeedback onPress={() => setSelectedStation(null)}>
+      <View style={styles.container}>
+        <View style={styles.dropdown}>
+          <DropdownBus
+            selectedValue={`${selectedRoute}호차`}
+            onChangeValue={(value) =>
+              setSelectedRoute(value.replace('호차', ''))
+            }
+            backgroundColor={PRIMARY.DEFAULT}
+            color={WHITE}
+          />
         </View>
-      ) : (
-        <RenderingScreen />
-      )}
+        {locationMap ? (
+          <View>
+            <View style={styles.dropdown}>
+              <DropdownBus
+                selectedValue={`${selectedRoute}호차`}
+                onChangeValue={(value) =>
+                  setSelectedRoute(value.replace('호차', ''))
+                }
+                backgroundColor={PRIMARY.DEFAULT}
+                color={WHITE}
+              />
+            </View>
+            <MapView
+              ref={mapRef}
+              style={styles.map}
+              initialRegion={{
+                latitude: locationMap.latitude,
+                longitude: locationMap.longitude,
+                latitudeDelta: locationMap.latitudeDelta,
+                longitudeDelta: locationMap.longitudeDelta,
+              }}
+              showsUserLocation={true} // 사용자 위치 표시
+            >
+              {/* 선택된 호차에 대한 버스 위치 마커 */}
+              {busLocation && (
+                <Marker coordinate={busLocation} title="현재 버스 위치">
+                  <Image
+                    resizeMode="cover"
+                    source={require('../../../assets/busMarker.png')} // 버스 이미지 파일 경로 설정
+                    style={styles.busImage}
+                  />
+                </Marker>
+              )}
 
-      {/* 선택된 정류장이 있을 때만 표시 */}
-      {selectedStation && (
-        <View style={styles.infobox}>
-          <View style={styles.titlecontainer}>
-            <Text style={styles.title}>{selectedStation.stationName}</Text>
-            <TouchableOpacity onPress={toggleStar}>
-              <Text style={starSelected ? styles.starSelected : styles.star}>
-                ★
-              </Text>
+              {/* API로부터 받아온 정류장 데이터를 마커로 표시 */}
+              {stations.map((station) => (
+                <StationMarker
+                  key={station.id}
+                  station={station}
+                  onPress={onBusStopMarkerClick}
+                />
+              ))}
+
+              {/* 경로 표시를 위한 Polyline */}
+              <Polyline
+                coordinates={busStops.map((stop) => ({
+                  latitude: stop.latitude,
+                  longitude: stop.longitude,
+                }))}
+                strokeWidth={10}
+                strokeColor={PRIMARY.DEFAULT}
+              />
+            </MapView>
+            <TouchableOpacity style={styles.button} onPress={moveToMarker}>
+              <FontAwesome name="location-arrow" size={24} color="white" />
             </TouchableOpacity>
           </View>
+        ) : (
+          <RenderingScreen />
+        )}
+        {/* 선택된 정류장이 있을 때만 표시 */}
+        {selectedStation && (
+          <View style={styles.infobox}>
+            <View style={styles.titlecontainer}>
+              <Text style={styles.title}>{selectedStation.stationName}</Text>
+              <TouchableOpacity onPress={toggleStar}>
+                <View style={styles.starview}>
+                  <Text
+                    style={starSelected ? styles.starSelected : styles.star}
+                  >
+                    ★
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            </View>
 
-          <View style={styles.partline} />
-          <View style={styles.line}>
-            <Text style={styles.textStyle}>{selectedRoute}호차</Text>
-            <Text style={styles.point}>
-              {arrivalTime ? `${arrivalTime}분 후 도착` : '도착 시간 정보 없음'}
-            </Text>
+            <View style={styles.partline} />
+            <View style={styles.line}>
+              <Text style={styles.textStyle}>{selectedRoute}호차</Text>
+              <Text style={styles.point}>
+                {arrivalTime
+                  ? `${arrivalTime}분 후 도착`
+                  : '도착 시간 정보 없음'}
+              </Text>
+            </View>
           </View>
-        </View>
-      )}
-    </View>
+        )}
+      </View>
+    </TouchableWithoutFeedback>
   );
 };
 
@@ -486,13 +505,18 @@ const styles = StyleSheet.create({
     width: SCREEN_WIDTH,
     height: SCREEN_HEIGHT, // Map takes the full height
   },
-  dropdown: {
-    position: 'absolute',
-    top: 80,
-    left: 20,
-    zIndex: 1000,
-  },
-
+  // dropdown: {
+  //   position: 'absolute',
+  //   width: 100, // 드롭다운 버튼의 너비 조정
+  //   top: Platform.OS === 'ios' ? 60 : 70, // 플랫폼에 따라 상단 위치 조정
+  //   right: 30, // 오른쪽 가장자리에서 10px 떨어짐
+  //   backgroundColor: '#f97316', // 배경색은 주황색
+  //   borderRadius: 20,
+  //   paddingVertical: 8,
+  //   paddingHorizontal: 10,
+  //   alignItems: 'center',
+  //   zIndex: 1000,
+  // },
   dropdownText: {
     color: '#fff',
     fontSize: 16,
@@ -518,7 +542,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     width: '100%',
     backgroundColor: 'rgba(255, 255, 255, 0.8)',
-    paddingVertical: 20,
+    paddingBottom: 20,
     paddingHorizontal: 40,
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
@@ -533,21 +557,25 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   title: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
     paddingLeft: 5,
+    marginTop: 20,
   },
   star: {
     fontSize: 30,
     fontWeight: 'bold',
     color: GRAY.DEFAULT, // 초기 별 색상은 회색
-    marginLeft: 10,
   },
   starSelected: {
     fontSize: 30,
     fontWeight: 'bold',
     color: PRIMARY.DEFAULT, // 선택 시 별 색상은 주황색
-    marginLeft: 10,
+  },
+  starview: {
+    paddingVertical: 10,
+    paddingRight: 5,
+    paddingLeft: 20,
   },
   partline: {
     height: 1,
@@ -574,6 +602,12 @@ const styles = StyleSheet.create({
     height: 60,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  dropdown: {
+    position: 'absolute',
+    top: 80,
+    left: 20,
+    zIndex: 1000,
   },
 });
 

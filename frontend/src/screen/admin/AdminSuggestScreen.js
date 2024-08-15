@@ -58,9 +58,9 @@ const AdminSuggestScreen = () => {
 
   return (
     <ScrollView style={styles.container}>
-      {notifications.map((item) => (
+      {notifications.map((item, index) => (
         <TouchableOpacity
-          key={item.boardId}
+          key={item.boardId ? item.boardId : `item-${index}`}
           style={[
             styles.notificationItem,
             item.important && styles.importantNotification,
