@@ -1,4 +1,3 @@
-// 실시간 버스 위치
 import { useFocusEffect } from '@react-navigation/native';
 import React, { useEffect, useState, useRef } from 'react';
 import {
@@ -7,26 +6,25 @@ import {
   Dimensions,
   Text,
   TouchableOpacity,
+  Platform,
   Image,
-  TouchableWithoutFeedback,
 } from 'react-native';
 import MapView, { Marker, Polyline } from 'react-native-maps';
 import { FontAwesome } from '@expo/vector-icons';
 import * as Location from 'expo-location';
+// import ModalDropdown from 'react-native-modal-dropdown';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { WHITE, PRIMARY, GRAY, BLACK } from '../../constant/color';
-import { currentBus, postBusData, postBusDataGpu } from '../../api/busUser';
+import { PRIMARY, GRAY, WHITE, BLACK, SKYBLUE } from '../../constant/color';
+import { currentBus, postBusData } from '../../api/busUser';
 import RenderingScreen from '../common/RenderingScreen';
 import StationMarker from './StationMarker';
 import NotExistScreen from '../common/NotExistScreen';
 import DropdownBus from '../../components/Dropdown/DropdownBus';
-import { BASEurl, routeUrl } from '../../api/url';
-import { fetchProfileData } from '../../api/user';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 const BusScreen = () => {
-  const [selectedRoute, setSelectedRoute] = useState(''); // 기본 노선 -> 선호 노선으로 설정
+  const [selectedRoute, setSelectedRoute] = useState('1'); // 기본적으로 '1'
   const [locationMap, setLocationMap] = useState(null); // 초기 위치를 null로 설정
   const [busStops, setBusStops] = useState([]); // 경로 데이터를 위한 상태
   const [stations, setStations] = useState([]); // 정류장 데이터를 위한 상태
@@ -39,34 +37,11 @@ const BusScreen = () => {
   const [isExist, setIsExist] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  // 17시 기준으로 eta 막기
-  const isAfternoon = () => {
-    const currentHour = new Date().getHours();
-    return currentHour >= 24;
-  };
-
-  // 프로필에서 선호노선 가져오기
-  const fetchFavoriteRoute = async () => {
-    try {
-      const data = await fetchProfileData();
-      const route = data.favoriteLine;
-      setSelectedRoute(route);
-      console.log('프로필데이터', data);
-      console.log('프로필선호노선', route);
-
-      // 선호 노선이 설정된 후 데이터를 가져옴
-      await fetchBusStops(route);
-      await fetchStations(route);
-    } catch (error) {
-      console.error('프로필 정보를 가져오는 중 오류 발생:', error);
-    }
-  };
-
   // API에서 경로 데이터를 가져오는 함수
   const fetchBusStops = async (busLine) => {
     try {
       const response = await fetch(
-        `${routeUrl}/coordinates?busLine=${busLine}`
+        `http://54.180.242.7:8080/coordinates?busLine=${busLine}`
       );
       const data = await response.json();
       setBusStops(data); // 경로 데이터 설정
@@ -88,6 +63,7 @@ const BusScreen = () => {
   // API에서 정류장 데이터를 가져오는 함수
   const fetchStations = async (busLine) => {
     try {
+      // AsyncStorage에서 액세스 토큰 불러오기
       const accessToken = await AsyncStorage.getItem('accessToken');
 
       if (!accessToken) {
@@ -95,13 +71,16 @@ const BusScreen = () => {
         return;
       }
 
-      const response = await fetch(`${BASEurl}/stations/${busLine}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
+      const response = await fetch(
+        `http://i11b109.p.ssafy.io:8080/stations/${busLine}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`, // 액세스 토큰을 Authorization 헤더에 추가
+          },
+        }
+      );
 
       // 응답 상태 확인
       if (!response.ok) {
@@ -126,7 +105,7 @@ const BusScreen = () => {
         return;
       }
 
-      const response = await fetch(`${BASEurl}/bookmarks`, {
+      const response = await fetch('http://i11b109.p.ssafy.io:8080/bookmarks', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -167,7 +146,7 @@ const BusScreen = () => {
       if (starSelected) {
         // 즐겨찾기 해제 - DELETE 요청
         const response = await fetch(
-          `${BASEurl}/bookmarks?stationId=${selectedStation.id}`,
+          `http://i11b109.p.ssafy.io:8080/bookmarks?stationId=${selectedStation.id}`,
           {
             method: 'DELETE',
             headers: {
@@ -186,7 +165,7 @@ const BusScreen = () => {
       } else {
         // 즐겨찾기 추가 - POST 요청 (필요시 구현)
         const response = await fetch(
-          `${BASEurl}/bookmarks?stationId=${selectedStation.id}`,
+          `http://i11b109.p.ssafy.io:8080/bookmarks?stationId=${selectedStation.id}`,
           {
             method: 'POST',
             headers: {
@@ -238,66 +217,33 @@ const BusScreen = () => {
         longitudeDelta: 0.005,
       });
 
-      // 선호 노선을 기본으로 설정
-      await fetchFavoriteRoute();
-      await fetchBookmarks(); // 즐겨찾기 목록 가져오기
-
-      // // 기본 노선에 대한 경로 및 정류장 데이터 가져오기
+      // 기본 노선에 대한 경로 및 정류장 데이터 가져오기
       fetchBusStops(selectedRoute);
       fetchStations(selectedRoute);
-      // fetchBookmarks(); // 즐겨찾기 목록 가져오기
+      fetchBookmarks(); // 즐겨찾기 목록 가져오기
     })();
   }, []);
 
-  // // 새로운 노선 선택 시 경로 및 정류장 데이터 업데이트
-  // useEffect(() => {
-  //   setIsLoading(true);
-  //   fetchBusStops(selectedRoute);
-  //   fetchStations(selectedRoute);
-
-  //   // 지도 초기 위치 -> 현재위치
-  //   if (mapRef.current) {
-  //     mapRef.current.animateToRegion({
-  //       latitude: locationMap.latitude,
-  //       longitude: locationMap.longitude,
-  //       // latitude: 36.3553089,
-  //       // longitude: 127.2984993,
-
-  //       latitudeDelta: 0.005,
-  //       longitudeDelta: 0.005,
-  //     });
-  //     setIsLoading(false);
-  //   }
-  // }, [selectedRoute]);
-
+  // 새로운 노선 선택 시 경로 및 정류장 데이터 업데이트
   useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true); // 로딩 시작
+    setIsLoading(true);
+    fetchBusStops(selectedRoute);
+    fetchStations(selectedRoute);
 
-      try {
-        await fetchBusStops(selectedRoute); // 새로운 노선에 대한 경로 데이터 가져오기
-        await fetchStations(selectedRoute); // 새로운 노선에 대한 정류장 데이터 가져오기
+    // 지도 초기 위치 -> 현재위치
+    if (mapRef.current) {
+      mapRef.current.animateToRegion({
+        latitude: locationMap.latitude,
+        longitude: locationMap.longitude,
+        // latitude: 36.3553089,
+        // longitude: 127.2984993,
 
-        // 지도 초기 위치 -> 현재 위치로 이동
-        if (mapRef.current && locationMap) {
-          mapRef.current.animateToRegion({
-            latitude: locationMap.latitude,
-            longitude: locationMap.longitude,
-            latitudeDelta: 0.005,
-            longitudeDelta: 0.005,
-          });
-        }
-      } catch (error) {
-        console.error('Error fetching data for selected route:', error);
-      } finally {
-        setIsLoading(false); // 로딩 완료
-      }
-    };
-
-    if (selectedRoute) {
-      fetchData();
+        latitudeDelta: 0.005,
+        longitudeDelta: 0.005,
+      });
+      setIsLoading(false);
     }
-  }, [selectedRoute, locationMap]);
+  }, [selectedRoute]);
 
   // 선택된 정류장의 즐겨찾기 상태 확인
   useEffect(() => {
@@ -404,13 +350,8 @@ const BusScreen = () => {
         console.log('Setting arrival time:', time);
         setArrivalTime(time);
         // let re
-      } else if (time === -1) {
+      } else if (time == -1) {
         console.log(time);
-        responseDataGPU = await postBusDataGpu(data);
-        let time = responseDataGPU.predicted_time;
-        console.log('gpu Response time:', time);
-        console.log('gpu Setting arrival time:', time);
-        setArrivalTime(time);
       } else {
         console.warn('Arrival time not found in response');
       }
@@ -441,105 +382,90 @@ const BusScreen = () => {
     return <RenderingScreen />;
   }
   return (
-    <TouchableWithoutFeedback onPress={() => setSelectedStation(null)}>
-      <View style={styles.container}>
-        <View style={styles.dropdown}>
-          {/* <DropdownBus
-            selectedValue={`${selectedRoute}호차`}
-            onChangeValue={(value) =>
-              setSelectedRoute(value.replace('호차', ''))
-            }
-            backgroundColor={PRIMARY.DEFAULT}
-            color={WHITE}
-          /> */}
-        </View>
-        {locationMap ? (
-          <View>
-            <View style={styles.dropdown}>
-              <DropdownBus
-                selectedValue={`${selectedRoute}호차`}
-                onChangeValue={(value) =>
-                  setSelectedRoute(value.replace('호차', ''))
-                }
-                backgroundColor={PRIMARY.DEFAULT}
-                color={WHITE}
-              />
-            </View>
-            <MapView
-              ref={mapRef}
-              style={styles.map}
-              initialRegion={{
-                latitude: locationMap.latitude,
-                longitude: locationMap.longitude,
-                latitudeDelta: locationMap.latitudeDelta,
-                longitudeDelta: locationMap.longitudeDelta,
-              }}
-              showsUserLocation={true} // 사용자 위치 표시
-            >
-              {/* 선택된 호차에 대한 버스 위치 마커 */}
-              {busLocation && (
-                <Marker coordinate={busLocation} title="현재 버스 위치">
-                  <Image
-                    resizeMode="cover"
-                    source={require('../../../assets/busMarker.png')} // 버스 이미지 파일 경로 설정
-                    style={styles.busImage}
-                  />
-                </Marker>
-              )}
+    <View style={styles.container}>
+      {/* 드롭다운 메뉴 */}
+      <View style={styles.dropdown}>
+        <DropdownBus
+          selectedValue={`${selectedRoute}호차`}
+          onChangeValue={(value) => setSelectedRoute(value.replace('호차', ''))}
+          backgroundColor={PRIMARY.DEFAULT}
+          color={WHITE}
+        />
+      </View>
 
-              {/* API로부터 받아온 정류장 데이터를 마커로 표시 */}
-              {stations.map((station) => (
-                <StationMarker
-                  key={station.id}
-                  station={station}
-                  onPress={onBusStopMarkerClick}
+      {locationMap ? (
+        <View>
+          <MapView
+            ref={mapRef}
+            style={styles.map}
+            initialRegion={{
+              latitude: locationMap.latitude,
+              longitude: locationMap.longitude,
+              latitudeDelta: locationMap.latitudeDelta,
+              longitudeDelta: locationMap.longitudeDelta,
+            }}
+            showsUserLocation={true} // 사용자 위치 표시
+          >
+            {/* 선택된 호차에 대한 버스 위치 마커 */}
+            {busLocation && (
+              <Marker coordinate={busLocation} title="현재 버스 위치">
+                <Image
+                  resizeMode="cover"
+                  source={require('../../../assets/busMarker.png')} // 버스 이미지 파일 경로 설정
+                  style={styles.busImage}
                 />
-              ))}
+              </Marker>
+            )}
 
-              {/* 경로 표시를 위한 Polyline */}
-              <Polyline
-                coordinates={busStops.map((stop) => ({
-                  latitude: stop.latitude,
-                  longitude: stop.longitude,
-                }))}
-                strokeWidth={10}
-                strokeColor={PRIMARY.DEFAULT}
+            {/* API로부터 받아온 정류장 데이터를 마커로 표시 */}
+            {stations.map((station) => (
+              <StationMarker
+                key={station.id}
+                station={station}
+                onPress={onBusStopMarkerClick}
               />
-            </MapView>
-            <TouchableOpacity style={styles.button} onPress={moveToMarker}>
-              <FontAwesome name="location-arrow" size={24} color="white" />
+            ))}
+
+            {/* 경로 표시를 위한 Polyline */}
+            <Polyline
+              coordinates={busStops.map((stop) => ({
+                latitude: stop.latitude,
+                longitude: stop.longitude,
+              }))}
+              strokeWidth={10}
+              strokeColor={PRIMARY.DEFAULT}
+            />
+          </MapView>
+          <TouchableOpacity style={styles.button} onPress={moveToMarker}>
+            <FontAwesome name="location-arrow" size={24} color="white" />
+          </TouchableOpacity>
+        </View>
+      ) : (
+        <RenderingScreen />
+      )}
+
+      {/* 선택된 정류장이 있을 때만 표시 */}
+      {selectedStation && (
+        <View style={styles.infobox}>
+          <View style={styles.titlecontainer}>
+            <Text style={styles.title}>{selectedStation.stationName}</Text>
+            <TouchableOpacity onPress={toggleStar}>
+              <Text style={starSelected ? styles.starSelected : styles.star}>
+                ★
+              </Text>
             </TouchableOpacity>
           </View>
-        ) : (
-          <RenderingScreen />
-        )}
-        {/* 선택된 정류장이 있을 때만 표시 */}
-        {selectedStation && (
-          <View style={styles.infobox}>
-            <View style={styles.titlecontainer}>
-              <Text style={styles.title}>{selectedStation.stationName}</Text>
-              <TouchableOpacity onPress={toggleStar}>
-                <Text style={starSelected ? styles.starSelected : styles.star}>
-                  ★
-                </Text>
-              </TouchableOpacity>
-            </View>
 
-            <View style={styles.partline} />
-            <View style={styles.line}>
-              <Text style={styles.textStyle}>{selectedRoute}호차</Text>
-              <Text style={styles.point}>
-                {isAfternoon()
-                  ? '정보 제공 시간이 아닙니다'
-                  : arrivalTime
-                  ? `${arrivalTime}분 후 도착`
-                  : '도착 시간 정보 없음'}
-              </Text>
-            </View>
+          <View style={styles.partline} />
+          <View style={styles.line}>
+            <Text style={styles.textStyle}>{selectedRoute}호차</Text>
+            <Text style={styles.point}>
+              {arrivalTime ? `${arrivalTime}분 후 도착` : '도착 시간 정보 없음'}
+            </Text>
           </View>
-        )}
-      </View>
-    </TouchableWithoutFeedback>
+        </View>
+      )}
+    </View>
   );
 };
 
@@ -560,6 +486,13 @@ const styles = StyleSheet.create({
     width: SCREEN_WIDTH,
     height: SCREEN_HEIGHT, // Map takes the full height
   },
+  dropdown: {
+    position: 'absolute',
+    top: 80,
+    left: 20,
+    zIndex: 1000,
+  },
+
   dropdownText: {
     color: '#fff',
     fontSize: 16,
@@ -641,12 +574,6 @@ const styles = StyleSheet.create({
     height: 60,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  dropdown: {
-    position: 'absolute',
-    top: 80,
-    left: 20,
-    zIndex: 1000,
   },
 });
 
