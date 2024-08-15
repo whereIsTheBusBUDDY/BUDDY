@@ -25,10 +25,11 @@ const EditProfileScreen = ({ route }) => {
   const email = profileData.이메일;
   const [nickname, setNickname] = useState(profileData.닉네임);
   const [favoriteLine, setFavoriteLine] = useState(profileData.선호노선);
-  const [isNicknameChecked, setIsNicknameChecked] = useState(false);
+  const [isNicknameChecked, setIsNicknameChecked] = useState(true); // 기본값을 true로 설정
 
   const handleSave = async () => {
-    if (!isNicknameChecked) {
+    // 닉네임이 변경되었고, 중복 확인이 되지 않았다면 경고 메시지
+    if (nickname !== profileData.닉네임 && !isNicknameChecked) {
       Alert.alert('', '닉네임 중복 확인을 해주세요.');
       return;
     }
@@ -68,7 +69,11 @@ const EditProfileScreen = ({ route }) => {
 
   const handleNicknameChange = (text) => {
     setNickname(text);
-    setIsNicknameChecked(false);
+    if (text !== profileData.닉네임) {
+      setIsNicknameChecked(false); // 닉네임이 변경되었을 때만 중복 확인 필요
+    } else {
+      setIsNicknameChecked(true); // 원래 닉네임으로 돌아가면 중복 확인 필요 없음
+    }
   };
 
   return (
@@ -141,7 +146,7 @@ const EditProfileScreen = ({ route }) => {
           onPress={handleSave}
           buttonColor={ButtonColors.GRAY}
           buttonStyle={styles.btn}
-          disabled={!isNicknameChecked} // 닉네임 중복 확인이 완료되지 않으면 버튼 비활성화
+          disabled={nickname !== profileData.닉네임 && !isNicknameChecked} // 닉네임이 변경된 경우 중복 확인이 완료되지 않으면 버튼 비활성화
         />
         <Button
           title="비밀번호 수정"
