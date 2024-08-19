@@ -1,47 +1,30 @@
-# 셔틀버스 실시간 위치 공유 시스템
+# 🚍  버스 어디? BUDDY 🚍
 
----
+실시간 셔틀버스 위치 공유 서비스
 
 ## 0. 프로젝트 개요
 
 ### **📆 프로젝트** 기간
-
 2024.07.08 ~ 2024.08.16 (6주)
 
 ### **💭** 기획 배경
 
 **[문제점 분석]**
 
-날씨나 교통 상황에 따라 탑승 시간이 일정하지 않아 교육생들이 셔틀버스를 놓치는 경우가 빈번
+![](./assets/survey.png)
 
-간혹 기사님들 간 담당 노선이 변경될 경우 승하차 위치 정보 불확실
+ 
+- 날씨나 교통 상황에 따라 탑승 시간이 일정하지 않아 교육생들이 셔틀버스를 놓치는 경우가 빈번
 
-탑승 패턴에 따라 학기 중 임의로 노선이 변경될 경우 따로 공지 확인을 못해 불편
+- 간혹 기사님들 간 담당 노선이 변경될 경우 승하차 위치 정보 불확실
+
+- 탑승 패턴에 따라 학기 중 임의로 노선이 변경될 경우 따로 공지 확인을 못해 불편
 
 **[솔루션 제시]**
 
 셔틀버스 실시간 위치 정보 공유
 
 이슈 발생 시 공지사항 전달 및 커뮤니티 공간 제공
-
-### **👯 팀 구성**
-
-| 윤보은        | 이승민  | 이주희   | 정석영 | 정지원 | 홍수인 |
-| ------------- | ------- | -------- | ------ | ------ | ------ |
-| Leader BE FE | FE | BE Infra | BE AI | FE     | FE     |
-
-### **💻 기술 스택**
-
-**Communication
-`Notion` , `Mattermost` , `Discord`**
-
-**FE Development**
-
-**`ReactNative`**
-
-**BE Development**
-
-**`Springboot`**
 
 ## 1. 기능 소개
 
@@ -82,7 +65,7 @@
 
 ### 🔊 푸시 알림
 
-- 즐겨찾기 한 정류장의 직전 정류장 도착 시 푸쉬 알림 및 TTS 알림
+- 즐겨찾기 한 정류장의 직전 정류장 도착 시 PUSH 및 TTS 알림
   - 사용자가 저장하고 싶은 장소의 GPS 좌표를 데이터베이스에 저장
   - 사용자 실시간 위치를 백그라운드 위치 추적하여 주기적으로 업데이트
   - 사용자 현재 위치와 저장된 장소 간 거리 계산하여 일정 반경 내 접근 시 푸시 알림 전송
@@ -124,4 +107,84 @@
 ## 4. 기대 효과
 
 - 확장시켜 전국 SSAFY 캠퍼스에서 활용 가능
-- 더 나아가 셔틀 버스를 운영하는 곳에 서비스 제공 가능
+- 셔틀 버스를 운영하는 곳에 서비스 제공 가능
+
+### **👯 팀 구성**
+
+<table>
+ <tr>
+    <td align="center"><a href="https://github.com/boeunyoon"><img src="https://avatars.githubusercontent.com/boeunyoon" width="130px;" alt=""></a></td>
+    <td align="center"><a href="https://github.com/seungminleeee"><img src="https://avatars.githubusercontent.com/seungminleeee" width="130px;" alt=""></a></td>
+    <td align="center"><a href="https://github.com/zhzzang"><img src="https://avatars.githubusercontent.com/zhzzang" width="130px;" alt=""></a></td>
+    <td align="center"><a href="https://github.com/aswe0409"><img src="https://avatars.githubusercontent.com/aswe0409" width="130px;" alt=""></a></td>
+    <td align="center"><a href="https://github.com/stopvvon"><img src="https://avatars.githubusercontent.com/stopvvon" width="130px;" alt=""></a></td>
+   <td align="center"><a href="https://github.com/ssuinh"><img src="https://avatars.githubusercontent.com/ssuinh" width="130px;" alt=""></a></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Leader & FE & BE</b></a></td>
+    <td align="center"><b>FE</b></a></td>
+    <td align="center"><b>BE & Infra</b></a></td>
+    <td align="center"><b>BE & AI</b></a></td>
+    <td align="center"><b>FE</b></a></td>
+    <td align="center"><b>FE</b></a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://github.com/boeunyoon"><b>윤보은</b></a></td>
+    <td align="center"><a href="https://github.com/seungminleeee"><b>이승민</b></a></td>
+    <td align="center"><a href="https://github.com/zhzzang"><b>이주희</b></a></td>
+    <td align="center"><a href="https://github.com/aswe0409"><b>정석영</b></a></td>
+    <td align="center"><a href="https://github.com/stopvvon"><b>정지원</b></a></td>
+    <td align="center"><a href="https://github.com/ssuinh"><b>홍수인</b></a></td>
+  </tr>
+</table>
+
+### **💻 기술 스택**
+
+
+**FE Development**
+
+  <img src="https://img.shields.io/badge/javascript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black">
+  <img src="https://img.shields.io/badge/React Native-61DAFB?style=for-the-badge&logo=React&logoColor=black"/>
+  <img src="https://img.shields.io/badge/css-1572B6?style=for-the-badge&logo=css3&logoColor=white">
+  <img src="https://img.shields.io/badge/Expo-000000?style=for-the-badge&logo=Expo&logoColor=white"/>
+
+**BE Development**
+
+<img src="https://img.shields.io/badge/springboot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white">
+<img src="https://img.shields.io/badge/JAVA-007396?style=for-the-badge&logo=OpenJDK&logoColor=white"> 
+<img src="https://img.shields.io/badge/spring%20security-6DB33F?style=for-the-badge&logo=spring-security&logoColor=white">
+<img src="https://img.shields.io/badge/JPA%20(Hibernate)-00485B?style=for-the-badge&logo=Hibernate&logoColor=white">
+<img src="https://img.shields.io/badge/jwt-000000?style=for-the-badge&logo=json-web-tokens&logoColor=white">
+
+**Database**
+
+  <img src="https://img.shields.io/badge/mysql-4479A1?style=for-the-badge&logo=mysql&logoColor=white"> 
+
+**AI**
+
+<img src="https://img.shields.io/badge/python-3776AB?style=for-the-badge&logo=python&logoColor=white">
+<img src="https://img.shields.io/badge/fastapi-009688?style=for-the-badge&logo=fastapi&logoColor=white">
+
+
+**Infra**
+
+<img src="https://img.shields.io/badge/ubuntu-E95420?style=for-the-badge&logo=ubuntu&logoColor=white">
+<img src="https://img.shields.io/badge/amazon%20ec2-FF9900?style=for-the-badge&logo=amazon-ec2&logoColor=white">
+<img src="https://img.shields.io/badge/nginx-009639?style=for-the-badge&logo=nginx&logoColor=white">
+<img src="https://img.shields.io/badge/amazonaws-232F3E?style=for-the-badge&logo=amazonaws&logoColor=white">
+
+**SUPPORT TOOL**
+
+<img src="https://img.shields.io/badge/git-F05032?style=for-the-badge&logo=git&logoColor=white">
+<img src="https://img.shields.io/badge/postman-FF6C37?style=for-the-badge&logo=postman&logoColor=white">
+<img src="https://img.shields.io/badge/jira-0052CC?style=for-the-badge&logo=jira&logoColor=white">
+<img src="https://img.shields.io/badge/notion-000000?style=for-the-badge&logo=notion&logoColor=white">
+<img src="https://img.shields.io/badge/intellij%20idea-000000?style=for-the-badge&logo=intellij-idea&logoColor=white">
+<img src="https://img.shields.io/badge/visual%20studio%20code-007ACC?style=for-the-badge&logo=visual-studio-code&logoColor=white">
+
+
+**CI/CD**
+
+<img src="https://img.shields.io/badge/gitlab-FC6D26?style=for-the-badge&logo=gitlab&logoColor=white">
+<img src="https://img.shields.io/badge/jenkins-D24939?style=for-the-badge&logo=jenkins&logoColor=white">
+<img src="https://img.shields.io/badge/docker-2496ED?style=for-the-badge&logo=docker&logoColor=white">
