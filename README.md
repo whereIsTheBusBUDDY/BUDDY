@@ -31,8 +31,7 @@
 
 
 ### 🤍 회원가입 
-<img src="assets/signup.gif" width="200" height="400"/>
-<img src="assets/mm.gif" width="200" height="400"/> </br>
+<img src="assets/signup.gif" width="200" height="400"/> <img src="assets/mm.gif" width="200" height="400"/> </br>
 
 [1차 인증] AI(YOLO)를 활용하여 학생증으로 SSAFY 교육생 여부를 판정
 
@@ -47,8 +46,7 @@
   일반 로그인(이메일, 비밀번호)
 
 ### 🚍 버스 위치 정보
-<img src="assets/user_tracking.gif" width="200" height="400"/>
-<img src="assets/eta.gif" width="200" height="400"/>
+<img src="assets/user_tracking.gif" width="200" height="400"/> <img src="assets/eta.gif" width="200" height="400"/>
 
 #### 버스의 실시간 위치 제공
 - 기사님 핸드폰 GPS를 이용하여 해당 셔틀버스의 실시간 위치 정보 공유
@@ -88,8 +86,7 @@
 
 ### 🗣️ 기사님과의 소통
 
-<img src="assets/alerm.gif" width="200" height="400"/>
-<img src="assets/admin_tracking.gif" width="200" height="400"/></br>
+<img src="assets/alerm.gif" width="200" height="400"/> <img src="assets/admin_tracking.gif" width="200" height="400"/></br>
 
 
 #### 비상 연락 시스템
