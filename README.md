@@ -121,6 +121,9 @@
 <img src="assets/location_api.PNG" width="400" height="100"/></br>
 <img src="assets/member_api.PNG" width="400" height="100"/></br>
 <img src="assets/take_api.PNG" width="400" height="100"/></br>
+
+###  프로젝트 구조
+<img src="assets/buddy_architecture.png" width="400" height="400"/></br>
 ## 3. 기대 효과
 
 전국 SSAFY 캠퍼스로 확장 가능
