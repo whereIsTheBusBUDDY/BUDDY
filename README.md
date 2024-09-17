@@ -5,6 +5,7 @@
 
 ## 0. 프로젝트 개요
 ###  삼성 청년 SW 아카데미 공통프로젝트 우수상 🏆
+<img src="assets/home.png" width="600" height="300"/></br>
 
 ### **📆 프로젝트** 기간
 2024.07.08 ~ 2024.08.16 (6주)
@@ -13,7 +14,7 @@
 
 **[문제점 분석]**
 
-<img src="assets/survey.png" width="400" height="300"/></br>
+<img src="assets/survey.png" width="600" height="300"/></br>
 
 설문조사 결과, 대부분의 교육생이 셔틀버스 이용에 불편을 겪은 경험이 있다고 응답
 
@@ -109,26 +110,26 @@
 
 ### 👁‍🗨 와이어 프레임
 
-<img src="assets/figma.png" width="400" height="400"/></br>
+<img src="assets/figma.png" width="800" height="400"/></br>
 
 ### API 명세서
-<img src="assets/admin_api.PNG" width="400" height="100"/></br>
-<img src="assets/ai_api.PNG" width="400" height="100"/></br>
-<img src="assets/board_api.PNG" width="400" height="100"/></br>
-<img src="assets/bus_stop_api.PNG" width="400" height="100"/></br>
-<img src="assets/chat_api.PNG" width="400" height="100"/></br>
-<img src="assets/ect.api.PNG" width="400" height="100"/></br>
-<img src="assets/location_api.PNG" width="400" height="100"/></br>
-<img src="assets/member_api.PNG" width="400" height="100"/></br>
-<img src="assets/take_api.PNG" width="400" height="100"/></br>
+<img src="assets/admin_api.PNG" width="800" height="100"/></br>
+<img src="assets/ai_api.PNG" width="800" height="100"/></br>
+<img src="assets/board_api.PNG" width="800" height="100"/></br>
+<img src="assets/bus_stop_api.PNG" width="800" height="100"/></br>
+<img src="assets/chat_api.PNG" width="800" height="100"/></br>
+<img src="assets/ect.api.PNG" width="800" height="100"/></br>
+<img src="assets/location_api.PNG" width="800" height="100"/></br>
+<img src="assets/member_api.PNG" width="800" height="100"/></br>
+<img src="assets/take_api.PNG" width="800" height="100"/></br>
 
 ###  프로젝트 구조
-<img src="assets/buddy_architecture.png" width="400" height="400"/></br>
+<img src="assets/buddy_architecture.png" width="800" height="400"/></br>
 ## 3. 기대 효과
 
-전국 SSAFY 캠퍼스로 확장 가능
+- 전국 SSAFY 캠퍼스로 확장 가능
 
-셔틀버스를 운행하는 기업으로의 B2B 서비스로 확장
+- 셔틀버스를 운행하는 기업으로의 B2B 서비스로 확장
 
 ### 👯 팀 구성
 
@@ -171,7 +172,8 @@
 
 **Database**
 
-  <img src="https://img.shields.io/badge/mysql-4479A1?style=for-the-badge&logo=mysql&logoColor=white"> 
+  <img src="https://img.shields.io/badge/mysql-4479A1?style=for-the-badge&logo=mysql&logoColor=white"> <img src="https://img.shields.io/badge/Amazon RDS-527FFF?style=for-the-badge&logo=amazon rds&logoColor=white">
+
 
 **AI**
 
