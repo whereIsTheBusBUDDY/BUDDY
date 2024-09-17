@@ -5,7 +5,7 @@
 
 ## 0. 프로젝트 개요
 ###  삼성 청년 SW 아카데미 공통프로젝트 우수상 🏆
-<img src="assets/home.PNG" width="600" height="300"/></br>
+<img src="assets/home.PNG" width="800" height="300"/></br>
 
 ### **📆 프로젝트** 기간
 2024.07.08 ~ 2024.08.16 (6주)
